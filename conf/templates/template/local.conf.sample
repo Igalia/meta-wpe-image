@@ -1,0 +1,5 @@
+MACHINE ??= '##MACHINE##'
+DISTRO ?= '##DISTRO##'
+
+require presets.conf
+include ../../local-host.conf

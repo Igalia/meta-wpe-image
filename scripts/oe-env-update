@@ -1,0 +1,27 @@
+#!/bin/bash
+if [ "${0}" != "${BASH_SOURCE}" ]; then
+    echo "Please don't source this script, but directly run it"
+    return
+fi
+
+run_error() {
+    echo
+    echo "Error running the update."
+    exit 1
+}
+
+run_ok() {
+    echo "Done: updated ok."
+    exit 0
+}
+
+set -eu
+
+echo "Updating ..."
+
+trap "run_error" EXIT
+
+repo init -u . -m default.xml
+repo sync
+
+trap "run_ok" EXIT

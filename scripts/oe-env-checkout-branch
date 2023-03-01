@@ -1,0 +1,15 @@
+#! /bin/bash
+
+B=$1
+SRC="${BUILDDIR}/../../sources"
+
+pushd ${SRC}
+
+for i in $(ls)
+do
+  echo -e "\n>>> $i <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+  pushd $i > /dev/null 2>&1
+  git fetch -a
+  git checkout $B
+  popd > /dev/null 2>&1;
+done

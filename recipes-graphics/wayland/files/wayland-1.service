@@ -1,0 +1,10 @@
+[Unit]
+Description=Set 775 to wayland-1 socket
+Requires=weston.service
+After=weston.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=chmod 775 /run/user/1000/wayland-1
+

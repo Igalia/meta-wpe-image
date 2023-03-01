@@ -1,0 +1,23 @@
+#! /bin/bash
+
+SRC="${BUILDDIR}/../../sources"
+
+if [ "${1}" = "--help" ]; then
+    echo "Usage: ${0} [--help] [--verbose]"
+    exit 0
+fi
+
+pushd ${SRC}
+
+for i in $(ls)
+do
+  echo -e "\n>>> $i <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+  pushd $i > /dev/null 2>&1
+  if [ "${1}" = "--verbose" ]; then
+      git remote -v
+      git status
+  else  
+      git status | grep -e "On branch"
+  fi
+  popd > /dev/null 2>&1;
+done

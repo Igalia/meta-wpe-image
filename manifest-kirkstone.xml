@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <default sync-j="2"/>
+
+  <remote fetch="https://git.openembedded.org/" name="oe"/>
+  <remote fetch="https://git.yoctoproject.org/git/" name="yocto"/>
+  <remote fetch="https://github.com" name="github"/>
+  <remote fetch="https://github.com/Freescale" name="freescale"/>
+  <remote fetch="https://github.com/Igalia" name="igalia"/>
+  <remote fetch="https://gitlab.com" name="gitlab"/>
+  <remote fetch="http://code.qt.io/yocto" name="qt"/>
+
+  <project remote="oe" revision="kirkstone" name="meta-openembedded" path="sources/meta-openembedded"/>
+
+  <project remote="yocto" revision="kirkstone" name="poky" path="sources/poky"/>
+  <project remote="yocto" revision="kirkstone" name="meta-security" path="sources/meta-security"/>
+
+  <project remote="yocto" revision="kirkstone" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
+
+  <project remote="github" revision="kirkstone" name="kraj/meta-clang.git" path="sources/meta-clang"/>
+
+  <project remote="qt" revision="upstream/kirkstone" name="meta-qt5.git" path="sources/meta-qt5"/>
+
+  <project remote="freescale" revision="kirkstone" name="meta-freescale" path="sources/meta-freescale"/>
+  <project remote="freescale" revision="kirkstone" name="meta-freescale-3rdparty" path="sources/meta-freescale-3rdparty"/>
+  <project remote="freescale" revision="kirkstone" name="meta-freescale-distro" path="sources/meta-freescale-distro"/>
+
+  <project remote="igalia" revision="main" name="meta-webkit.git" path="sources/meta-webkit"/>
+
+  <project remote="igalia" revision="main" name="meta-wpe-image.git" path="sources/meta-wpe-image">
+     <copyfile src="scripts/setup-environment" dest="setup-environment"/>
+  </project>
+</manifest>

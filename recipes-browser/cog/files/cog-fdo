@@ -1,0 +1,5 @@
+#! /bin/bash
+
+export GST_PLUGIN_FEATURE_RANK="avdec_av1:0"
+
+/usr/bin/cog -P wl $@

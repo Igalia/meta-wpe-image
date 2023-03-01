@@ -1,0 +1,5 @@
+#!/bin/bash
+export $(cat /proc/$(pidof weston-keyboard)/environ  | strings | grep DBUS_SESSION_BUS_ADDRESS)
+
+/usr/bin/cogctl "$@"
+

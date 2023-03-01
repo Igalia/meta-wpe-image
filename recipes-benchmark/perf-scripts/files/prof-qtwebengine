@@ -1,0 +1,3 @@
+#!/bin/sh
+export QTWEBENGINE_DISABLE_SANDBOX=1
+psrecord --include-children --interval 5 --log qtwebengine.log "qtwebengine-simple-browser -platform wayland $@"

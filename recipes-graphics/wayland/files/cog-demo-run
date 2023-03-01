@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+#
+# Maintainer: Pablo Saavedra <psaavedra@igalia.com>
+
+import argparse
+import os
+import subprocess
+import sys
+import time
+
+## vars ########################################################################
+launcher = 'cog-wpe'
+urls = 'urls.conf'
+
+## functions ###################################################################
+def pretty_print(line, prefix=""):
+    print(prefix + line.decode('utf-8'))
+
+def call(command, interrupt=False, pp=pretty_print):
+    print("\033[0;32m>>> %s\033[0m" % command)
+    proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        pp(line.rstrip(), prefix="    ")
+    if interrupt and proc.returncode != 0:
+        print("!!! Failure")
+        sys.exit(1)
+
+## command line options parser #################################################
+parser = argparse.ArgumentParser()
+parser.add_argument("-l", "--launcher", dest="launcher", default=launcher,
+                    help=" (default: %s)" % launcher)
+parser.add_argument("-u", "--urls", dest="urls", default=urls,
+                    help=" (default: %s)" % urls)
+args = parser.parse_args()
+
+launcher = args.launcher
+urls = args.urls
+
+## main ####################################################################
+if __name__ == "__main__":
+
+    with open(urls) as f:
+        lines = f.readlines()
+
+    try:
+        os.system("/usr/local/bin/%s %s &" % (launcher, lines[0].split()[0]))
+    except Exception as e:
+        print("Error parsing first line: %s" % e)
+        sys.exit(2)
+
+    while True:
+        counter = 1
+        for l in lines:
+            try:
+                url, duration = l.split()
+                call("/usr/bin/%s-ctl open %s" % (launcher, url))
+                time.sleep(int(duration))
+                counter += 1
+            except Exception as e:
+                print("Error parsing %d line: %s" % (counter, e))
+
+

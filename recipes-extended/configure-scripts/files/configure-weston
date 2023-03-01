@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+#
+# Maintainer: Pablo Saavedra <psaavedra@igalia.com>
+
+import argparse
+import configparser
+import os
+import subprocess
+import sys
+
+## vars ########################################################################
+configfile = '/etc/xdg/weston/weston.ini'
+
+
+## functions ###################################################################
+def pretty_print(line, prefix=""):
+    print(prefix + line.decode('utf-8'))
+
+def call(command, interrupt=False, pp=pretty_print):
+    print("\033[0;32m>>> %s\033[0m" % command)
+    proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        pp(line.rstrip(), prefix="    ")
+    if interrupt and proc.returncode != 0:
+        print("!!! Failure")
+        sys.exit(1)
+
+def set_option(config, section, option, defaults={}):
+    if not config.has_section(section):
+        config[section] = {}
+
+    status = "current"
+    value = config.get(section, option, fallback=None)
+    if not value:
+        status = "default"
+        value = defaults.get(section, {}).get(option,"")
+    new_value = input("\033[1;33m>>> \033[0;37m[%s][%s] (%s: '%s'):\033[0m " % (section, option, status, value))
+    config[section][option] = new_value if new_value else value
+
+
+## command line options parser #################################################
+parser = argparse.ArgumentParser()
+parser.add_argument("-c", "--configfile", dest="configfile", default=configfile,
+                    help=" (default: %s)" % configfile)
+
+args = parser.parse_args()
+configfile = args.configfile
+
+
+## main ####################################################################
+if __name__ == "__main__":
+    if os.geteuid() != 0:
+        print("\033[0;31mYou need root permissions to run this command.\033")
+        sys.exit(2)
+
+    config = configparser.ConfigParser()
+    config.read(configfile)
+    config.get("core","idle-time", fallback=None)
+    config.get("core","", fallback=None)
+
+    defaults = {}
+    defaults['core'] = {}
+    defaults['core']['idle-time'] = 0
+    defaults['output'] = {}
+    defaults['output']['name'] = 'HDMI-A-1'
+    defaults['output']['mode'] = '1920x1080@60'
+    defaults['input-method'] = {}
+    defaults['input-method']['path'] = ''
+
+    if not config.has_section('input-method'):
+        config['input-method'] = {}
+    if not config.has_option('input-method', 'path'):
+        config['input-method']['path'] = defaults['input-method']['path']
+
+    if not config.has_section('output'):
+        config['output'] = {}
+    if not config.has_option('output', 'name'):
+        config['output']['name'] = defaults['output']['name']
+    if not config.has_option('output', 'mode'):
+        config['output']['mode'] = defaults['output']['mode']
+    for section in config.sections():
+        for option in config.options(section):
+            set_option(config, section, option, defaults=defaults)
+
+    call("cp %s %s.prev" % (configfile, configfile))
+    with open(configfile, 'w') as f:
+        config.write(f, space_around_delimiters=False)
+
+    call("diff -u %s.prev %s" % (configfile, configfile))
+    call("systemctl restart weston@root.service")
+

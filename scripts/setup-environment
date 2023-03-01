@@ -1,0 +1,183 @@
+#!/bin/bash
+
+BSPDIR="$(pwd)"
+TARGET="${1}"
+MACHINE="${2}"
+DISTRO="${3}"
+BBLAYERS="${4}"
+PRESETS="${5}"
+
+TEMPLATEDIR="${BSPDIR}/sources/meta-wpe-image/conf/templates"
+TEMPLATECONF="${TEMPLATEDIR}/template"
+
+CONFBACKNAME="conf_$(date +%Y%m%d-%H%M%S)"
+OLDCONFSDIR="builds/${TARGET}/oldconfs"
+
+function print_targets ()
+{
+    echo -e "\e[32mTargets:\e[0m"
+    echo -e "\e[1m"
+    echo -e "<<new>>"
+    local basedir="${BSPDIR}/builds"
+    local build
+    for build in "${basedir}"/* ; do
+        [[ -d ${build} ]] || continue
+        build=${build#"${basedir}/"}
+        echo "${build%/}"
+    done
+    echo -e "\e[0m"
+}
+
+function print_machines ()
+{
+    echo -e "\e[32mMachines:\e[0m"
+    echo -e "\e[1m"
+	local basedir="${BSPDIR}/sources/meta-wpe-image/conf/machine"
+    local machine
+    for machine in "${basedir}"/*.conf ; do
+        [[ -f ${machine} ]] || continue
+        machine=${machine#"${basedir}/"}
+        echo "${machine%.conf}"
+    done
+    echo -e "\e[0m"
+}
+
+function print_distro ()
+{
+    echo -e "\e[32mDistros:\e[0m"
+    echo -e "\e[1m"
+    local basedir="${BSPDIR}/sources/meta-wpe-image/conf/distro"
+    local distro
+    for distro in "${basedir}"/*.conf ; do
+        [[ -f ${distro} ]] || continue
+        distro=${distro#"${basedir}/"}
+        echo "${distro%.conf}"
+    done
+    echo -e "\e[0m"
+}
+
+function print_bblayers ()
+{
+    echo -e "\e[32mBBlayers:\e[0m"
+    echo -e "\e[1m"
+    local basedir="${TEMPLATECONF}/bblayers"
+    local layer
+    for layer in "${basedir}"/bblayers.conf.* ; do
+        [[ -f ${layer} ]] || continue
+        echo "${layer#"${basedir}/bblayers.conf."}"
+    done
+    echo -e "\e[0m"
+}
+
+function print_presets ()
+{
+    echo -e "\e[32mPresets:\e[0m"
+    echo -e "\e[1m"
+    local basedir="${TEMPLATECONF}/presets"
+    local preset
+    for preset in "${basedir}"/*.conf ; do
+        [[ -f ${preset} ]] || continue
+        preset=${preset#"${basedir}/"}
+        echo "${preset%.conf}"
+    done
+    echo -e "\e[0m"
+}
+
+function print_help_info ()
+{
+    print_targets
+    print_machines
+    print_distro
+    print_bblayers
+    print_presets
+    echo -e "\e[0m"
+}
+
+if [ "${0}" = "${BASH_SOURCE}" ]; then
+    echo "Please don't run the script but source it"
+    echo -e "\e[32mUsage:\e[1m source ${0} targetname\e[0m"
+    echo -e "\e[1m       source ${BASH_SOURCE} targetname machine distro bblayers presets --update-config"
+    return 1
+fi
+
+if [ "$#" -lt "1" ]
+then
+    echo -e "\e[32mUsage:\e[1m ${BASH_SOURCE} targetname\e[0m"
+    echo -e "\e[1m       ${BASH_SOURCE} targetname machine distro bblayers presets --update-config"
+    echo -e "\e[0m"
+    print_help_info
+    return 1
+fi
+
+if [ "$#" -gt "1" ] && [ "${6}" != "--update-config" ]; then
+    echo -e "\e[32mUse only the target argument:\e[0m"
+    echo -e "\e[1m ${BASH_SOURCE} ${1}\e[0m"
+    echo -e "\e[32mOr specify the missing parameters:\e[0m"
+    echo -e "\e[1m ${BASH_SOURCE} ${1} machine(${2}) distro(${3}) bblayers(${4}) presets(${5}) --update-config"
+    echo -e "\e[0m"
+    print_help_info
+    return 1
+fi
+
+test -d builds || mkdir builds
+test -d caches || mkdir caches
+
+if [ "${6}" = "--update-config" ]; then
+    if test -d "builds/${TARGET}/conf"; then
+        test -d "${OLDCONFSDIR}" || mkdir "${OLDCONFSDIR}"
+        mv "builds/${TARGET}/conf" "${OLDCONFSDIR}/${CONFBACKNAME}"
+        echo "Backuped current config to oldconfs/${CONFBACKNAME}"
+        echo "Resetting build config at conf/"
+    fi
+fi
+
+OEROOT="${BSPDIR}/sources/poky"
+if [ -f ${TEMPLATECONF}/poky.path ]; then
+    OEROOT="${BSPDIR}/$(cat ${TEMPLATECONF}/poky.path)"
+fi
+
+OESCRIPT="${OEROOT}/oe-init-build-env"
+if ! test -x "${OESCRIPT}"; then
+    echo "ERROR: Either repositories are not updated correctly or script not sourced from the topdir."
+    echo "Please see README file."
+    return 1
+fi
+
+# Variables that need to be passed to the poky script.
+export OEROOT
+export TEMPLATECONF
+export BASH_SOURCE="${OESCRIPT}"
+source "${OESCRIPT}" "${BSPDIR}/builds/${TARGET}"
+
+# cp conf files
+if [ "${6}" = "--update-config" ]; then
+    cp -a ${TEMPLATECONF}/presets ${BUILDDIR}/conf/
+
+    IFS='.' read -ra LAYERS <<< "$BBLAYERS"
+    for i in "${LAYERS[@]}"; do
+      cat ${TEMPLATECONF}/bblayers/bblayers.conf.${i}
+    done > "${BUILDDIR}/conf/bblayers.conf"
+
+    IFS='.' read -ra P <<< "$PRESETS"
+    for i in "${P[@]}"; do
+      echo "require presets/${i}.conf"
+    done > ${BUILDDIR}/conf/presets.conf
+
+    sed -i "s|##MACHINE##|${MACHINE}|g"  "${BUILDDIR}/conf/local.conf"
+    sed -i "s|##DISTRO##|${DISTRO}|g"    "${BUILDDIR}/conf/local.conf"
+
+    if test -d "conf"; then
+        if test -d "../../${OLDCONFSDIR}"; then
+            echo "Changes in the conf/"
+            diff -ur "../../${OLDCONFSDIR}/${CONFBACKNAME}" "conf" 2>&1 || true
+        fi
+    fi
+fi
+
+alias oe-goto-deploy-images="pushd ${BUILDDIR}/tmp/deploy/images"
+alias oe-goto-sources="pushd ${BUILDDIR}/../../sources"
+alias oe-goto-builddir="pushd ${BUILDDIR}/"
+
+export PATH=$PATH:$BSPDIR/sources/meta-wpe-image/scripts
+
+umask 002

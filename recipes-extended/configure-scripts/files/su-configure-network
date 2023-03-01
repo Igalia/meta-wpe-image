@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/bin/su -c '/usr/bin/configure-network --wait' root

@@ -1,0 +1,3 @@
+#!/bin/sh
+sudo systemctl stop weston.service
+su - bot /usr/bin/cog-drm $1

@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+#
+# Maintainer: Pablo Saavedra <psaavedra@igalia.com>
+
+import argparse
+import binascii
+import configparser
+import hashlib
+import os
+import time
+import subprocess
+import sys
+
+
+## vars ########################################################################
+iface = "wlan0"
+net_conf_dir = "/etc/systemd/network/"
+net_conf_file = net_conf_dir + "/20-net.network"
+wait_seconds = 15
+wpa_suplicant_conf_dir = "/etc/wpa_supplicant/"
+wpa_suplicant_conf_file = wpa_suplicant_conf_dir + "wpa_supplicant-%s.conf"
+wpa_passphrase = '''
+network={
+    ssid="%s"
+    #psk="%s"
+    psk=%s
+}
+'''
+
+## functions ###################################################################
+def pretty_print(line, prefix=""):
+    print(prefix + line.decode('utf-8'))
+
+def print_ssid(line, prefix=""):
+    if line.find(b'SSID:') >= 0:
+        _ = line.split(b'SSID:')
+        if len(_) > 1 and len(_[1].strip()) > 0:
+            pretty_print(_[1], prefix)
+
+def call(command, interrupt=False, pp=pretty_print):
+    print("\033[0;32m>>> %s\033[0m" % command)
+    proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        pp(line.rstrip(), prefix="    ")
+    if interrupt and proc.returncode != 0:
+        print("!!! Failure")
+        sys.exit(1)
+
+def wpa_psk(ssid, password):
+    dk = hashlib.pbkdf2_hmac('sha1', str.encode(password), str.encode(ssid), 4096, 32)
+    return (binascii.hexlify(dk)).decode('utf8')
+
+
+## command line options parser #################################################
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--interface", dest="iface", default=iface,
+                    help=" (default: %s)" % iface)
+parser.add_argument('--disable', action='store_true')
+parser.add_argument('--wait', action='store_true')
+
+args = parser.parse_args()
+iface = args.iface
+disable = args.disable
+wait = args.wait
+
+## main ####################################################################
+if __name__ == "__main__":
+    if os.geteuid() != 0:
+        print("\033[0;31mYou need root permissions to run this command.\033")
+        sys.exit(2)
+
+    if False: #  Deprecated code
+        call("rm -rf %s/*" % net_conf_dir)
+        config = configparser.ConfigParser()
+        config['Match'] = {}
+        config['Match']['Name'] = iface
+        config['Network'] = {}
+        config['Network']['DHCP'] = 'ipv4'
+        with open(net_conf_file, 'w') as configfile:
+            config.write(configfile)
+
+    if iface.startswith("wlan"):
+        if disable:
+            call("systemctl disable -l wpa_supplicant@%s.service" % iface)
+            call("systemctl stop -l wpa_supplicant@%s.service" % iface)
+            call("rm %s" % wpa_suplicant_conf_file % iface)
+        else:
+            call("iw dev %s scan" % iface, pp=print_ssid)
+            ssid = input("\033[0;37mEnter the WiFi SSID (in iface %s):\033[0m " % iface)
+            passphrase = input("\033[0;37mEnter the WiFi passphrase (Min. 8 chars):\033[0m ")
+
+            if not os.path.exists(wpa_suplicant_conf_dir):
+                call("mkdir %s" % wpa_suplicant_conf_dir)
+            with open(wpa_suplicant_conf_file % iface, 'w') as configfile:
+                configfile.write(wpa_passphrase % (ssid, passphrase,
+                                                   wpa_psk(ssid, passphrase)))
+
+            call("systemctl enable -l wpa_supplicant@%s.service" % iface)
+            call("systemctl restart -l wpa_supplicant@%s.service" % iface)
+        call("systemctl status -l wpa_supplicant@%s.service" % iface)
+
+    ssid = print("\033[1;32mWaiting %s seconds to get IP in %s ...\033[0m " % (wait_seconds, iface))
+    time.sleep(wait_seconds)
+    call("ip address show %s" % iface)
+    if wait:
+        print("\033[1;32mPress any key to exit ...\033[0m ")
+        input()
+

@@ -1,0 +1,12 @@
+[Unit] 
+Description=Check wayland-1 socket exists
+RequiresMountsFor=/run/user/1000
+Requires=weston.service
+After=weston.service
+
+[Path]
+PathExists=/run/user/1000/wayland-1
+
+[Install]
+WantedBy=graphical.target
+
