@@ -1,0 +1,46 @@
+From 0afee900cecc1799ed5b7adfa5d2a913359b31a1 Mon Sep 17 00:00:00 2001
+From: Pablo Saavedra <psaavedra@igalia.com>
+Date: Thu, 10 Nov 2022 10:57:07 +0000
+Subject: [PATCH] login: Use 770 mode instead of 700 for the /run/user
+
+This allows other users asigned to the user group to get access to
+the user runtime directoy.
+---
+ src/login/user-runtime-dir.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/login/user-runtime-dir.c b/src/login/user-runtime-dir.c
+index 5ce5b35e17..0ea595d47d 100644
+--- a/src/login/user-runtime-dir.c
++++ b/src/login/user-runtime-dir.c
+@@ -69,18 +69,18 @@ static int user_mkdir_runtime_path(
+         if (path_is_mount_point(runtime_path, NULL, 0) >= 0)
+                 log_debug("%s is already a mount point", runtime_path);
+         else {
+-                char options[sizeof("mode=0700,uid=,gid=,size=,nr_inodes=,smackfsroot=*")
++                char options[sizeof("mode=0770,uid=,gid=,size=,nr_inodes=,smackfsroot=*")
+                              + DECIMAL_STR_MAX(uid_t)
+                              + DECIMAL_STR_MAX(gid_t)
+                              + DECIMAL_STR_MAX(uint64_t)
+                              + DECIMAL_STR_MAX(uint64_t)];
+ 
+                 xsprintf(options,
+-                         "mode=0700,uid=" UID_FMT ",gid=" GID_FMT ",size=%" PRIu64 ",nr_inodes=%" PRIu64 "%s",
++                         "mode=0770,uid=" UID_FMT ",gid=" GID_FMT ",size=%" PRIu64 ",nr_inodes=%" PRIu64 "%s",
+                          uid, gid, runtime_dir_size, runtime_dir_inodes,
+                          mac_smack_use() ? ",smackfsroot=*" : "");
+ 
+-                (void) mkdir_label(runtime_path, 0700);
++                (void) mkdir_label(runtime_path, 0770);
+ 
+                 r = mount_nofollow_verbose(LOG_DEBUG, "tmpfs", runtime_path, "tmpfs", MS_NODEV|MS_NOSUID, options);
+                 if (r < 0) {
+@@ -93,7 +93,7 @@ static int user_mkdir_runtime_path(
+                                         "Failed to mount per-user tmpfs directory %s.\n"
+                                         "Assuming containerized execution, ignoring: %m", runtime_path);
+ 
+-                        r = chmod_and_chown(runtime_path, 0700, uid, gid);
++                        r = chmod_and_chown(runtime_path, 0770, uid, gid);
+                         if (r < 0) {
+                                 log_error_errno(r, "Failed to change ownership and mode of \"%s\": %m", runtime_path);
+                                 goto fail;

@@ -1,0 +1,27 @@
+From 0ec14982c0ce5cf712fc16cb79bda35515566c11 Mon Sep 17 00:00:00 2001
+From: Pablo Saavedra <psaavedra@igalia.com>
+Date: Tue, 29 Nov 2022 16:12:25 +0000
+Subject: [PATCH] coredump: set external storage
+
+---
+ src/coredump/coredump.conf | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/coredump/coredump.conf b/src/coredump/coredump.conf
+index 1f75d48d33..067c2c51e6 100644
+--- a/src/coredump/coredump.conf
++++ b/src/coredump/coredump.conf
+@@ -15,10 +15,10 @@
+ # See coredump.conf(5) for details.
+ 
+ [Coredump]
+-#Storage=external
+-#Compress=yes
++Storage=external
++Compress=yes
+ #ProcessSizeMax=2G
+-#ExternalSizeMax=2G
++ExternalSizeMax=12G
+ #JournalSizeMax=767M
+ #MaxUse=
+ #KeepFree=
