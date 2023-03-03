@@ -1,0 +1,5 @@
+LINUX_VERSION = "5.10.63"
+
+SRCREV_machine = "4117cba235d24a7c4630dc38cb55cc80a04f5cf3"
+SRCREV_meta = "e0147386e9f3c4cabc6f6d256d457fd4e67eb221"
+
