@@ -1,0 +1,3 @@
+OPTARGS_IDLE="-D 0"
+OPTARGS_FREQUENCY="-g performance"
+

@@ -1,0 +1,13 @@
+[Unit]
+Description=CPU powersave
+
+[Service]
+EnvironmentFile=-/etc/default/cpupower
+
+Type=oneshot
+ExecStart=/usr/bin/cpupower idle-set ${OPTARGS_IDLE}
+ExecStart=/usr/bin/cpupower frequency-set ${OPTARGS_FREQUENCY}
+
+[Install]
+WantedBy=multi-user.target
+
