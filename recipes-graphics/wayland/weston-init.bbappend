@@ -9,6 +9,7 @@ SRC_URI += "file://weston.env \
             file://cog-demo-run \
             file://demo-wpe-website \
             file://demo-wpe-duckduckgo\
+            file://24x24-blank.png \
             file://wpe_white.jpg \
             file://weston-terminal-configure-network \
            "
@@ -29,6 +30,7 @@ FILES:${PN} += "\
     ${bindir}/cog-demo-run \
     ${bindir}/demo-wpe-website \
     ${bindir}/demo-wpe-duckduckgo \
+    ${datadir}/24x24-blank.png \
     ${datadir}/wpe_white.jpg \
     ${bindir}/weston-terminal-configure-network \
     "
@@ -38,6 +40,7 @@ do_install:append () {
     install -D -p -m0644 ${WORKDIR}/wayland-1.service ${D}${systemd_system_unitdir}/wayland-1.service
     install -D -p -m0644 ${WORKDIR}/wayland-1.path ${D}${systemd_system_unitdir}/wayland-1.path
 
+    install -D -p -m0644 ${WORKDIR}/24x24-blank.png ${D}${datadir}/24x24-blank.png
     install -D -p -m0644 ${WORKDIR}/wpe_white.jpg ${D}${datadir}/wpe_white.jpg
 
     install -Dm755 ${WORKDIR}/kill-demo ${D}/${bindir}/kill-demo
