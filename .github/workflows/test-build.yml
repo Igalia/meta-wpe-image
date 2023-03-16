@@ -1,0 +1,70 @@
+name: Build tests
+on: [pull_request]
+jobs:
+
+  kirkstone-repo:
+    runs-on: self-hosted
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/bitbake-repo
+        with:
+          repo_release: 'kirkstone'
+
+  matrix-build-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        machine: ['raspberrypi3-mesa', 'raspberrypi4-64-mesa']
+        wpe_vers: ['2_38', 'nightly']
+        yocto_rel: ['kirkstone']
+    continue-on-error: true
+    runs-on: self-hosted
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    needs: kirkstone-repo
+    steps:
+      #- uses: actions/checkout@v3
+      - uses: ./.github/actions/bitbake-build
+        with:
+          bitbake_source: 'raspberrypi3-mesa-wpe-${{ matrix.wpe_vers }} ${{ matrix.machine }} poky-wayland layers.raspberrypi conf.wpe-${{ matrix.wpe_vers }} --update-config'
+          repo_release: ${{ matrix.yocto_rel }}
+
+  # kirkstone-raspberrypi3-mesa-weston-wpe-nightly:
+  #   runs-on: self-hosted
+  #   if: "!contains(github.event.head_commit.message, 'ci skip')"
+  #   steps:
+  #     - uses: ./.github/actions/bitbake-build
+  #       with:
+  #         bitbake_source: 'rpi3-mesa-wpe-nightly raspberrypi3-mesa poky-wayland layers.raspberrypi conf.wpe-nightly --update-config'
+  #         repo_release: 'kirkstone'
+  #   needs: kirkstone-repo
+  #
+  # kirkstone-raspberrypi4-64-mesa-weston-wpe-nightly:
+  #   runs-on: self-hosted
+  #   if: "!contains(github.event.head_commit.message, 'ci skip')"
+  #   steps:
+  #     - uses: ./.github/actions/bitbake-build
+  #       with:
+  #         bitbake_source: 'rpi4-mesa-wpe-nightly raspberrypi4-64-mesa poky-wayland layers.raspberrypi conf.wpe-nightly --update-config'
+  #         repo_release: 'kirkstone'
+  #   needs: kirkstone-repo
+  #
+  # kirkstone-raspberrypi3-mesa-weston-wpe-2_38:
+  #   runs-on: self-hosted
+  #   if: "!contains(github.event.head_commit.message, 'ci skip')"
+  #   steps:
+  #     - uses: ./.github/actions/bitbake-build
+  #       with:
+  #         bitbake_source: 'rpi3-mesa-wpe-2_38 raspberrypi3-mesa poky-wayland layers.raspberrypi conf.wpe-2_38 --update-config'
+  #         repo_release: 'kirkstone'
+  #   needs: kirkstone-repo
+  #
+  # kirkstone-raspberrypi4-64-mesa-weston-wpe-2_38:
+  #   runs-on: self-hosted
+  #   if: "!contains(github.event.head_commit.message, 'ci skip')"
+  #   steps:
+  #     - uses: ./.github/actions/bitbake-build
+  #       with:
+  #         bitbake_source: 'rpi4-mesa-wpe-2_38 raspberrypi4-64-mesa poky-wayland layers.raspberrypi conf.wpe-2_38 --update-config'
+  #         repo_release: 'kirkstone'
+  #   needs: kirkstone-repo
