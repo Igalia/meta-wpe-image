@@ -3,7 +3,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 S:class-devupstream = "${WORKDIR}/git"
 SRC_URI:class-devupstream = "git://github.com/WebKit/webkit.git;protocol=https;branch=main"
 
-SRCREV:class-devupstream = "${AUTOREV}"
+# SRCREV:class-devupstream = "${AUTOREV}"
+SRCREV:class-devupstream = "1de3be56f82b7fa7a908dc834666b1d1b4d706eb"
 
 # XXX: Renderer process ran out of memory issue regression added in
 # f822d46cdb31d1d3df1915a99c0413acbcb06fd1 for 32-bits builds
@@ -21,3 +22,6 @@ PACKAGECONFIG:append = " experimental-features"
 PACKAGECONFIG:append:class-devupstream = " mediastream"
 
 # PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'api-documentation', 'documentation', '' ,d)} instrospection"
+
+EXTRA_OECMAKE += " -DENABLE_SPEECH_SYNTHESIS=OFF"
+

@@ -1,8 +1,8 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 FILESEXTRAPATHS:prepend:class-devupstream := "${THISDIR}/files:"
 
-SRC_URI:class-devupstream = "git://github.com/Igalia/cog.git;protocol=https;branch=mcatanzaro/next"
-SRCREV:class-devupstream = "8f82f7e4287ee69a8375ca7e894f0981a32d7ac8"
+SRC_URI:class-devupstream = "git://github.com/Igalia/cog.git;protocol=https;branch=master"
+SRCREV:class-devupstream = "48347f3a36e6dba75bcfd4f9443730861adec5b0"
 
 SRC_URI += " \
     file://cog-drm \
