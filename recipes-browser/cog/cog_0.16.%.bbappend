@@ -36,3 +36,5 @@ PV:class-devupstream = "trunk"
 RDEPENDS:${PN} += "bash sudo"
 RDEPENDS:${PN}:class-devupstream += "bash sudo"
 
+PACKAGECONFIG:append = " gtk4"
+
