@@ -17,4 +17,7 @@ RCONFLICTS:${PN}:class-devupstream = ""
 
 PACKAGECONFIG:append = " experimental-features"
 
+# mediastream: Needed since >2.40.
+PACKAGECONFIG:append:class-devupstream = " mediastream"
+
 # PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'api-documentation', 'documentation', '' ,d)} instrospection"
