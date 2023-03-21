@@ -18,5 +18,5 @@ do_install:append () {
     install -m 755 ${WORKDIR}/cog-fdo-exported-wayland ${D}/${bindir}/cog-fdo-exported-wayland
 }
 
-RDEPENDS:${PN} += "bash sudo"
+RDEPENDS:${PN} += "bash"
 

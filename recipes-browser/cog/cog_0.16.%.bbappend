@@ -33,8 +33,8 @@ do_install:append () {
 
 PV:class-devupstream = "trunk"
 
-RDEPENDS:${PN} += "bash sudo"
-RDEPENDS:${PN}:class-devupstream += "bash sudo"
+RDEPENDS:${PN} += "bash"
+RDEPENDS:${PN}:class-devupstream += "bash"
 
 PACKAGECONFIG:append = " gtk4"
 
