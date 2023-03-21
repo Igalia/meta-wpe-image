@@ -1,6 +1,9 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 FILESEXTRAPATHS:prepend:class-devupstream := "${THISDIR}/files:"
 
+SRC_URI:class-devupstream = "git://github.com/Igalia/cog.git;protocol=https;branch=mcatanzaro/next"
+SRCREV:class-devupstream = "8f82f7e4287ee69a8375ca7e894f0981a32d7ac8"
+
 SRC_URI += " \
     file://cog-drm \
     file://cog-drm-kill-weston \
@@ -27,8 +30,6 @@ do_install:append () {
     install -m 755 ${WORKDIR}/cog-fdo-ctl ${D}/${bindir}/cog-fdo-ctl
     install -m 755 ${WORKDIR}/cog-fdo-exported-wayland ${D}/${bindir}/cog-fdo-exported-wayland
 }
-
-SRCREV:class-devupstream = "${AUTOREV}"
 
 PV:class-devupstream = "trunk"
 
