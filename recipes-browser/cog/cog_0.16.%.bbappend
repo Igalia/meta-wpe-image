@@ -38,3 +38,6 @@ RDEPENDS:${PN}:class-devupstream += "bash"
 
 PACKAGECONFIG:append = " gtk4"
 
+# Required for future 0.17
+PACKAGECONFIG[soup2] = ",,libsoup-2.4"
+
