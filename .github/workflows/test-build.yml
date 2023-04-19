@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi3-mesa', 'raspberrypi4-64-mesa']
-        wpe_vers: ['2_38', 'nightly']
+        wpe_vers: ['2_40', 'nightly']
         yocto_rel: ['kirkstone']
     continue-on-error: true
     runs-on: self-hosted
