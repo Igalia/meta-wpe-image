@@ -24,4 +24,5 @@ PACKAGECONFIG:append:class-devupstream = " mediastream"
 # PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'api-documentation', 'documentation', '' ,d)} instrospection"
 
 EXTRA_OECMAKE += " -DENABLE_SPEECH_SYNTHESIS=OFF"
-
+# 2.40 fails to build with this experimental feature enabled
+EXTRA_OECMAKE += " -DENABLE_WEB_CODECS=OFF"
