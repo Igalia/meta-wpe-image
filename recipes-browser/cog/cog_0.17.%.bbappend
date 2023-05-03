@@ -1,4 +1,8 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend:class-devupstream := "${THISDIR}/files:"
+
+SRC_URI:class-devupstream = "git://github.com/Igalia/cog.git;protocol=https;branch=master"
+SRCREV:class-devupstream = "${AUTOREV}"
 
 SRC_URI += " \
     file://cog-drm \
@@ -7,6 +11,15 @@ SRC_URI += " \
     file://cog-fdo-ctl \
     file://cog-fdo-exported-wayland \
     file://cog-set-opaque-region_v0.14.patch \
+"
+
+SRC_URI:class-devupstream += " \
+    file://cog-drm \
+    file://cog-drm-kill-weston \
+    file://cog-fdo \
+    file://cog-fdo-ctl \
+    file://cog-fdo-exported-wayland \
+    file://cog-set-opaque-region_devupstream.patch \
 "
 
 do_install:append () {
@@ -18,7 +31,10 @@ do_install:append () {
     install -m 755 ${WORKDIR}/cog-fdo-exported-wayland ${D}/${bindir}/cog-fdo-exported-wayland
 }
 
+PV:class-devupstream = "trunk"
+
 RDEPENDS:${PN} += "bash"
+RDEPENDS:${PN}:class-devupstream += "bash"
 
 PACKAGECONFIG:append = " gtk4"
 
