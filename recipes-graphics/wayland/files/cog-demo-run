@@ -10,7 +10,7 @@ import sys
 import time
 
 ## vars ########################################################################
-launcher = 'cog-wpe'
+launcher = 'cog'
 urls = 'urls.conf'
 
 ## functions ###################################################################
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         lines = f.readlines()
 
     try:
-        os.system("/usr/local/bin/%s %s &" % (launcher, lines[0].split()[0]))
+        os.system("%s %s &" % (launcher, lines[0].split()[0]))
     except Exception as e:
         print("Error parsing first line: %s" % e)
         sys.exit(2)
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         for l in lines:
             try:
                 url, duration = l.split()
-                call("/usr/bin/%s-ctl open %s" % (launcher, url))
+                call("%s-ctl open %s" % (launcher, url))
                 time.sleep(int(duration))
                 counter += 1
             except Exception as e:
