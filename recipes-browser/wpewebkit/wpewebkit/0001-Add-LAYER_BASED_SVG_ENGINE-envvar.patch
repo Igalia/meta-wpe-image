@@ -1,0 +1,33 @@
+From 58768b3698ef50af5b88ba7973c3de2b133b02c6 Mon Sep 17 00:00:00 2001
+From: Pablo Saavedra <psaavedra@igalia.com>
+Date: Wed, 24 May 2023 13:50:19 +0000
+Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE envvar
+
+---
+ Source/WebKit/WebProcess/WebPage/WebPage.cpp | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+index 9431e5bb..027d4ce9 100644
+--- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
++++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+@@ -4200,6 +4200,19 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
+ 
+     updateSettingsGenerated(store, settings);
+ 
++#if ENABLE(LAYER_BASED_SVG_ENGINE)
++    const char* lbseEnabled = getenv("LAYER_BASED_SVG_ENGINE");
++    if (lbseEnabled != NULL &&  strcmp(lbseEnabled, "1") == 0)
++    {
++        fprintf(stderr, "LAYER_BASED_SVG_ENGINE: '%s'\n", lbseEnabled);
++        settings.setLayerBasedSVGEngineEnabled(true);
++    }
++    else
++    {
++        settings.setLayerBasedSVGEngineEnabled(false);
++    }
++#endif
++
+ #if !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION)
+     if (!settings.acceleratedCompositingEnabled()) {
+         WEBPAGE_RELEASE_LOG(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
