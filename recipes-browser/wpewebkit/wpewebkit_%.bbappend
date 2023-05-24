@@ -26,3 +26,5 @@ PACKAGECONFIG:append:class-devupstream = " mediastream"
 EXTRA_OECMAKE += " -DENABLE_SPEECH_SYNTHESIS=OFF"
 # 2.40 fails to build with this experimental feature enabled
 EXTRA_OECMAKE += " -DENABLE_WEB_CODECS=OFF"
+
+GSTVIDEOCONVERTSCALEPLUGIN = "${@bb.utils.contains_any('LAYERSERIES_CORENAMES', 'dunfell gatesgarth hardknott honister', 'gstreamer1.0-plugins-base-videoconvert gstreamer1.0-plugins-base-videoscale', 'gstreamer1.0-plugins-base-videoconvertscale', d)}"
