@@ -1,33 +1,87 @@
-From 58768b3698ef50af5b88ba7973c3de2b133b02c6 Mon Sep 17 00:00:00 2001
+From c778ce6a597239febb8e5b02e611a387fa084571 Mon Sep 17 00:00:00 2001
 From: Pablo Saavedra <psaavedra@igalia.com>
 Date: Wed, 24 May 2023 13:50:19 +0000
-Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE envvar
+Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE and LAYER_BASED_SVG_ENGINE_TOGGLER
+ envvars
 
 ---
- Source/WebKit/WebProcess/WebPage/WebPage.cpp | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../UIProcess/API/glib/WebKitWebView.cpp      |  3 +++
+ Source/WebKit/UIProcess/WebPageProxy.cpp      |  2 ++
+ Source/WebKit/WebProcess/WebPage/WebPage.cpp  | 25 +++++++++++++++++++
+ 3 files changed, 30 insertions(+)
 
+diff --git a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
+index 837aa061..fce55d67 100644
+--- a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
++++ b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
+@@ -3333,6 +3333,9 @@ void webkit_web_view_reload(WebKitWebView* webView)
+ {
+     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+ 
++#if ENABLE(LAYER_BASED_SVG_ENGINE)
++    webkitWebViewUpdateSettings(webView);
++#endif
+     getPage(webView).reload({ });
+ }
+ 
+diff --git a/Source/WebKit/UIProcess/WebPageProxy.cpp b/Source/WebKit/UIProcess/WebPageProxy.cpp
+index 4f48ca66..a2dcd7c9 100644
+--- a/Source/WebKit/UIProcess/WebPageProxy.cpp
++++ b/Source/WebKit/UIProcess/WebPageProxy.cpp
+@@ -700,8 +700,10 @@ void WebPageProxy::notifyProcessPoolToPrewarm()
+ 
+ void WebPageProxy::setPreferences(WebPreferences& preferences)
+ {
++#if !ENABLE(LAYER_BASED_SVG_ENGINE)
+     if (&preferences == m_preferences.ptr())
+         return;
++#endif
+ 
+     m_preferences->removePage(*this);
+     m_preferences = preferences;
 diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-index 9431e5bb..027d4ce9 100644
+index 9431e5bb..b9d71d63 100644
 --- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
 +++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-@@ -4200,6 +4200,19 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
+@@ -405,6 +405,10 @@
+ #import <pal/spi/cg/CoreGraphicsSPI.h>
+ #endif
+ 
++#if ENABLE(LAYER_BASED_SVG_ENGINE)
++#include <filesystem>
++#endif
++
+ namespace WebKit {
+ using namespace JSC;
+ using namespace WebCore;
+@@ -4200,6 +4204,27 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
  
      updateSettingsGenerated(store, settings);
  
 +#if ENABLE(LAYER_BASED_SVG_ENGINE)
-+    const char* lbseEnabled = getenv("LAYER_BASED_SVG_ENGINE");
-+    if (lbseEnabled != NULL &&  strcmp(lbseEnabled, "1") == 0)
-+    {
-+        fprintf(stderr, "LAYER_BASED_SVG_ENGINE: '%s'\n", lbseEnabled);
-+        settings.setLayerBasedSVGEngineEnabled(true);
-+    }
-+    else
-+    {
-+        settings.setLayerBasedSVGEngineEnabled(false);
++    const char* lbseEnabledToggler = getenv("LAYER_BASED_SVG_ENGINE_TOGGLER");
++    if (lbseEnabledToggler != NULL) {
++        if (std::filesystem::exists(std::filesystem::path {lbseEnabledToggler})) {
++            fprintf(stderr, "LAYER_BASED_SVG_ENGINE: 1 (activated by the %s toggler)\n", lbseEnabledToggler);
++            settings.setLayerBasedSVGEngineEnabled(true);
++        } else {
++            fprintf(stderr, "LAYER_BASED_SVG_ENGINE: 0 ('%s' the toggler doesn't exist)\n", lbseEnabledToggler);
++            settings.setLayerBasedSVGEngineEnabled(false);
++	}
++    } else {
++        const char* lbseEnabled = getenv("LAYER_BASED_SVG_ENGINE");
++        if (lbseEnabled != NULL && strcmp(lbseEnabled, "1") == 0) {
++            fprintf(stderr, "LAYER_BASED_SVG_ENGINE: '%s'\n", lbseEnabled);
++            settings.setLayerBasedSVGEngineEnabled(true);
++        } else {
++            settings.setLayerBasedSVGEngineEnabled(false);
++        }
 +    }
 +#endif
 +
  #if !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION)
      if (!settings.acceleratedCompositingEnabled()) {
          WEBPAGE_RELEASE_LOG(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
+-- 
+2.30.2
+
