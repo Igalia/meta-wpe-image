@@ -17,9 +17,16 @@ urls = 'urls.conf'
 def pretty_print(line, prefix=""):
     print(prefix + line.decode('utf-8'))
 
-def call(command, interrupt=False, pp=pretty_print):
+def call(command, interrupt=False, pp=pretty_print, env=[]):
     print("\033[0;32m>>> %s\033[0m" % command)
-    proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+
+    cmd_env = os.environ.copy()
+    for e in env:
+        if '=' in e:
+            k,v = e.split('=')
+            cmd_env[k] = v
+
+    proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE, env=cmd_env)
     while True:
         line = proc.stdout.readline()
         if not line:
@@ -56,7 +63,9 @@ if __name__ == "__main__":
         counter = 1
         for l in lines:
             try:
-                url, duration = l.split()
+                entry = l.split()
+                url = entry[0]
+                duration = entry[1]
                 call("%s-ctl open %s" % (launcher, url))
                 time.sleep(int(duration))
                 counter += 1
