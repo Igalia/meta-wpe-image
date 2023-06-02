@@ -1,3 +1,3 @@
 RDEPENDS:${PN} = ""
-RRECOMMENDS:${PN} = "${PN}-client (>= ${PV}) ${PN}-proxy (>= ${PV}) ${PN}-server (>= ${PV})"
+RRECOMMENDS:${PN} = "${PN}-proxy (>= ${PV})"
 
