@@ -52,6 +52,7 @@ IMAGE_INSTALL:append = " \
     smem \
     systemd-analyze \
     valgrind \
+    weston-xwayland \
     "
 
 # Dependencies for graphic demos based on Vulkan
