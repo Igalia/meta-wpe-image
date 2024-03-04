@@ -17,6 +17,7 @@ BBLAYERS = " \
   ${BSPDIR}/sources/meta-openembedded/meta-webserver \
   \
   ${BSPDIR}/sources/meta-clang \
+  ${BSPDIR}/sources/meta-virtualization \
   \
   ${BSPDIR}/sources/meta-security \
   \

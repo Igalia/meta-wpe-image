@@ -82,6 +82,9 @@ IMAGE_INSTALL:append= " \
     sbc \
 "
 
+# Add podman only for ARM64 bits arch
+IMAGE_INSTALL:append:aarch64 = " podman"
+
 SDK_EXTRA_TOOLS += "nativesdk-cmake nativesdk-ninja \
     nativesdk-perl-module-findbin \
     nativesdk-perl-misc \
