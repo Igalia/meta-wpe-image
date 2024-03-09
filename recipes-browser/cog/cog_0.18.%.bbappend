@@ -10,7 +10,6 @@ SRC_URI += " \
     file://cog-fdo \
     file://cog-fdo-ctl \
     file://cog-fdo-exported-wayland \
-    file://cog-set-opaque-region_v0.14.patch \
 "
 
 SRC_URI:class-devupstream += " \
@@ -19,7 +18,7 @@ SRC_URI:class-devupstream += " \
     file://cog-fdo \
     file://cog-fdo-ctl \
     file://cog-fdo-exported-wayland \
-    file://cog-set-opaque-region_devupstream.patch \
+    file://0001-wl-Add-safe-guards-for-touch-and-pointer-events.patch \
 "
 
 do_install:append () {
@@ -36,8 +35,9 @@ PV:class-devupstream = "trunk"
 RDEPENDS:${PN} += "bash"
 RDEPENDS:${PN}:class-devupstream += "bash"
 
-PACKAGECONFIG:append = " gtk4"
+PACKAGECONFIG:append = " gtk4 libportal"
 
-# Required for future 0.17
-PACKAGECONFIG[soup2] = ",,libsoup-2.4"
+# Required for future 0.19
+PACKAGECONFIG[libportal] = "-Dlibportal=enabled,-Dlibportal=disabled, libportal"
+
 
