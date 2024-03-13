@@ -1,0 +1,95 @@
+From bd0a410395327c2350ed97d4fd962d0203b94777 Mon Sep 17 00:00:00 2001
+From: Pablo Saavedra <psaavedra@igalia.com>
+Date: Wed, 15 Nov 2023 12:10:59 +0100
+Subject: [PATCH] wl: Add safe-guards for touch and pointer events
+
+In some unstable compositors it could be posible these 2 cases:
+
+* to receive touch up/motion events inmediatelly after a touch up
+  (touch deinit the touch target).
+* to receive pointer motion/leave event inmediatelly after a touch
+  leave (deinit the touch target).
+
+%% original patch: 0002-wl-Add-safe-guards-for-touch-and-pointer-events.patch
+---
+ platform/wayland/cog-platform-wl.c | 36 +++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/platform/wayland/cog-platform-wl.c b/platform/wayland/cog-platform-wl.c
+index a6e3904..8c20c10 100644
+--- a/platform/wayland/cog-platform-wl.c
++++ b/platform/wayland/cog-platform-wl.c
+@@ -271,8 +271,17 @@ pointer_on_enter(void              *data,
+ static void
+ pointer_on_leave(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface)
+ {
++    if (data == NULL || pointer == NULL) {
++        return;
++    }
++
+     CogWlSeat *seat = data;
+ 
++    if (seat->pointer_target == NULL || seat->pointer.surface == NULL) {
++        return;
++    }
++
++
+     if (pointer != seat->pointer_obj) {
+         g_critical("%s: Got pointer %p, expected %p.", G_STRFUNC, pointer, seat->pointer_obj);
+         return;
+@@ -286,7 +295,16 @@ pointer_on_leave(void *data, struct wl_pointer *pointer, uint32_t serial, struct
+ static void
+ pointer_on_motion(void *data, struct wl_pointer *pointer, uint32_t time, wl_fixed_t fixed_x, wl_fixed_t fixed_y)
+ {
+-    CogWlSeat    *seat = data;
++    if (data == NULL || pointer == NULL) {
++        return;
++    }
++
++    CogWlSeat *seat = data;
++
++    if (seat->pointer_target == NULL || seat->pointer.surface == NULL) {
++        return;
++    }
++
+     CogWlDisplay *display = seat->display;
+ 
+     if (pointer != seat->pointer_obj) {
+@@ -783,8 +801,16 @@ touch_on_down(void              *data,
+ static void
+ touch_on_up(void *data, struct wl_touch *touch, uint32_t serial, uint32_t time, int32_t id)
+ {
++    if (data == NULL || touch == NULL) {
++        return;
++    }
++
+     CogWlSeat *seat = data;
+ 
++    if (seat->touch_target == NULL || seat->touch.surface == NULL) {
++        return;
++    }
++
+     if (touch != seat->touch_obj) {
+         g_critical("%s: Got touch %p, expected %p.", G_STRFUNC, touch, seat->touch_obj);
+         return;
+@@ -833,9 +859,17 @@ touch_on_up(void *data, struct wl_touch *touch, uint32_t serial, uint32_t time,
+ static void
+ touch_on_motion(void *data, struct wl_touch *touch, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y)
+ {
++    if (data == NULL || touch == NULL) {
++        return;
++    }
++
+     CogWlSeat    *seat = data;
+     CogWlDisplay *display = seat->display;
+ 
++    if (seat->touch_target == NULL || seat->touch.surface == NULL) {
++        return;
++    }
++
+     if (touch != seat->touch_obj) {
+         g_critical("%s: Got touch %p, expected %p.", G_STRFUNC, touch, seat->touch_obj);
+         return;
+-- 
+2.34.1
+

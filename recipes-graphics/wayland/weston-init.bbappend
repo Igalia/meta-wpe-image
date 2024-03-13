@@ -11,6 +11,15 @@ SRC_URI += "file://weston.env \
             file://demo-wpe-duckduckgo\
             file://24x24-blank.png \
             file://wpe_white.jpg \
+            file://application-exit-symbolic.symbolic.png \
+            file://find-location-symbolic.symbolic.png \
+            file://go-next-symbolic-rtl.symbolic.png \
+            file://go-next-symbolic.symbolic.png \
+            file://network-wireless-acquiring-symbolic.symbolic.png \
+            file://user-home-symbolic.symbolic.png \
+            file://utilities-terminal-symbolic.symbolic.png \
+            file://view-refresh-symbolic.symbolic.png \
+            file://web-browser-symbolic.symbolic.png \
             file://weston-terminal-configure-network \
            "
 
@@ -31,6 +40,15 @@ FILES:${PN} += "\
     ${bindir}/demo-wpe-website \
     ${bindir}/demo-wpe-duckduckgo \
     ${datadir}/24x24-blank.png \
+    ${datadir}/application-exit-symbolic.symbolic.png \
+    ${datadir}/find-location-symbolic.symbolic.png \
+    ${datadir}/go-next-symbolic-rtl.symbolic.png \
+    ${datadir}/go-next-symbolic.symbolic.png \
+    ${datadir}/network-wireless-acquiring-symbolic.symbolic.png \
+    ${datadir}/user-home-symbolic.symbolic.png \
+    ${datadir}/utilities-terminal-symbolic.symbolic.png \
+    ${datadir}/view-refresh-symbolic.symbolic.png \
+    ${datadir}/web-browser-symbolic.symbolic.png \
     ${datadir}/wpe_white.jpg \
     ${bindir}/weston-terminal-configure-network \
     "
@@ -40,8 +58,18 @@ do_install:append () {
     install -D -p -m0644 ${WORKDIR}/wayland-1.service ${D}${systemd_system_unitdir}/wayland-1.service
     install -D -p -m0644 ${WORKDIR}/wayland-1.path ${D}${systemd_system_unitdir}/wayland-1.path
 
-    install -D -p -m0644 ${WORKDIR}/24x24-blank.png ${D}${datadir}/24x24-blank.png
-    install -D -p -m0644 ${WORKDIR}/wpe_white.jpg ${D}${datadir}/wpe_white.jpg
+    install -d -D -p -m0755 ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/24x24-blank.png                                  ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/application-exit-symbolic.symbolic.png           ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/find-location-symbolic.symbolic.png              ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/go-next-symbolic-rtl.symbolic.png                ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/go-next-symbolic.symbolic.png                    ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/network-wireless-acquiring-symbolic.symbolic.png ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/user-home-symbolic.symbolic.png                  ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/utilities-terminal-symbolic.symbolic.png         ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/view-refresh-symbolic.symbolic.png               ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/web-browser-symbolic.symbolic.png                ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/wpe_white.jpg                                    ${D}${datadir}/
 
     install -Dm755 ${WORKDIR}/kill-demo ${D}/${bindir}/kill-demo
     install -Dm755 ${WORKDIR}/toggle-gallium-hud ${D}/${bindir}/toggle-gallium-hud

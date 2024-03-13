@@ -1,19 +1,17 @@
-From 0afee900cecc1799ed5b7adfa5d2a913359b31a1 Mon Sep 17 00:00:00 2001
+From 0afee900cecc1799ed5b7adfa5d2a913359b31a1 Tue Jan 9 00:00:00 2001
 From: Pablo Saavedra <psaavedra@igalia.com>
 Date: Thu, 10 Nov 2022 10:57:07 +0000
 Subject: [PATCH] login: Use 770 mode instead of 700 for the /run/user
 
 This allows other users asigned to the user group to get access to
 the user runtime directoy.
----
- src/login/user-runtime-dir.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
+Upstream-Status: Inappropriate [upstream ticket nourl://]
 diff --git a/src/login/user-runtime-dir.c b/src/login/user-runtime-dir.c
-index 5ce5b35e17..0ea595d47d 100644
+index ed8a80e6ed..9d9e856427 100644
 --- a/src/login/user-runtime-dir.c
 +++ b/src/login/user-runtime-dir.c
-@@ -69,18 +69,18 @@ static int user_mkdir_runtime_path(
+@@ -70,18 +70,18 @@ static int user_mkdir_runtime_path(
          if (path_is_mount_point(runtime_path, NULL, 0) >= 0)
                  log_debug("%s is already a mount point", runtime_path);
          else {
@@ -30,12 +28,12 @@ index 5ce5b35e17..0ea595d47d 100644
                           uid, gid, runtime_dir_size, runtime_dir_inodes,
                           mac_smack_use() ? ",smackfsroot=*" : "");
  
--                (void) mkdir_label(runtime_path, 0700);
-+                (void) mkdir_label(runtime_path, 0770);
+-                r = mkdir_label(runtime_path, 0700);
++                r = mkdir_label(runtime_path, 0770);
+                 if (r < 0 && r != -EEXIST)
+                         return log_error_errno(r, "Failed to create %s: %m", runtime_path);
  
-                 r = mount_nofollow_verbose(LOG_DEBUG, "tmpfs", runtime_path, "tmpfs", MS_NODEV|MS_NOSUID, options);
-                 if (r < 0) {
-@@ -93,7 +93,7 @@ static int user_mkdir_runtime_path(
+@@ -96,7 +96,7 @@ static int user_mkdir_runtime_path(
                                          "Failed to mount per-user tmpfs directory %s.\n"
                                          "Assuming containerized execution, ignoring: %m", runtime_path);
  
