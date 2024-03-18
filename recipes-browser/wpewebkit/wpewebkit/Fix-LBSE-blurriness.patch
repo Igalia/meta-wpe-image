@@ -1,0 +1,68 @@
+Fix blurry image when LBSE is on
+
+Upstream-Status: Inappropriate [meta-wpe-image specific]
+
+diff --git a/Source/WebCore/platform/graphics/GraphicsLayer.h b/Source/WebCore/platform/graphics/GraphicsLayer.h
+index bd13b594389b..55a82d13e218 100644
+--- a/Source/WebCore/platform/graphics/GraphicsLayer.h
++++ b/Source/WebCore/platform/graphics/GraphicsLayer.h
+@@ -623,6 +623,7 @@ public:
+ 
+     virtual void deviceOrPageScaleFactorChanged() { }
+     virtual void setShouldUpdateRootRelativeScaleFactor(bool) { }
++    virtual void setShouldDoubleScaleFactor(bool) { }
+ 
+     WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+ 
+diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
+index a1e13176ee67..c9a2f2abbb16 100644
+--- a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
++++ b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
+@@ -1088,7 +1088,10 @@ void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
+ 
+ float CoordinatedGraphicsLayer::effectiveContentsScale()
+ {
+-    return selfOrAncestorHaveNonAffineTransforms() ? 1 : deviceScaleFactor() * pageScaleFactor();
++    float contentsScale = selfOrAncestorHaveNonAffineTransforms() ? 1 : deviceScaleFactor() * pageScaleFactor();
++    if (m_shouldDoubleScaleFactor)
++        return contentsScale * 2;
++    return contentsScale;
+ }
+ 
+ IntRect CoordinatedGraphicsLayer::transformedVisibleRect()
+diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
+index 8d8fdb71d6eb..6a36bd8beb46 100644
+--- a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
++++ b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
+@@ -110,6 +110,7 @@ public:
+     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+     void setContentsNeedsDisplay() override;
+     void deviceOrPageScaleFactorChanged() override;
++    void setShouldDoubleScaleFactor(bool shouldDoubleScaleFactor) override { m_shouldDoubleScaleFactor = shouldDoubleScaleFactor; }
+     void flushCompositingState(const FloatRect&) override;
+     void flushCompositingStateForThisLayerOnly() override;
+     bool setFilters(const FilterOperations&) override;
+@@ -224,6 +225,7 @@ private:
+     bool m_pendingContentsScaleAdjustment : 1;
+     bool m_pendingVisibleRectAdjustment : 1;
+     bool m_shouldUpdatePlatformLayer : 1;
++    bool m_shouldDoubleScaleFactor : 1 { false };
+ 
+     CoordinatedGraphicsLayerClient* m_coordinator;
+ 
+diff --git a/Source/WebCore/rendering/RenderLayerBacking.cpp b/Source/WebCore/rendering/RenderLayerBacking.cpp
+index 054f14b16dcd..d3fd48368048 100644
+--- a/Source/WebCore/rendering/RenderLayerBacking.cpp
++++ b/Source/WebCore/rendering/RenderLayerBacking.cpp
+@@ -364,6 +364,11 @@ Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, G
+     if (renderer().isSVGLayerAwareRenderer() && renderer().document().settings().layerBasedSVGEngineEnabled())
+         graphicsLayer->setShouldUpdateRootRelativeScaleFactor(true);
+ #endif
++
++#if ENABLE(LAYER_BASED_SVG_ENGINE)
++    if (renderer().isSVGLayerAwareRenderer() && renderer().document().settings().layerBasedSVGEngineEnabled())
++        graphicsLayer->setShouldDoubleScaleFactor(true);
++#endif
+     
+     return graphicsLayer;
+ }
