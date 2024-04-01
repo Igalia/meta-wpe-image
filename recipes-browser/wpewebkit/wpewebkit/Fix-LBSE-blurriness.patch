@@ -1,12 +1,20 @@
-Fix blurry image when LBSE is on
+From cb49036cec2eaa5626478229a04bd2a73af3f09f Mon Sep 17 00:00:00 2001
+From: Vitaly Dyachkov <vitaly@igalia.com>
+Date: Fri, 22 Mar 2024 16:00:43 +0100
+Subject: [PATCH] Fix blurry image when LBSE is on
 
-Upstream-Status: Inappropriate [meta-wpe-image specific]
+---
+ Source/WebCore/platform/graphics/GraphicsLayer.h             | 1 +
+ .../graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp | 5 ++++-
+ .../graphics/texmap/coordinated/CoordinatedGraphicsLayer.h   | 2 ++
+ Source/WebCore/rendering/RenderLayerBacking.cpp              | 5 +++++
+ 4 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/Source/WebCore/platform/graphics/GraphicsLayer.h b/Source/WebCore/platform/graphics/GraphicsLayer.h
-index bd13b594389b..55a82d13e218 100644
+index 98d54bc51874..e6c45c87815c 100644
 --- a/Source/WebCore/platform/graphics/GraphicsLayer.h
 +++ b/Source/WebCore/platform/graphics/GraphicsLayer.h
-@@ -623,6 +623,7 @@ public:
+@@ -622,6 +622,7 @@ public:
  
      virtual void deviceOrPageScaleFactorChanged() { }
      virtual void setShouldUpdateRootRelativeScaleFactor(bool) { }
@@ -15,10 +23,10 @@ index bd13b594389b..55a82d13e218 100644
      WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
  
 diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
-index a1e13176ee67..c9a2f2abbb16 100644
+index a3551d5093a5..c42875372c51 100644
 --- a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
 +++ b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
-@@ -1088,7 +1088,10 @@ void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
+@@ -1076,7 +1076,10 @@ void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
  
  float CoordinatedGraphicsLayer::effectiveContentsScale()
  {
@@ -31,10 +39,10 @@ index a1e13176ee67..c9a2f2abbb16 100644
  
  IntRect CoordinatedGraphicsLayer::transformedVisibleRect()
 diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
-index 8d8fdb71d6eb..6a36bd8beb46 100644
+index d3edc1b1690b..fc5a37abde35 100644
 --- a/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
 +++ b/Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
-@@ -110,6 +110,7 @@ public:
+@@ -124,6 +124,7 @@ public:
      void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
      void setContentsNeedsDisplay() override;
      void deviceOrPageScaleFactorChanged() override;
@@ -42,7 +50,7 @@ index 8d8fdb71d6eb..6a36bd8beb46 100644
      void flushCompositingState(const FloatRect&) override;
      void flushCompositingStateForThisLayerOnly() override;
      bool setFilters(const FilterOperations&) override;
-@@ -224,6 +225,7 @@ private:
+@@ -246,6 +247,7 @@ private:
      bool m_pendingContentsScaleAdjustment : 1;
      bool m_pendingVisibleRectAdjustment : 1;
      bool m_shouldUpdatePlatformLayer : 1;
@@ -51,10 +59,10 @@ index 8d8fdb71d6eb..6a36bd8beb46 100644
      CoordinatedGraphicsLayerClient* m_coordinator;
  
 diff --git a/Source/WebCore/rendering/RenderLayerBacking.cpp b/Source/WebCore/rendering/RenderLayerBacking.cpp
-index 054f14b16dcd..d3fd48368048 100644
+index 3b2d0f4c537b..5ddc6ca67d70 100644
 --- a/Source/WebCore/rendering/RenderLayerBacking.cpp
 +++ b/Source/WebCore/rendering/RenderLayerBacking.cpp
-@@ -364,6 +364,11 @@ Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, G
+@@ -365,6 +365,11 @@ Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, G
      if (renderer().isSVGLayerAwareRenderer() && renderer().document().settings().layerBasedSVGEngineEnabled())
          graphicsLayer->setShouldUpdateRootRelativeScaleFactor(true);
  #endif
@@ -66,3 +74,6 @@ index 054f14b16dcd..d3fd48368048 100644
      
      return graphicsLayer;
  }
+-- 
+2.34.1
+
