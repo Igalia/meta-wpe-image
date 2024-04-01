@@ -35,9 +35,8 @@ PV:class-devupstream = "trunk"
 RDEPENDS:${PN} += "bash"
 RDEPENDS:${PN}:class-devupstream += "bash"
 
-PACKAGECONFIG:append = " gtk4 libportal"
+PACKAGECONFIG:append = " gtk4"
 
 # Required for future 0.19
-PACKAGECONFIG[libportal] = "-Dlibportal=enabled,-Dlibportal=disabled, libportal"
-
+DEPENDS:append:class-devupstream = " libportal"
 
