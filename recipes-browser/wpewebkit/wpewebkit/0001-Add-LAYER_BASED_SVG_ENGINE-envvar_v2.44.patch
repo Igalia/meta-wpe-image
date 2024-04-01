@@ -1,8 +1,8 @@
-From c778ce6a597239febb8e5b02e611a387fa084571 Mon Sep 17 00:00:00 2001
+From 67dbdd65c3f44cf55c2ca91d0bb0dfc2691dba7c Mon Sep 17 00:00:00 2001
 From: Pablo Saavedra <psaavedra@igalia.com>
 Date: Wed, 24 May 2023 13:50:19 +0000
-Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE and LAYER_BASED_SVG_ENGINE_TOGGLER
- envvars
+Subject: [PATCH 1/2] Add LAYER_BASED_SVG_ENGINE and
+ LAYER_BASED_SVG_ENGINE_TOGGLER envvars
 
 ---
  .../UIProcess/API/glib/WebKitWebView.cpp      |  3 +++
@@ -11,10 +11,10 @@ Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE and LAYER_BASED_SVG_ENGINE_TOGGLER
  3 files changed, 30 insertions(+)
 
 diff --git a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
-index 837aa061..fce55d67 100644
+index 7cf82df0..4b0118a7 100644
 --- a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
 +++ b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
-@@ -3333,6 +3333,9 @@ void webkit_web_view_reload(WebKitWebView* webView)
+@@ -3449,6 +3449,9 @@ void webkit_web_view_reload(WebKitWebView* webView)
  {
      g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
  
@@ -25,10 +25,10 @@ index 837aa061..fce55d67 100644
  }
  
 diff --git a/Source/WebKit/UIProcess/WebPageProxy.cpp b/Source/WebKit/UIProcess/WebPageProxy.cpp
-index 4f48ca66..a2dcd7c9 100644
+index 9a0e9e38..e5d04af3 100644
 --- a/Source/WebKit/UIProcess/WebPageProxy.cpp
 +++ b/Source/WebKit/UIProcess/WebPageProxy.cpp
-@@ -700,8 +700,10 @@ void WebPageProxy::notifyProcessPoolToPrewarm()
+@@ -936,8 +936,10 @@ void WebPageProxy::notifyProcessPoolToPrewarm()
  
  void WebPageProxy::setPreferences(WebPreferences& preferences)
  {
@@ -37,14 +37,14 @@ index 4f48ca66..a2dcd7c9 100644
          return;
 +#endif
  
-     m_preferences->removePage(*this);
+     protectedPreferences()->removePage(*this);
      m_preferences = preferences;
 diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-index 9431e5bb..b9d71d63 100644
+index d981b937..db8f4a7b 100644
 --- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
 +++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-@@ -405,6 +405,10 @@
- #import <pal/spi/cg/CoreGraphicsSPI.h>
+@@ -445,6 +445,10 @@
+ #include "UnifiedTextReplacementController.h"
  #endif
  
 +#if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -54,7 +54,7 @@ index 9431e5bb..b9d71d63 100644
  namespace WebKit {
  using namespace JSC;
  using namespace WebCore;
-@@ -4200,6 +4204,27 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
+@@ -4535,6 +4539,27 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
  
      updateSettingsGenerated(store, settings);
  
@@ -83,5 +83,5 @@ index 9431e5bb..b9d71d63 100644
      if (!settings.acceleratedCompositingEnabled()) {
          WEBPAGE_RELEASE_LOG(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
 -- 
-2.30.2
+2.34.1
 
