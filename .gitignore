@@ -1,7 +1,19 @@
 __pycache__
+*.bak
 *.pyc
 *.pyo
 *.swp
+*.tmp
 *.orig
 *.rej
 *~
+
+# Python venv
+venv*
+.env
+.virtualenv
+.venv_robot_framework
+
+.ci/robot_framework/html/rbyers
+.ci/setup-env-local.sh
+.ci/tests_results/

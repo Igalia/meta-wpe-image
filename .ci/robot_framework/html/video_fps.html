@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPS Display Video</title>
+    <style>
+        /* Styles for the FPS display */
+        #fps {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: black;
+            color: white;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Video element -->
+    <video id="myVideo" autoplay muted controls width="100%">
+        <source src="bbb_sunflower_1080p_30fps_normal.mp4" type="video/mp4">
+    </video>
+
+    <!-- FPS display element -->
+    <div id="fps">FPS: 0</div>
+
+    <script>
+        const video = document.getElementById("myVideo");
+        const fpsDisplay = document.getElementById("fps");
+        const timeUpdateThreshold = 10000;
+
+        let totalFrames = 0;
+        let startTime = 0;
+        let lastTimeUpdate = startTime;
+
+        /**
+         * Callback function to calculate the average FPS and update the display.
+         * @param {DOMHighResTimeStamp} now - Current high-resolution timestamp.
+         * @param {VideoFrameMetadata} metadata - Metadata for the video frame.
+         */
+        function updateFPS(now, metadata) {
+            if (startTime === 0) startTime = metadata.mediaTime;
+
+            const currentTime = performance.now();
+            if (lastTimeUpdate + timeUpdateThreshold < currentTime) {
+                lastTimeUpdate = currentTime;
+
+                // Increment the total frame count
+                totalFrames = metadata.presentedFrames;
+
+                // Calculate elapsed time since start
+                const elapsedTime = metadata.mediaTime - startTime;
+                const avgFPS = (totalFrames / elapsedTime).toFixed(2);
+
+                // Update the FPS display every second
+                fpsDisplay.textContent = `FPS: ${avgFPS}`;
+            }
+
+            // Request the next frame callback
+            video.requestVideoFrameCallback(updateFPS);
+        }
+
+        // Start the video frame callback loop
+        video.requestVideoFrameCallback(updateFPS);
+    </script>
+</body>
+</html>
+

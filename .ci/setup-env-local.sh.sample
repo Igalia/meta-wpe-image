@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# export TEST_BOARD_SETUP_SKIP="yes"
+
+# export TEST_BOARD_IP="192.168.1.105"
+# export TEST_BOARD_NAME="rpi5"
+
+# export TEST_WEBSERVER_IP="192.168.1.92"
+# export TEST_WEBSERVER_PORT="8008"
+

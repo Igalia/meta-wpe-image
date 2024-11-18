@@ -3,7 +3,7 @@ on: [pull_request]
 jobs:
   scarthgap-repo:
     runs-on: [self-hosted, builder]
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request'"
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/s3-configure
@@ -27,7 +27,7 @@ jobs:
         wpe_vers: ['2_46']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request'"
     needs: scarthgap-repo
     steps:
       - uses: ./.github/actions/bitbake-build
@@ -47,7 +47,7 @@ jobs:
         yocto_rel: ['scarthgap']
     continue-on-error: true
     runs-on: [self-hosted, builder]
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request' && !github.event.pull_request.draft"
     needs: scarthgap-repo
     steps:
       - uses: ./.github/actions/bitbake-build
@@ -66,7 +66,7 @@ jobs:
         yocto_rel: ['scarthgap']
     continue-on-error: true
     runs-on: [self-hosted, builder]
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request' && !github.event.pull_request.draft"
     needs: scarthgap-repo
     steps:
       - uses: ./.github/actions/bitbake-build
