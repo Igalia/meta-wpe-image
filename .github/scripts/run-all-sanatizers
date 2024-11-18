@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Navigate to the directory containing the sanitizer scripts
+SANATIZERS_DIR="$(dirname $(realpath $0))"
+
+# Initialize an exit status variable
+exit_status=0
+
+# Loop through each sanitizer script and execute it
+for script in $SANATIZERS_DIR/sanatizer-*; do
+    "$script"
+    # Check the exit status of the script
+    if [ $? -ne 0 ]; then
+        echo "Error: $script failed"
+        exit_status=1
+    fi
+done
+
+exit $exit_status

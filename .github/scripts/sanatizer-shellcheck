@@ -1,0 +1,24 @@
+#! /bin/bash
+
+set -e
+
+scripts=$(find . -executable -type f ! -path '*/\.*' -exec grep -lE '^#! *(|/usr/bin/env +|/bin/|/usr/bin/)(sh|bash|dash)' {} +)
+echo "Running ShellCheck on the following scripts:"
+echo "$scripts"
+errors=0
+
+# Force the creation of the setup-env.sh and so
+touch ./setup-env.sh
+mkdir -p ./.venv_robot_framework/bin
+touch ./.venv_robot_framework/bin/activate
+
+for script in $scripts; do
+  if ! shellcheck -x "$script"; then
+    errors=$((errors + 1))
+  fi
+done
+if [ "$errors" -ne 0 ]; then
+  echo "ShellCheck found issues."
+  exit 1
+fi
+echo "ShellCheck passed successfully."
