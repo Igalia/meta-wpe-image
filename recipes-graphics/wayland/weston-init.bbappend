@@ -29,8 +29,6 @@ USERADD_PARAM:${PN} += "; --uid 900 --system -p '' -s /bin/bash -g bot -G audio,
 
 RDEPENDS:${PN} += "bash"
 
-DIRFILES = "1"
-
 FILES:${PN} += "\
     ${systemd_system_unitdir}/wayland-1.path \
     ${systemd_system_unitdir}/wayland-1.service \
