@@ -1,0 +1,199 @@
+From 7f82a5a21a137737a1e66a47a32ff3210d1d998d Mon Sep 17 00:00:00 2001
+From: Carlos Alberto Lopez Perez <clopez@igalia.com>
+Date: Thu, 26 Sep 2024 22:29:18 +0100
+Subject: [PATCH] REGRESSION(263237@main): [WPE] Identifiers for touch points
+ are not constant in multi touch
+ https://bugs.webkit.org/show_bug.cgi?id=270516
+
+Reviewed by NOBODY (OOPS!).
+
+263237@main implemented tracking of touchstart/touchend events in order to
+guess when a new touchpoint was pressed and assign a unique ID to each.
+
+The issue here is that doesn't work well in practice.
+I'm not sure if is because of buggy drivers or buggy devices, but it happens
+that sometimes when we start a new touch event (put a new finger on the screen)
+without removing the previous ones we can receive more than one touchstart event
+(one for the ongoing gesture and one for the new).
+
+There are also issues when trying to use several fingers at the same time on some
+touchscreens that do not properly support that like dual-touch devices, in that
+case we may receive several touchstart events (more than two) and perhaps some fake
+touchend events (or missing touchend events) and that will end confusing the logic.
+
+So instead of trying to implement in WebKit code the tracking of the touchpoints
+is better that we rely on the system (the driver, libinput and the wayland-protocol)
+to track the touchpoints for us.
+
+The touch IDs that we receive from the system are already unique from the other
+ones active at that moment, each active touchpoint should have a different ID.
+
+So, there isn't really a need to assign random IDs by ourselves.
+
+However, the IDs that we receive from the system for the touchpoints start
+at 0, but IDs 0 and 1 are already reserved for the mouse and the stylus
+pointer devices. So to ensure that the ID of the touchpoint will be unique
+we can simply add 2 to the value from the system.
+
+Note also what the PointerEvents spec says <https://www.w3.org/TR/pointerevents/>:
+> pointerId is a unique identifier for the pointer causing the event.
+> This identifier MUST be unique from all other active pointers in the top-level
+> browsing context (as defined by [HTML5]) at the time.
+> A user agent MAY recycle previously retired values for pointerId from previous
+> active pointers, if necessary.
+
+So the ID has to be unique only between the active ones, and that is what
+we get from the system.
+
+* LayoutTests/platform/glib/TestExpectations:
+* LayoutTests/platform/gtk/TestExpectations:
+* LayoutTests/platform/wpe/TestExpectations:
+* Source/WebCore/dom/wpe/PointerEventWPE.cpp:
+* Source/WebKit/Shared/libwpe/WebEventFactory.cpp:
+(WebKit::WebEventFactory::createWebTouchEvent):
+* Tools/PlatformWPE.cmake:
+* Tools/wpe/backends/fdo/WindowViewBackend.cpp:
+* Tools/wpe/backends/fdo/WindowViewBackend.h:
+---
+ Source/WebCore/dom/wpe/PointerEventWPE.cpp     |  7 ++++++-
+ .../WebKit/Shared/libwpe/WebEventFactory.cpp   | 18 ++++--------------
+ Tools/PlatformWPE.cmake                        |  2 +-
+ Tools/wpe/backends/fdo/WindowViewBackend.cpp   |  7 ++-----
+ Tools/wpe/backends/fdo/WindowViewBackend.h     |  3 +--
+ 5 files changed, 14 insertions(+), 23 deletions(-)
+
+diff --git a/Source/WebCore/dom/wpe/PointerEventWPE.cpp b/Source/WebCore/dom/wpe/PointerEventWPE.cpp
+index 2e55d786..6ca5b277 100644
+--- a/Source/WebCore/dom/wpe/PointerEventWPE.cpp
++++ b/Source/WebCore/dom/wpe/PointerEventWPE.cpp
+@@ -71,9 +71,14 @@ Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTou
+     return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTFMove(view), touchDelta));
+ }
+ 
++// According to the PointerEvents spec all active pointer ids have to be unique.
++// Libinput on Linux assigns the ids of the touchpoints starting at 0, but
++// the ids 0 and 1 are used for the pointer ids of mouse and pen/stylus.
++const unsigned touchMinimumPointerId = WebCore::mousePointerID + 1;
++
+ PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
+     : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchPoints().at(index).pos(), event.touchPoints().at(index).pos(), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, { }, { }, IsSimulated::No, IsTrusted::Yes)
+-    , m_pointerId(event.touchPoints().at(index).id())
++    , m_pointerId(touchMinimumPointerId + event.touchPoints().at(index).id())
+     , m_width(2 * event.touchPoints().at(index).radiusX())
+     , m_height(2 * event.touchPoints().at(index).radiusY())
+     , m_pressure(event.touchPoints().at(index).force())
+diff --git a/Source/WebKit/Shared/libwpe/WebEventFactory.cpp b/Source/WebKit/Shared/libwpe/WebEventFactory.cpp
+index a59468b5..e9c0c9bc 100644
+--- a/Source/WebKit/Shared/libwpe/WebEventFactory.cpp
++++ b/Source/WebKit/Shared/libwpe/WebEventFactory.cpp
+@@ -30,8 +30,6 @@
+ #include <WebCore/Scrollbar.h>
+ #include <cmath>
+ #include <wpe/wpe.h>
+-#include <wtf/HashMap.h>
+-#include <wtf/NeverDestroyed.h>
+ 
+ namespace WebKit {
+ 
+@@ -308,28 +306,20 @@ static WebKit::WebPlatformTouchPoint::State stateForTouchPoint(int mainEventId,
+ 
+ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)
+ {
+-    auto type = WebEventType::TouchMove;
+-    static NeverDestroyed<HashMap<int32_t, int32_t, DefaultHash<int32_t>, WTF::UnsignedWithZeroKeyHashTraits<int32_t>>> activeTrackingTouchPoints;
+-    static int32_t uniqueTouchPointId = WebCore::mousePointerID + 1;
+-    int32_t pointId;
+-
++    WebEventType type;
+     switch (event->type) {
+     case wpe_input_touch_event_type_down:
+         type = WebEventType::TouchStart;
+-        activeTrackingTouchPoints.get().add(event->id, uniqueTouchPointId);
+-        pointId = uniqueTouchPointId;
+-        uniqueTouchPointId++;
+         break;
+     case wpe_input_touch_event_type_motion:
+         type = WebEventType::TouchMove;
+-        pointId = activeTrackingTouchPoints.get().get(event->id);
+         break;
+     case wpe_input_touch_event_type_up:
+         type = WebEventType::TouchEnd;
+-        pointId = activeTrackingTouchPoints.get().take(event->id);
+         break;
+-    case wpe_input_touch_event_type_null:
++    default:
+         ASSERT_NOT_REACHED();
++        break;
+     }
+ 
+     Vector<WebKit::WebPlatformTouchPoint> touchPoints;
+@@ -343,7 +333,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
+         WebCore::IntPoint pointCoordinates(point.x, point.y);
+         pointCoordinates.scale(1 / deviceScaleFactor);
+         touchPoints.append(
+-            WebKit::WebPlatformTouchPoint(pointId, stateForTouchPoint(event->id, &point),
++            WebKit::WebPlatformTouchPoint(point.id, stateForTouchPoint(event->id, &point),
+                 pointCoordinates, pointCoordinates));
+     }
+ 
+diff --git a/Tools/PlatformWPE.cmake b/Tools/PlatformWPE.cmake
+index 19110cc3..91d7230b 100644
+--- a/Tools/PlatformWPE.cmake
++++ b/Tools/PlatformWPE.cmake
+@@ -44,7 +44,7 @@ if (ENABLE_COG)
+         set(WPE_COG_REPO "https://github.com/Igalia/cog.git")
+     endif ()
+     if ("${WPE_COG_TAG}" STREQUAL "")
+-        set(WPE_COG_TAG "9ac900a835ee4905ad3dc3d8dc377494bd8e4c34")
++        set(WPE_COG_TAG "edafaa079f1c5ebe201bac33ddf3c476479c3f1f")
+     endif ()
+     # TODO Use GIT_REMOTE_UPDATE_STRATEGY with 3.18 to allow switching between
+     # conflicting branches without having to delete the repo
+diff --git a/Tools/wpe/backends/fdo/WindowViewBackend.cpp b/Tools/wpe/backends/fdo/WindowViewBackend.cpp
+index ddfad4b1..d2082bbb 100644
+--- a/Tools/wpe/backends/fdo/WindowViewBackend.cpp
++++ b/Tools/wpe/backends/fdo/WindowViewBackend.cpp
+@@ -432,7 +432,6 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
+             return;
+ 
+         auto& seatData = window.m_seatData;
+-        seatData.touch.tracking = true;
+         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_down,
+             time, id, wl_fixed_to_int(x), wl_fixed_to_int(y) };
+         memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
+@@ -446,11 +445,9 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
+     {
+         auto& window = *static_cast<WindowViewBackend*>(data);
+         auto& seatData = window.m_seatData;
+-        if (!seatData.touch.tracking || id < 0 || id >= 10)
++        if (id < 0 || id >= 10)
+             return;
+ 
+-        seatData.touch.tracking = false;
+-
+         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_up,
+             time, id, seatData.touch.points[id].x, seatData.touch.points[id].y };
+         memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
+@@ -466,7 +463,7 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
+     {
+         auto& window = *static_cast<WindowViewBackend*>(data);
+         auto& seatData = window.m_seatData;
+-        if (!seatData.touch.tracking || id < 0 || id >= 10)
++        if (id < 0 || id >= 10)
+             return;
+ 
+         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_motion,
+diff --git a/Tools/wpe/backends/fdo/WindowViewBackend.h b/Tools/wpe/backends/fdo/WindowViewBackend.h
+index 56ca694b..408ba3cf 100644
+--- a/Tools/wpe/backends/fdo/WindowViewBackend.h
++++ b/Tools/wpe/backends/fdo/WindowViewBackend.h
+@@ -100,8 +100,7 @@ private:
+ 
+         struct {
+             struct wl_touch* object { nullptr };
+-            struct wpe_input_touch_event_raw points[10];
+-            bool tracking { false };
++            struct wpe_input_touch_event_raw points[10] { };
+         } touch;
+ 
+         struct {
