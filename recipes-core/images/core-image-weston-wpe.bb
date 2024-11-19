@@ -6,5 +6,6 @@ IMAGE_INSTALL:append = " \
     cog \
     wpebackend-fdo \
     wpewebkit \
+    python3-uinput \
 "
 
