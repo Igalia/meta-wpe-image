@@ -1,4 +1,4 @@
-From 0afee900cecc1799ed5b7adfa5d2a913359b31a1 Tue Jan 9 00:00:00 2001
+From 20ba7a9df65ebee82edb348f60b51eadb0aefa26 Mon Sep 17 00:00:00 2001
 From: Pablo Saavedra <psaavedra@igalia.com>
 Date: Thu, 10 Nov 2022 10:57:07 +0000
 Subject: [PATCH] login: Use 770 mode instead of 700 for the /run/user
@@ -7,12 +7,16 @@ This allows other users asigned to the user group to get access to
 the user runtime directoy.
 
 Upstream-Status: Inappropriate [upstream ticket nourl://]
+---
+ src/login/user-runtime-dir.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
 diff --git a/src/login/user-runtime-dir.c b/src/login/user-runtime-dir.c
-index ed8a80e6ed..9d9e856427 100644
+index ad04b04df9..b4f0440a42 100644
 --- a/src/login/user-runtime-dir.c
 +++ b/src/login/user-runtime-dir.c
 @@ -70,18 +70,18 @@ static int user_mkdir_runtime_path(
-         if (path_is_mount_point(runtime_path, NULL, 0) >= 0)
+         if (path_is_mount_point(runtime_path, NULL, 0) > 0)
                  log_debug("%s is already a mount point", runtime_path);
          else {
 -                char options[sizeof("mode=0700,uid=,gid=,size=,nr_inodes=,smackfsroot=*")
