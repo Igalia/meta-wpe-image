@@ -1,19 +1,18 @@
-From 0ec14982c0ce5cf712fc16cb79bda35515566c11 Mon Sep 17 00:00:00 2001
+From 53702039090762d1e9bc154d59e916f26dd23f12 Mon Sep 17 00:00:00 2001
 From: Pablo Saavedra <psaavedra@igalia.com>
 Date: Tue, 29 Nov 2022 16:12:25 +0000
 Subject: [PATCH] coredump: set external storage
 
 Upstream-Status: Inappropriate [meta-wpe-image specific]
-
 ---
  src/coredump/coredump.conf | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/src/coredump/coredump.conf b/src/coredump/coredump.conf
-index 8d52d8ded7..5c8bab13e1 100644
+index ae341e40d7..71551179dd 100644
 --- a/src/coredump/coredump.conf
 +++ b/src/coredump/coredump.conf
-@@ -15,11 +15,11 @@
+@@ -17,11 +17,11 @@
  # See coredump.conf(5) for details.
  
  [Coredump]
