@@ -4,8 +4,8 @@ export $(cat /proc/$(pidof weston-keyboard)/environ  | strings | grep XDG_RUNTIM
 
 if [[ "root" = "$(whoami)" ]]
 then
-    su weston /usr/bin/cog-fdo $1
+    su weston -c "/usr/bin/cog-fdo $*"
 else
-    /usr/bin/cog-fdo $1
+    /usr/bin/cog-fdo "$@"
 fi
 

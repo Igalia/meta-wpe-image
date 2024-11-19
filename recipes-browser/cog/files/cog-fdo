@@ -1,5 +1,27 @@
 #! /bin/bash
 
+# export WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
+# export GST_PLUGIN_FEATURE_RANK="avdec_av1:0"
+# export GST_DEBUG_DUMP_DOT_DIR=/tmp/gst-out/
+# mkdir -p /tmp/gst-out
+# chmod 777 /tmp/gst-out
+
+# WebKitDMABufVideoSink sink that is able to accept decode
+# dmabuf or raw data in a range of RGB-like or YUV formats.
+# Bug: https://bugs.webkit.org/show_bug.cgi?id=279819
+export WEBKIT_GST_DMABUF_SINK_ENABLED=1
+
 export GST_PLUGIN_FEATURE_RANK="avdec_av1:0"
 
-/usr/bin/cog -P wl $@
+params=()
+
+for arg in "$@"; do
+    if [[ $arg == "--maximized" ]]; then
+        export COG_PLATFORM_WL_VIEW_WIDTH=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 1 | tail -n 1)
+        export COG_PLATFORM_WL_VIEW_HEIGHT=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 2 | tail -n 1)
+    else
+        params+=("$arg")
+    fi
+done
+
+/usr/bin/cog -P wl "${params[@]}"
