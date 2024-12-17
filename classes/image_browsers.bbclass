@@ -40,6 +40,7 @@ IMAGE_INSTALL:append = " \
     apache2 apache2-scripts \
     configure-scripts \
     cpupower cpupower-init \
+    dbus \
     e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks e2fsprogs-resize2fs \
     gdb \
     gdbserver \
@@ -67,8 +68,7 @@ IMAGE_INSTALL:append = " \
 # PulseAudio. Needed for RPI4 (`dtoverlay=vc4-kms-v3d`) because the ALSA
 # compatibility is disabled (`snd_bcm2835.enable_compat_alsa=0`) so the
 # sound is processed using Pulseaudio through the user D-Bus session
-IMAGE_INSTALL:append= " \
-    dbus \
+PULSEAUDIO_INSTALL= " \
     libcap \
     libpulse \
     libpulsecore \
@@ -81,6 +81,9 @@ IMAGE_INSTALL:append= " \
     libasound \
     sbc \
 "
+IMAGE_INSTALL:append:raspberrypi4 = " ${PULSEAUDIO_INSTALL}"
+IMAGE_INSTALL:append:raspberrypi4-64 = " ${PULSEAUDIO_INSTALL}"
+IMAGE_INSTALL:append:raspberrypi5 = " ${PULSEAUDIO_INSTALL}"
 
 # Add podman only for ARM64 bits arch
 IMAGE_INSTALL:append:aarch64 = " podman"
