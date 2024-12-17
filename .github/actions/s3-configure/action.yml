@@ -1,0 +1,28 @@
+inputs:
+  access_key:
+    description: "S3 Access Key"
+    required: true
+  secret_key:
+    description: "S3 Secret Key"
+    required: true
+  host_base:
+    description: "S3 Host base"
+    required: false
+    default: "ams3.digitaloceanspaces.com"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure s3cmd
+      shell: bash
+      run: |
+        cat > ~/.s3cfg <<EOL
+        [default]
+        access_key = ${{ inputs.access_key }}
+        secret_key = ${{ inputs.secret_key }}
+        host_base = ${{ inputs.host_base }}
+        host_bucket = %(bucket)s.${{ inputs.host_base }}
+        use_https = True
+        gpg_command = /usr/bin/gpg
+        EOL
+

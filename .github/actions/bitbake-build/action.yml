@@ -1,6 +1,10 @@
 inputs:
+  bitbake_buildname:
+    default: 'build'
   bitbake_prefix:
     default: ''
+  bitbake_machine:
+    default: 'raspberrypi5'
   bitbake_target:
     default: 'core-image-weston-wpe'
   bitbake_source:
@@ -15,27 +19,55 @@ runs:
       run:  |
         echo "Environment:"
         echo "======================================================================"
+        echo "BITBAKE_BUILDNAME=${{ inputs.bitbake_buildname }}"
+        echo "BITBAKE_MACHINE=${{ inputs.bitbake_machine }}"
         echo "BITBAKE_PREFIX=${{ inputs.bitbake_prefix }}"
         echo "BITBAKE_SOURCE=${{ inputs.bitbake_source }}"
         echo "BITBAKE_TARGET=${{ inputs.bitbake_target }}"
         echo "RELEASE=${{ inputs.repo_release }}"
         echo "======================================================================"
+    - name: Generate timestamped prefix
+      id: timestamp
+      shell: bash
+      run: |
+        TIMESTAMP=$(date +"%Y%m%d%H%M")
+        echo "prefix=${TIMESTAMP}" >> $GITHUB_OUTPUT
     - name: Build
       shell: bash
       run:  |
         cd ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
-        rm -rf tmp
         ulimit -n 4096
-        #source sources/meta-wpe-image/scripts/setup-environment ${{ inputs.bitbake_source }}
-        source setup-environment ${{ inputs.bitbake_source }}
+        source sources/meta-wpe-image/scripts/setup-environment ${{ inputs.bitbake_buildname}} ${{ inputs.bitbake_machine }} ${{ inputs.bitbake_source }}
+        MAX_RETRIES=5
+        export ${{ inputs.bitbake_prefix }}
+        for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i to fetch sources for $IMAGE..."
+            if bitbake ${{ inputs.bitbake_target }} --runall=fetch; then
+                echo "All sources fetched successfully."
+                break
+            fi
+
+            if [ $i -lt $MAX_RETRIES ]; then
+                echo "Retrying fetch process..."
+            else
+                echo "Max retries reached. Some sources may still be missing."
+            fi
+        done
         ${{ inputs.bitbake_prefix }} bitbake ${{ inputs.bitbake_target }}
     - name: Artifacts
       if: always()
       shell: bash
-      run:  |
-        ls -lh ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/*/tmp/deploy/images/*/
+      run: |
+        ls -lh ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/
+        PREFIX=${{ steps.timestamp.outputs.prefix }}
+        s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs.wic.bmap \
+            s3://yocto/${PREFIX}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
+        s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs.wic.bz2 \
+            s3://yocto/${PREFIX}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
+        s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs-dbg.tar.bz2 \
+            s3://yocto/${PREFIX}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.dbg.tar.bz2
     - name: Clean the tmp dir
       if: always()
       shell: bash
       run:  |
-        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/*/tmp
+        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp
