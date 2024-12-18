@@ -4,11 +4,14 @@ SRC="${BUILDDIR}/../../sources"
 
 pushd ${SRC}
 
-for i in $(ls)
-do
-  echo -e "\n>>> $i <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-  pushd $i > /dev/null 2>&1
-  git status | grep -e "On branch"
-  git pull
-  popd > /dev/null 2>&1;
+for i in *; do
+    if [ -d "$i" ]; then
+        echo -e "\n>>> $i <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+        pushd $i > /dev/null 2>&1
+        git status | grep -e "On branch"
+        git pull
+        popd > /dev/null 2>&1;
+    fi
 done
+
+popd
