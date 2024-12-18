@@ -9,17 +9,20 @@ fi
 
 pushd ${SRC}
 
-for i in $(ls)
-do
-  echo -e "\n>>> $i <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-  pushd $i > /dev/null 2>&1
-  if [ "${1}" = "--verbose" ]; then
-      git remote -v
-      git status
-      git log -1 --oneline
-  else  
-      git status | grep -e "On branch"
-      git log -1 --oneline
-  fi
-  popd > /dev/null 2>&1;
+for i in *; do
+    if [ -d "$i" ]; then
+        echo -e "\n>>> $i <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+        pushd $i > /dev/null 2>&1
+        if [ "${1}" = "--verbose" ]; then
+            git remote -v
+            git status
+            git log -1 --oneline
+        else
+            git status | grep -e "On branch"
+            git log -1 --oneline
+        fi
+        popd > /dev/null 2>&1;
+    fi
 done
+
+popd
