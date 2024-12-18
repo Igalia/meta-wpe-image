@@ -11,7 +11,7 @@ GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
 # IMAGE_OVERHEAD_FACTOR = "1.5"
 # IMAGE_ROOTFS_EXTRA_SPACE = "2097152"
 
-IMAGE_FSTYPES:append = " tar.gz"
+IMAGE_FSTYPES = "wic.bmap wic.bz2 tar.gz"
 
 EXTRA_USERS_PARAMS += "usermod -a -G systemd-journal bot; usermod -a -G systemd-journal weston;"
 
