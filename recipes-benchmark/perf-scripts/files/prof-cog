@@ -1,4 +1,4 @@
 #!/bin/sh
 export COG_PLATFORM_FDO_VIEW_FULLSCREEN=1
 
-psrecord --include-children --interval 5 --log cog.log "cog -P fdo --webprocess-failure=exit --cookie-store=always --cookie-jar=text:$HOME/.cache/cog-cookies.txt --enable-webaudio=0 --enable-mediasource=1 --enable-media-capabilities=1 $@"
+psrecord --include-children --interval 5 --log cog.log "cog -P fdo --webprocess-failure=exit --cookie-store=always --cookie-jar=text:$HOME/.cache/cog-cookies.txt --enable-webaudio=0 --enable-mediasource=1 --enable-media-capabilities=1 $*"
