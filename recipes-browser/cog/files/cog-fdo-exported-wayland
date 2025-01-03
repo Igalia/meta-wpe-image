@@ -1,8 +1,9 @@
 #!/bin/sh
-export $(cat /proc/$(pidof weston-keyboard)/environ  | strings | grep WAYLAND_DISPLAY)
-export $(cat /proc/$(pidof weston-keyboard)/environ  | strings | grep XDG_RUNTIME_DIR)
 
-if [[ "root" = "$(whoami)" ]]
+export "$(strings < /proc/"$(pidof weston-keyboard)"/environ | grep WAYLAND_DISPLAY)"
+export "$(strings < /proc/"$(pidof weston-keyboard)"/environ | grep XDG_RUNTIME_DIR)"
+
+if [ "root" = "$(whoami)" ]
 then
     su weston -c "/usr/bin/cog-fdo $*"
 else

@@ -17,8 +17,11 @@ params=()
 
 for arg in "$@"; do
     if [[ $arg == "--maximized" ]]; then
-        export COG_PLATFORM_WL_VIEW_WIDTH=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 1 | tail -n 1)
-        export COG_PLATFORM_WL_VIEW_HEIGHT=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 2 | tail -n 1)
+        COG_PLATFORM_WL_VIEW_WIDTH=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 1 | tail -n 1)
+        export COG_PLATFORM_WL_VIEW_WIDTH
+
+        COG_PLATFORM_WL_VIEW_HEIGHT=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 2 | tail -n 1)
+        export COG_PLATFORM_WL_VIEW_HEIGHT
     else
         params+=("$arg")
     fi
