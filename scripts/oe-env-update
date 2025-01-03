@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "${0}" != "${BASH_SOURCE}" ]; then
+if [ "${0}" != "${BASH_SOURCE[0]}" ]; then
     echo "Please don't source this script, but directly run it"
     return
 fi

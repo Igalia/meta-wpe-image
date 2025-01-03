@@ -2,16 +2,16 @@
 
 SRC="${BUILDDIR}/../../sources"
 
-pushd ${SRC}
+pushd "${SRC}" || exit 1
 
 for i in *; do
     if [ -d "$i" ]; then
         echo -e "\n>>> $i <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-        pushd $i > /dev/null 2>&1
+        pushd "$i" > /dev/null 2>&1 || exit 1
         git status | grep -e "On branch"
         git pull
-        popd > /dev/null 2>&1;
+        popd > /dev/null 2>&1 || exit 1
     fi
 done
 
-popd
+popd || exit 1
