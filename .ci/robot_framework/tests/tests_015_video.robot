@@ -4,7 +4,6 @@ Test Timeout    300 seconds
 
 Suite Setup       Webdriver Remote Start    --maximized
 Suite Teardown    Webdriver Remote Stop
-Suite Timeout     10 minutes
 
 Library    SeleniumLibrary
 

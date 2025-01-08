@@ -10,7 +10,6 @@ Test Timeout      10 minutes
 
 Suite Setup       Webdriver Remote Start
 Suite Teardown    Webdriver Remote Stop
-Suite Timeout     15 minutes
 
 Library    SeleniumLibrary
 

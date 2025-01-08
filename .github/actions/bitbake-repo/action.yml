@@ -17,6 +17,12 @@ runs:
         echo "CI_COMMIT_SHA=${{ inputs.repo_ref }}"
         echo "CI_RELEASE=${{ inputs.repo_release }}"
         echo "======================================================================"
+    - name: Generate timestamped prefix
+      id: timestamp
+      shell: bash
+      run: |
+        TIMESTAMP=$(date +"%Y%m%d%H%M")
+        echo ${TIMESTAMP} > timestamp.txt
     - name: Set bitbake environment
       shell: bash
       run:  |
@@ -35,3 +41,9 @@ runs:
         git checkout ${{ inputs.repo_ref }}
         git rebase tmp/main
         popd
+    - name: Upload timestamp prefix artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: timestamp.txt
+        path: timestamp.txt
+

@@ -3,7 +3,6 @@ Test Timeout    60 seconds
 
 Suite Setup       Webdriver Remote Start    --maximized
 Suite Teardown    Webdriver Remote Stop
-Suite Timeout     5 minutes
 
 Library    Collections
 Library    DocTest.VisualTest
