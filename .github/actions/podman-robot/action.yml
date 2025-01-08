@@ -1,0 +1,89 @@
+inputs:
+  bitbake_buildname:
+    default: 'build'
+  bitbake_prefix:
+    default: ''
+  bitbake_machine:
+    default: 'raspberrypi5'
+  bitbake_target:
+    default: 'core-image-weston-wpe'
+  bitbake_source:
+    default: 'source'
+  github_token:
+    required: true
+  repo_release:
+    default: 'scarthgap'
+runs:
+  using: 'composite'
+  steps:
+    - name: Print environment
+      shell: bash
+      run:  |
+        echo "Environment:"
+        echo "======================================================================"
+        echo "BITBAKE_BUILDNAME=${{ inputs.bitbake_buildname }}"
+        echo "BITBAKE_MACHINE=${{ inputs.bitbake_machine }}"
+        echo "BITBAKE_PREFIX=${{ inputs.bitbake_prefix }}"
+        echo "BITBAKE_SOURCE=${{ inputs.bitbake_source }}"
+        echo "BITBAKE_TARGET=${{ inputs.bitbake_target }}"
+        echo "RELEASE=${{ inputs.repo_release }}"
+        echo "======================================================================"
+    - name: Download timestamp artifact
+      uses: actions/download-artifact@v4
+      with:
+        pattern: timestamp.txt
+        merge-multiple: true
+    - name: Get timestamped prefix
+      id: timestamp
+      shell: bash
+      run: |
+        TIMESTAMP=$(cat timestamp.txt)
+        echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+    - name: Prepare the Robot-Framework related PODs in background
+      shell: bash
+      run:  |
+        pushd .ci
+        podman rm ci_webserver_1 ci_robot_1 -f
+        ./podman-compose.sh up --force-recreate --always-recreate-deps --build -d
+        popd
+    - name: Flash
+      shell: bash
+      run:  |
+        TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
+        s3cmd get -F s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
+        s3cmd get -F s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
+        sudo flash ${{ inputs.bitbake_target }} ${{ inputs.bitbake_machine }}
+    - name: Test
+      shell: bash
+      run:  |
+        TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
+        GITHUB_PR_SHA=${GITHUB_SHA}
+        if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            GITHUB_PR_SHA=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
+        fi
+        cd .ci
+        echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ci-message.txt
+        IP=$(sudo manage-devices -c /etc/manage-devices.yml ip ${{ inputs.bitbake_machine }})
+        echo "#!/bin/sh" > setup-env-local.sh
+        echo "export TEST_BOARD_IP=${IP}" >> setup-env-local.sh
+        if ./run-tests.sh; then
+          MESSAGE="Tests passed for \`${{ inputs.bitbake_buildname }}\` on \`${{ inputs.bitbake_target }}\`. Tests results: https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/robot/report.html"
+          echo "* ✅️ ${MESSAGE}" >> ci-message.txt
+        else
+          MESSAGE="Failures were detected in the test results for \`${{ inputs.bitbake_buildname }}\` on \`${{ inputs.bitbake_target }}\`. Tests results: https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/robot/report.html"
+          echo "::warning file=.ci/run-tests.sh,title=Robot Framework tests::${MESSAGE}"
+          echo "* ⚠️  ${MESSAGE}" >> ci-message.txt
+        fi
+        s3cmd put -r -F tests_results/robot s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/
+    - name: Comment on the pull request
+      uses: mshick/add-pr-comment@v2
+      with:
+        message-id: ${{ inputs.bitbake_buildname }}-${{ steps.timestamp.outputs.timestamp }}
+        message-path: |
+            .ci/ci-message.txt
+    - name: Stop DUT and Clean the tests directory
+      if: always()
+      shell: bash
+      run:  |
+        sudo manage-devices -c /etc/manage-devices.yml down ${{ inputs.bitbake_machine }}
+        rm -rf .ci/setup-env-local.sh .ci/tests_results .ci/ci-message.txt

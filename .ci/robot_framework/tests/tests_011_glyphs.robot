@@ -7,7 +7,6 @@ Test Timeout    30 seconds
 
 Suite Setup       Webdriver Remote Start
 Suite Teardown    Webdriver Remote Stop
-Suite Timeout     5 minutes
 
 Library    DocTest.VisualTest
 Library    SeleniumLibrary

@@ -26,12 +26,17 @@ runs:
         echo "BITBAKE_TARGET=${{ inputs.bitbake_target }}"
         echo "RELEASE=${{ inputs.repo_release }}"
         echo "======================================================================"
-    - name: Generate timestamped prefix
+    - name: Download timestamp artifact
+      uses: actions/download-artifact@v4
+      with:
+        pattern: timestamp.txt
+        merge-multiple: true
+    - name: Get timestamp prefix
       id: timestamp
       shell: bash
       run: |
-        TIMESTAMP=$(date +"%Y%m%d%H%M")
-        echo "prefix=${TIMESTAMP}" >> $GITHUB_OUTPUT
+        TIMESTAMP=$(cat timestamp.txt)
+        echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
     - name: Build
       shell: bash
       run:  |
@@ -59,13 +64,13 @@ runs:
       shell: bash
       run: |
         ls -lh ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/
-        PREFIX=${{ steps.timestamp.outputs.prefix }}
+        TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs.wic.bmap \
-            s3://yocto/${PREFIX}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
+            s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs.wic.bz2 \
-            s3://yocto/${PREFIX}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
+            s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs-dbg.tar.bz2 \
-            s3://yocto/${PREFIX}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.dbg.tar.bz2
+            s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.dbg.tar.bz2
     - name: Clean the tmp dir
       if: always()
       shell: bash
