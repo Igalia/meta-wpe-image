@@ -1,4 +1,4 @@
-DESCRIPTION = "core-image-weston with Cog/WPEWebKit"
+DESCRIPTION = "core-image-weston with WPEWebKit"
 
 inherit image_browsers image_weston
 
@@ -6,6 +6,7 @@ IMAGE_INSTALL:append = " \
     cog \
     wpebackend-fdo \
     wpewebkit \
+    wpe-simple-launcher \
     python3-uinput \
 "
 
