@@ -1,5 +1,9 @@
+*** Variables ***
+${BASELINE_IMAGES_PATH}    /app/robot_framework/images/
+
 *** Settings ***
 Library    Collections
+Library    DocTest.VisualTest
 Library    OperatingSystem
 Library    ../libs/TestUtils.py
 
@@ -31,6 +35,19 @@ Get Remote Memory Used
     ${value}=    Evaluate    float(${stdout}[0])
     RETURN    ${value}
 
+Remote Weston Capture Screenshot
+    [Arguments]    ${capture_name}
+
+    ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
+    SSH Command    ${TEST_BOARD_IP}    rm -rf wayland-screenshot-*.png && export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-1 && weston-screenshooter
+    Run    scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@%{TEST_BOARD_IP}:~/wayland-screenshot-*.png ${capture_name}
+    Log    <img src="${capture_name}" width="50%" />    html
+
+Remote Weston Check Screenshot
+    [Arguments]    ${image}
+    Remote Weston Capture Screenshot    ${image}
+    Compare Images   ${BASELINE_IMAGES_PATH}/${image}    ${image}    threshold=0.0050
+
 Webdriver Remote Start
     [Arguments]    @{other_params}
     [Timeout]      2 minutes
@@ -57,4 +74,3 @@ Webdriver Remote Stop
     Close All Browsers
     SSH Webdriver Remote Stop    ${TEST_BOARD_IP}
     SSH Force Kill    ${TEST_BOARD_IP}    cog
-
