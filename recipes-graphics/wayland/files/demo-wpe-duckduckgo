@@ -1,6 +1,4 @@
 #!/bin/bash
 /usr/bin/kill-demo
-export  COG_PLATFORM_WL_VIEW_WIDTH=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 1 | tail -n 1)
-export COG_PLATFORM_WL_VIEW_HEIGHT=$(journalctl  -b | grep weston | grep current | cut -f 1 -d '@' | awk '{ print $6 }' | cut -d 'x' -f 2 | tail -n 1)
 export WEBKIT_SHOW_FPS=0 GALLIUM_HUD_TOGGLE_SIGNAL=10 GALLIUM_HUD_VISIBLE=0 GALLIUM_HUD=cpu+fps
-/usr/bin/cog-fdo-exported-wayland https://duckduckgo.com/
+/usr/bin/wpe-exported-wayland --maximized https://duckduckgo.com/
