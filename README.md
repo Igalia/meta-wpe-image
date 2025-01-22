@@ -125,10 +125,10 @@ CXX=arm-poky-linux-gnueabi-g++ ...
 ...
 ```
 
-## Running Cog browser:
+## Running WPE launcher:
 
-* Cog with FDO backend in Weston: `/usr/bin/cog-fdo-exported-wayland https://wpewebkit.org`
-* Cog with DRM backend directly in framebuffer: `/usr/bin/cog-drm-kill-weston https://wpewebkit.org`
+* WPE with FDO backend in Weston: `/usr/bin/wpe-exported-wayland https://wpewebkit.org`
+* WPE with DRM backend directly in framebuffer: `export WPE_DISPLAY="wpe-display-drm"; /usr/bin/wpe-exported-wayland https://wpewebkit.org`
 
 All this commands will execute the browsers as `weston` user.
 

@@ -1,4 +1,4 @@
 #! /bin/bash
-/usr/bin/pkill -9 -f "cog"
+/usr/bin/pkill -9 -f "wpe-simple-launcher"
 /usr/bin/pkill -9 -O 1 -f "demo"
 

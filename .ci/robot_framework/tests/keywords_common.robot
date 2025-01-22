@@ -57,12 +57,12 @@ Webdriver Remote Start
 
     # Force kill previous launchers
     SSH Webdriver Remote Stop    ${TEST_BOARD_IP}
-    SSH Force Kill    ${TEST_BOARD_IP}    cog
+    SSH Force Kill    ${TEST_BOARD_IP}    wpe-simple-launcher
 
     SSH Webdriver Remote Start    ${TEST_BOARD_IP}    ${TEST_BOARD_WEBDRIVER_PORT}
     Sleep    5
 
-    ${wpe_options} =    Create WPEWebKitOptions    cog    /usr/bin/cog-fdo-exported-wayland    --automation    @{other_params}
+    ${wpe_options} =    Create WPEWebKitOptions    wpe-simple-launcher    /usr/bin/wpe-exported-wayland    --automation    @{other_params}
     Create Webdriver    Remote    command_executor=${TEST_BOARD_IP}:${TEST_BOARD_WEBDRIVER_PORT}    options=${wpe_options}
 
 Webdriver Remote Stop
@@ -73,4 +73,4 @@ Webdriver Remote Stop
 
     Close All Browsers
     SSH Webdriver Remote Stop    ${TEST_BOARD_IP}
-    SSH Force Kill    ${TEST_BOARD_IP}    cog
+    SSH Force Kill    ${TEST_BOARD_IP}    wpe-simple-launcher
