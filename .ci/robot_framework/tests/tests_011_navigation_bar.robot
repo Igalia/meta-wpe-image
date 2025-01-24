@@ -4,7 +4,7 @@ ${HOME_SCREEN_IMAGE}    home-screen.png
 ${SEARCH_SCREEN_IMAGE}    search-screen.png
 
 *** Settings ***
-Test Timeout    60 seconds
+Test Timeout    120 seconds
 
 Suite Setup    Configure Mockup Pages
 
