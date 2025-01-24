@@ -62,7 +62,7 @@ class TestUtils:
     def ssh_force_kill(self, ip, text):
         """Force kill all related process."""
         print(f"RUN: Killing all '{text}' related processes ...")
-        command = f"pgrep {text} && pgrep {text} | xargs kill -9 || echo '{text} not running'"
+        command = f"pgrep -f {text} && pgrep -f {text} | xargs kill -9 || echo '{text} not running'"
         return self.ssh_command(ip, command, quiet=True)
 
     def ssh_reboot_force_reboot(self, ip):
