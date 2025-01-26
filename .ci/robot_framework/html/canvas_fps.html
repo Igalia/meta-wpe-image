@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 1);
+        }
+        canvas {
+            display: block;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background-color: black;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <div id="iteration">Iteration: 0</div>
+        <div id="fps">FPS: 0.00</div>
+        <div id="average">Average: 0.00</div>
+        <div id="std-deviation">Std. deviation: 0.00</div>
+    <div id="frames-lower-5-percent">% frames 5% lower avg():: 0.00</div>
+    <div id="frames-over-5-percent">% frames 5% over avg():: 0.00</div>
+    </div>
+    <canvas id="myCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas to full width and height
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const colors = [
+            "red", "orange", "yellow", "green", "blue", "indigo",
+            "violet", "cyan", "magenta", "lime", "teal", "pink",
+        ];
+
+        const durationIter = 10; // Duration in seconds
+        const maxBarHeight = canvas.height / colors.length;
+        const maxBarWidth = canvas.width;
+
+        let frameCounter = 0;
+        let frameLowerCounter = 0;
+        let frameHiguerCounter = 0;
+        let sumFrameTime = 0
+        let sumSquaresFrameTime = 0
+        let frameCounterIter = 0;
+        let iterCounter = 0
+        let lastIterTime = performance.now();
+        let previousFrameTime = performance.now();
+        let currentFrameTime = performance.now();
+        let fps = 0;
+
+        function addDataPoint(frameTime) {
+            frameCounter++;
+            frameCounterIter++;
+            sumFrameTime += frameTime;
+            sumSquaresFrameTime += frameTime * frameTime;
+        }
+
+        function getAverage() {
+            if (frameCounter === 0) return 0;
+            return sumFrameTime / frameCounter;
+        }
+
+        function getVariance() {
+            if (frameCounter === 0) return 0;
+            const average = getAverage();
+            return sumSquaresFrameTime / frameCounter - average * average;
+        }
+
+        function getStandardDeviation() {
+            return Math.sqrt(getVariance());
+        }
+
+        function drawBars() {
+            previousFrameTime = currentFrameTime;
+            currentFrameTime = performance.now();
+
+            for (let i = 0; i < colors.length; i++) {
+            const barOffset = 60;
+                const barWidth = 4;
+                const barWidthPosition = ((maxBarWidth * ((currentFrameTime - lastIterTime) /  (durationIter * 1000))) + (0 * barOffset) ) % maxBarWidth;
+                const barHeight = 4;
+                // const barHeightPosition = (i * maxBarHeight) + (maxBarHeight * Math.random()) - barHeight;
+                const barHeightPosition = (i * maxBarHeight) + (((maxBarHeight * (barWidthPosition / maxBarWidth ) ** 2 * (barWidthPosition / maxBarWidth )) ) % maxBarHeight) - barHeight;
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(barWidthPosition, barHeightPosition, barWidth, barHeight);
+            }
+            const eraserWidthPosition = (maxBarWidth * ((currentFrameTime - lastIterTime) /  (durationIter * 1000))) % maxBarWidth;
+            ctx.clearRect((eraserWidthPosition + 15 ) % maxBarWidth, 0, 10, canvas.height);
+
+            const frameTime = currentFrameTime - previousFrameTime;
+            // console.log("frameTime: " + frameTime.toFixed(2));
+            if (frameTime > 1.05 * getAverage()) {
+                frameHiguerCounter++;
+            }
+
+            if (frameTime < 0.95 * getAverage()) {
+                frameLowerCounter++;
+            }
+
+            if (iterCounter > 0) {
+                addDataPoint(frameTime);
+            }
+
+            if (currentFrameTime - lastIterTime > (durationIter * 1000)) {
+                iterCounter++;
+                document.getElementById("iteration").textContent = `Iteration: ${iterCounter}`;
+
+                fps = frameCounterIter / ((currentFrameTime - lastIterTime) / 1000);
+                const framesOver5Percent = 100 * frameHiguerCounter / frameCounter;
+                const framesLower5Percent = 100 * frameLowerCounter / frameCounter;
+                document.getElementById("fps").textContent = `FPS: ${fps.toFixed(2)}`;
+                document.getElementById("average").textContent = `Average: ${getAverage().toFixed(2)}`;
+                document.getElementById("std-deviation").textContent = `Std. deviation: ${getStandardDeviation().toFixed(2)}`;
+                document.getElementById("frames-over-5-percent").textContent = `% frames 5% over avg(): ${framesOver5Percent.toFixed(2)}`;
+                document.getElementById("frames-lower-5-percent").textContent = `% frames 5% lower avg(): ${framesLower5Percent.toFixed(2)}`;
+
+                lastIterTime = currentFrameTime;
+                frameCounterIter = 0;
+            }
+
+            window.requestAnimationFrame(drawBars);
+        }
+
+        // Start the animation and FPS updates
+        window.requestAnimationFrame(drawBars);
+    </script>
+</body>
+</html>
