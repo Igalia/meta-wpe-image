@@ -34,6 +34,7 @@ FILES:${PN} += "\
     ${systemd_system_unitdir}/wayland-1.service \
     ${bindir}/kill-demo \
     ${bindir}/toggle-gallium-hud \
+    ${bindir}/wpe-demo-run \
     ${bindir}/demo-wpe-website \
     ${bindir}/demo-wpe-duckduckgo \
     ${datadir}/24x24-blank.png \
@@ -70,6 +71,7 @@ do_install:append () {
 
     install -Dm755 ${WORKDIR}/kill-demo ${D}/${bindir}/kill-demo
     install -Dm755 ${WORKDIR}/toggle-gallium-hud ${D}/${bindir}/toggle-gallium-hud
+    install -Dm755 ${WORKDIR}/wpe-demo-run ${D}/${bindir}/wpe-demo-run
     install -Dm755 ${WORKDIR}/demo-wpe-website ${D}/${bindir}/demo-wpe-website
     install -Dm755 ${WORKDIR}/demo-wpe-duckduckgo ${D}/${bindir}/demo-wpe-duckduckgo
     install -Dm755 ${WORKDIR}/weston-terminal-configure-network ${D}/${bindir}/weston-terminal-configure-network
