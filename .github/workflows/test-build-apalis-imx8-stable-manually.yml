@@ -1,5 +1,5 @@
 name: Build tests apalis-imx8 stable manually
-on: workflow_dispatch
+on: [pull_request, workflow_dispatch]
 
 jobs:
   scarthgap-repo:
