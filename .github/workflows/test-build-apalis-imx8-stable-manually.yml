@@ -1,0 +1,68 @@
+name: Build tests apalis-imx8 stable manually
+on: workflow_dispatch
+
+jobs:
+  scarthgap-repo:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/bitbake-repo
+        with:
+          repo_release: 'scarthgap'
+
+  build-apalis-imx8-stable:
+    strategy:
+      fail-fast: false
+      matrix:
+        machine: ['apalis-imx8']
+        wpe_vers: ['2_46']
+        yocto_rel: ['scarthgap']
+    runs-on: [self-hosted, builder]
+    needs: scarthgap-repo
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/s3-configure
+        env:
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          S3_HOST_BASE: ${{ secrets.S3_HOST_BASE }}
+        with:
+          access_key: ${S3_ACCESS_KEY}
+          secret_key: ${S3_SECRET_KEY}
+          host_base: ${S3_HOST_BASE}
+      - uses: ./.github/actions/bitbake-build
+        with:
+          bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
+          bitbake_machine: ${{ matrix.machine }}
+          bitbake_source: 'poky-wayland layers.toradex conf.wpe-${{ matrix.wpe_vers }} --update-config'
+          repo_release: ${{ matrix.yocto_rel }}
+
+  test-apalis-imx8-stable:
+    strategy:
+      fail-fast: false
+      matrix:
+        machine: ['apalis-imx8']
+        wpe_vers: ['2_46']
+        yocto_rel: ['scarthgap']
+    runs-on: [self-hosted, podman]
+    permissions:
+      pull-requests: write
+    needs: build-apalis-imx8-stable
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/s3-configure
+        env:
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          S3_HOST_BASE: ${{ secrets.S3_HOST_BASE }}
+        with:
+          access_key: ${S3_ACCESS_KEY}
+          secret_key: ${S3_SECRET_KEY}
+          host_base: ${S3_HOST_BASE}
+      - uses: ./.github/actions/podman-robot
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
+          bitbake_machine: ${{ matrix.machine }}
+          github_token: ${GITHUB_TOKEN}
