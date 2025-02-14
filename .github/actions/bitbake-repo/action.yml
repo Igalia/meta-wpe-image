@@ -26,14 +26,15 @@ runs:
     - name: Set bitbake environment
       shell: bash
       run:  |
-        mkdir -pv ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/
+        sudo apt-get install -y git git-lfs repo
+        mkdir -p ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
         cd ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
-        cp -av /local-host.conf builds/
-        rm -rf sources .repo setup-environment
         repo init -u ${{ inputs.repo_url }} -m manifest-${{ inputs.repo_release }}.xml -b ${{ inputs.repo_ref }}
         repo sync --force-sync
 
         pushd sources/meta-wpe-image
+        git config --global user.email "meta-wpe-image-bot@igalia.com"
+        git config --global user.name "meta-wpe-image CI Bot"
         git remote remove tmp || true
         git remote add tmp ${{ inputs.repo_url }}
         git fetch tmp main
@@ -46,4 +47,14 @@ runs:
       with:
         name: timestamp.txt
         path: timestamp.txt
+    - name: Tar workdir
+      shell: bash
+      run:  |
+        cd ~
+        tar -cf yocto-meta-wpe-image-${{ inputs.repo_release }}.tar yocto-meta-wpe-image-${{ inputs.repo_release }}
+    - name: Upload tar workdir artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: yocto-meta-wpe-image-${{ inputs.repo_release }}
+        path:  ~/yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
 
