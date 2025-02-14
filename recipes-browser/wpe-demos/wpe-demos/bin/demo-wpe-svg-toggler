@@ -1,0 +1,13 @@
+#!/bin/bash
+
+TOGGLER=/mnt/wpe-demos/LAYER_BASED_SVG_ENGINE_TOGGLER
+
+if [ -f "$TOGGLER" ]
+then
+    rm $TOGGLER
+else
+    touch $TOGGLER
+fi
+
+/usr/bin/wpe-ctl reload
+
