@@ -12,7 +12,7 @@ BBLAYERS_TI ?= " \
   ${BSPDIR}/sources/meta-ti/meta-ti-extras \
 "
 
-BBLAYERS ?= " \
+BBLAYERS = " \
   ${BBLAYERS_NXP} \
   ${BBLAYERS_TI} \
   \
