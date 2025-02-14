@@ -1,0 +1,12 @@
+#!/bin/sh
+
+/usr/bin/kill-demo
+
+export WEBKIT_INSPECTOR_SERVER=0.0.0.0:12321
+#export WAYLAND_DEBUG=1
+
+export WEBKIT_SHOW_FPS=0
+export GALLIUM_HUD_TOGGLE_SIGNAL=10 GALLIUM_HUD_VISIBLE=0 GALLIUM_HUD=cpu+fps
+export LAYER_BASED_SVG_ENGINE_TOGGLER=/mnt/wpe-demos/LAYER_BASED_SVG_ENGINE_TOGGLER
+
+/usr/bin/wpe-exported-wayland --maximize 'http://localhost/wpe-demos/demo-videos-wolvic/index.html'
