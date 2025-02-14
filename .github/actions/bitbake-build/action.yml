@@ -37,10 +37,28 @@ runs:
       run: |
         TIMESTAMP=$(cat timestamp.txt)
         echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+    - name: Clean the build dir
+      shell: bash
+      run:  |
+        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
+        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
+    - name: Download workdir artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: yocto-meta-wpe-image-${{ inputs.repo_release }}
+        path:  ~/
+    - name: Untar workdir
+      shell: bash
+      run:  |
+        cd ~
+        tar -xf yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
+        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
     - name: Build
       shell: bash
       run:  |
         cd ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
+        mkdir ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/
+        cp /local-host.conf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/
         ulimit -n 4096
         source sources/meta-wpe-image/scripts/setup-environment ${{ inputs.bitbake_buildname}} ${{ inputs.bitbake_machine }} ${{ inputs.bitbake_source }}
         MAX_RETRIES=5
