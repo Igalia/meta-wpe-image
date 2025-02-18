@@ -17,7 +17,7 @@ SRC_URI = " \
 "
 
 # demo-videos-wolvic
-SRC_URI:append = " git://gitlab.igalia.com/teams/core/misc/demo-wolvic-videos.git;branch=main;protocol=https;name=demo-videos-wolvic;destsuffix=${S}/htdocs/demo-videos-wolvic"
+SRC_URI:append = " git://gitlab.igalia.com/teams/core/misc/demo-wolvic-videos.git;branch=main;protocol=https;name=demo-videos-wolvic;destsuffix=${S}/demo-videos-wolvic"
 SRCREV_demo-videos-wolvic = "${AUTOREV}"
 
 S = "${WORKDIR}"
@@ -48,18 +48,18 @@ python do_fetch:append() {
     import subprocess
 
     s_path = d.getVar('S')
-    demo_videos_dir = os.path.join(s_path, "demo-videos-wolvic")
-    download_script = os.path.join(s_path, "htdocs", "demo-videos-wolvic", "download.py")
-    os.makedirs(demo_videos_dir, exist_ok=True)
+    # demo_videos_dir = os.path.join(s_path, "demo-videos-wolvic")
+    download_script = os.path.join(s_path, "demo-videos-wolvic", "download.py")
+    # os.makedirs(demo_videos_dir, exist_ok=True)
 
     if os.path.isfile(download_script):
         try:
             subprocess.check_call(["python3", download_script],
                                   cwd=os.path.dirname(download_script))
-            videos_dir = os.path.join(os.path.dirname(download_script),
-                                      "videos")
-            if os.path.isdir(videos_dir):
-                subprocess.check_call(["mv", videos_dir, demo_videos_dir])
+            # videos_dir = os.path.join(os.path.dirname(download_script),
+            #                           "videos")
+            # if os.path.isdir(videos_dir):
+            #     subprocess.check_call(["mv", videos_dir, demo_videos_dir])
         except subprocess.CalledProcessError as e:
             bb.fatal(f"Failed to execute {download_script}: {e}")
 }
@@ -69,8 +69,7 @@ do_install() {
     install -m 0755 ${WORKDIR}/bin/demo-* ${D}${bindir}/
 
     install -d ${D}/mnt/wpe-demos/
-    cp -r ${WORKDIR}/htdocs/demo-videos-wolvic ${D}/mnt/wpe-demos/
-    cp -r ${WORKDIR}/demo-videos-wolvic/videos ${D}/mnt/wpe-demos/demo-videos-wolvic/
+    cp -r ${WORKDIR}/demo-videos-wolvic ${D}/mnt/wpe-demos/
     cp -r ${WORKDIR}/htdocs/demo-wpe-svg-tiger ${D}/mnt/wpe-demos/
 
     install -d ${D}/mnt/install/icons/
