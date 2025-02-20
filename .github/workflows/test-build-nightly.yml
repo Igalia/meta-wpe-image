@@ -1,9 +1,5 @@
 name: Build tests for nightly
-on:
-  schedule:
-    # Runs at 3:00 AM UTC every day
-    - cron: '0 3 * * *'
-  workflow_dispatch:
+on: [pull_request]
 
 jobs:
   scarthgap-repo:
