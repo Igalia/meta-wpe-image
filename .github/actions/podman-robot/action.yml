@@ -44,6 +44,7 @@ runs:
     - name: Prepare the Robot-Framework related PODs in background
       shell: bash
       run:  |
+        git lfs pull
         pushd .ci
         podman rm ci_webserver_1 ci_robot_1 -f
         ./podman-compose.sh up --force-recreate --always-recreate-deps --build -d
