@@ -45,8 +45,9 @@ Remote Weston Capture Screenshot
 
 Remote Weston Check Screenshot
     [Arguments]    ${image}
+    ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     Remote Weston Capture Screenshot    ${image}
-    Compare Images   ${BASELINE_IMAGES_PATH}/${image}    ${image}    threshold=0.0050
+    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${image}    ${image}    threshold=0.0050
 
 Webdriver Remote Start
     [Arguments]    @{other_params}

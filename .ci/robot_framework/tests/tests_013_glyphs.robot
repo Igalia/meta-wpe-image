@@ -18,11 +18,12 @@ Resource   keywords_common.robot
 Verify no changes in the glyphs
     ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
     ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
+    ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     ${PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/glyphs.html
 
     Go to    ${PAGE}
     Wait Until Page Contains    Ready    timeout=10s
 
     Capture Page Screenshot    ${GLYPHS_PAGE_IMAGE}
-    Compare Images   ${BASELINE_IMAGES_PATH}/${GLYPHS_PAGE_IMAGE}    ${GLYPHS_PAGE_IMAGE}    threshold=0.0005
+    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${GLYPHS_PAGE_IMAGE}    ${GLYPHS_PAGE_IMAGE}    threshold=0.0005
 

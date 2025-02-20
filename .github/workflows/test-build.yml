@@ -66,6 +66,7 @@ jobs:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           github_token: ${GITHUB_TOKEN}
+          wpe_vers: ${{ matrix.wpe_vers }}
 
   build-raspberrypi-rest-stable:
     strategy:
@@ -124,6 +125,7 @@ jobs:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           github_token: ${GITHUB_TOKEN}
+          wpe_vers: ${{ matrix.wpe_vers }}
 
   build-freescale-stable:
     strategy:
@@ -183,3 +185,4 @@ jobs:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           github_token: ${GITHUB_TOKEN}
+          wpe_vers: ${{ matrix.wpe_vers }}
