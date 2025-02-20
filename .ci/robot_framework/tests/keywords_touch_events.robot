@@ -21,6 +21,7 @@ Check Browser Touch Events Using Uinput
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
     ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
     ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
+    ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     ${PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/vertical_scroll.html
     ${PAGE2}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/rbyers/paint.html
 
@@ -56,11 +57,11 @@ Check Browser Touch Events Using Uinput
     Go to    ${PAGE2}
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-two-fingers-gesture.py --duration 2 --steps 40 900 200 900 500 900 800 900 500
     Capture Page Screenshot    ${PINCH_GESTURE_IMAGE}
-    Compare Images   ${BASELINE_IMAGES_PATH}/${PINCH_GESTURE_IMAGE}    ${PINCH_GESTURE_IMAGE}    threshold=0.0005
+    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${PINCH_GESTURE_IMAGE}    ${PINCH_GESTURE_IMAGE}    threshold=0.0005
 
     # Multitouch: Zoom
     Go to    ${PAGE2}
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-two-fingers-gesture.py --duration 2 --steps 40 900 500 900 200 900 500 900 800
     Capture Page Screenshot    ${ZOOM_GESTURE_IMAGE}
-    Compare Images   ${BASELINE_IMAGES_PATH}/${ZOOM_GESTURE_IMAGE}    ${ZOOM_GESTURE_IMAGE}    threshold=0.0005
+    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${ZOOM_GESTURE_IMAGE}    ${ZOOM_GESTURE_IMAGE}    threshold=0.0005
 

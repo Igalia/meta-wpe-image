@@ -13,6 +13,8 @@ inputs:
     required: true
   repo_release:
     default: 'scarthgap'
+  wpe_vers:
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -68,6 +70,7 @@ runs:
         echo "#!/bin/sh" > setup-env-local.sh
         echo "export TEST_BOARD_IP=${IP}" >> setup-env-local.sh
         echo "export TEST_WEBSERVER_IP=${WEBSERVER_IP}" >> setup-env-local.sh
+        echo "export TEST_WPEWEBKIT_VERSION=${{ inputs.wpe_vers }}" >> setup-env-local.sh
         if ./run-tests.sh; then
           MESSAGE="Tests passed for \`${{ inputs.bitbake_buildname }}\` on \`${{ inputs.bitbake_target }}\`. Tests results: https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/robot/report.html"
           echo "* ✅️ ${MESSAGE}" >> ci-message.txt
