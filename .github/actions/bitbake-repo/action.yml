@@ -30,7 +30,17 @@ runs:
         mkdir -p ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
         cd ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
         repo init -u ${{ inputs.repo_url }} -m manifest-${{ inputs.repo_release }}.xml -b ${{ inputs.repo_ref }}
-        repo sync --force-sync
+
+        attempt=0
+        until repo sync --force-sync; do
+          attempt=$((attempt+1))
+          if [ $attempt -ge 5 ]; then
+            echo "repo sync failed after 5 attempts. Exiting."
+            exit 1
+          fi
+          echo "repo sync failed. Retrying in 30 seconds... ($attempt/5)"
+          sleep 30
+        done
 
         pushd sources/meta-wpe-image
         git config --global user.email "meta-wpe-image-bot@igalia.com"
