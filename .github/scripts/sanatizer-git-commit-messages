@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -e
+
+echo "Running git commit log messages check:"
+
+error_found=0
+
+baseref="main"
+headref="HEAD"
+
+git fetch origin $baseref 2>&1 > /dev/null
+
+if [[ -n "${GITHUB_HEAD_REF}" ]]; then
+    headref="origin/${GITHUB_HEAD_REF}"
+    git fetch origin ${GITHUB_HEAD_REF} 2>&1 > /dev/null
+fi
+
+# Get commit messages
+commits=$(git log origin/${baseref}..${headref} --pretty=format:"%s")
+echo "$commits" > commit_messages.txt
+
+# Check commit messages format
+while IFS= read -r line; do
+  if ! [[ $line =~ ^[a-zA-Z]+:\ [a-zA-Z]+ ]]; then
+    echo "Invalid commit message: $line"
+    error_found=1
+  fi
+done < commit_messages.txt
+
+# Get full commit messages
+commits=$(git log origin/${baseref}..${headref} --pretty=format:"%B")
+echo "$commits" > commit_messages.txt
+
+# Check for required keywords
+if ! grep -qE 'Change-type:|Maintenance-type:' commit_messages.txt; then
+    echo "Error: No commit message contains 'Change-type:' or 'Maintenance-type:'."
+    error_found=1
+fi
+
+rm commit_messages.txt
+# Exit with the appropriate status
+exit $error_found
