@@ -22,6 +22,7 @@ CTL_FILE="/tmp/wpe-exported-wayland"
 # Apply workaround only if running on raspberrypi5
 if [ "$(hostname)" = "raspberrypi5" ]; then
     export WEBKIT_GST_DMABUF_SINK_ENABLED=1
+    export WEBKIT_GST_DMABUF_SINK_DISABLED=false
 fi
 
 # Regression in 2.48.X since
