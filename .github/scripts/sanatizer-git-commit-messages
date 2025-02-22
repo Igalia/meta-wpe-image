@@ -32,8 +32,8 @@ done < commit_messages.txt
 commits=$(git log origin/${baseref}..${headref} --pretty=format:"%B")
 echo "$commits" > commit_messages.txt
 
-# Check for required keywords
-if ! grep -qE 'Change-type:|Maintenance-type:' commit_messages.txt; then
+# Check for required keywords (case-insensitive)
+if ! grep -iqE 'Change-type:|Maintenance-type:' commit_messages.txt; then
     echo "Error: No commit message contains 'Change-type:' or 'Maintenance-type:'."
     error_found=1
 fi
