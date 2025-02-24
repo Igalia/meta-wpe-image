@@ -20,6 +20,12 @@ CTL_FILE="/tmp/wpe-exported-wayland"
 # Bug: https://bugs.webkit.org/show_bug.cgi?id=279819
 export WEBKIT_GST_DMABUF_SINK_ENABLED=1
 
+# Regression in 2.48.X since
+#   [GStreamer] Add support for DMA-BUF to GL video sink
+#   https://bugs.webkit.org/show_bug.cgi?id=279672
+# XXX Reported in : https://bugs.webkit.org/show_bug.cgi?id=288464
+export WEBKIT_GST_DISABLE_GL_SINK=1
+
 # Ensure Wayland and XDG runtime environment variables are propagated
 WAYLAND_DISPLAY=$(strings < "/proc/$(pidof weston-keyboard)/environ" | grep WAYLAND_DISPLAY)
 XDG_RUNTIME_DIR=$(strings < "/proc/$(pidof weston-keyboard)/environ" | grep XDG_RUNTIME_DIR)
