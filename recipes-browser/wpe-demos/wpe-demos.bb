@@ -48,18 +48,12 @@ python do_fetch:append() {
     import subprocess
 
     s_path = d.getVar('S')
-    # demo_videos_dir = os.path.join(s_path, "demo-videos-wolvic")
     download_script = os.path.join(s_path, "demo-videos-wolvic", "download.py")
-    # os.makedirs(demo_videos_dir, exist_ok=True)
 
     if os.path.isfile(download_script):
         try:
             subprocess.check_call(["python3", download_script],
                                   cwd=os.path.dirname(download_script))
-            # videos_dir = os.path.join(os.path.dirname(download_script),
-            #                           "videos")
-            # if os.path.isdir(videos_dir):
-            #     subprocess.check_call(["mv", videos_dir, demo_videos_dir])
         except subprocess.CalledProcessError as e:
             bb.fatal(f"Failed to execute {download_script}: {e}")
 }
