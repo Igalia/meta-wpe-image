@@ -22,7 +22,7 @@ echo "$commits" > commit_messages.txt
 
 # Check commit messages format
 while IFS= read -r line; do
-  if ! [[ $line =~ ^[a-zA-Z]+:\ [a-zA-Z]+ ]]; then
+  if ! [[ $line =~ ^[a-zA-Z0-9-]+:\ .+$ ]]; then
     echo "Invalid commit message: $line"
     error_found=1
   fi
