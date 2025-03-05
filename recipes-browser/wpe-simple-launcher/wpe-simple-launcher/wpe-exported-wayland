@@ -18,7 +18,11 @@ CTL_FILE="/tmp/wpe-exported-wayland"
 # WebKitDMABufVideoSink sink that is able to accept decode
 # dmabuf or raw data in a range of RGB-like or YUV formats.
 # Bug: https://bugs.webkit.org/show_bug.cgi?id=279819
-export WEBKIT_GST_DMABUF_SINK_ENABLED=1
+#
+# Apply workaround only if running on raspberrypi5
+if [ "$(hostname)" = "raspberrypi5" ]; then
+    export WEBKIT_GST_DMABUF_SINK_ENABLED=1
+fi
 
 # Regression in 2.48.X since
 #   [GStreamer] Add support for DMA-BUF to GL video sink
