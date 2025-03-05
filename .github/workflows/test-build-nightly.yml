@@ -1,13 +1,9 @@
 name: Build tests for nightly
-on:
-  schedule:
-    # Runs at 3:00 AM UTC every day
-    - cron: '0 3 * * *'
+on: [pull_request]
 
 jobs:
   scarthgap-repo:
     runs-on: ubuntu-22.04
-    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/bitbake-repo
