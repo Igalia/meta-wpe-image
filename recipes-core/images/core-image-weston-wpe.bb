@@ -6,6 +6,7 @@ IMAGE_INSTALL:append = " \
     wpewebkit \
     wpe-simple-launcher \
     python3-uinput \
+    sysprof \
 "
 
 IMAGE_INSTALL:append:raspberrypi4 = " rpi-eeprom"
