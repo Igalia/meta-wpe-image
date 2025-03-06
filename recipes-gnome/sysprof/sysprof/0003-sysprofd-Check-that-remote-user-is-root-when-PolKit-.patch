@@ -1,0 +1,81 @@
+From 77f7c62d6818967e3b5f7048c593d629fb40d9c3 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Mon, 30 Sep 2024 16:36:52 +0300
+Subject: [PATCH] sysprofd: Check that remote user is root when PolKit is
+ disabled
+
+When PolKit support is enabled at build time, check that the remote user
+is "root" (and thus privileged) instead of always allowing access to
+methods of the sysprofd D-Bus interface.
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/sysprof/-/merge_requests/103]
+---
+ src/sysprofd/ipc-service-impl.c | 45 +++++++++++++++++++++++++++++++--
+ 1 file changed, 43 insertions(+), 2 deletions(-)
+
+diff --git a/src/sysprofd/ipc-service-impl.c b/src/sysprofd/ipc-service-impl.c
+index f1c1205..182159a 100644
+--- a/src/sysprofd/ipc-service-impl.c
++++ b/src/sysprofd/ipc-service-impl.c
+@@ -299,6 +299,49 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
+ 
+   return ret;
+ }
++#else
++static gboolean
++ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
++                                     GDBusMethodInvocation  *invocation)
++{
++  GDBusConnection *connection;
++  GCredentials *credentials;
++
++  g_assert (IPC_IS_SERVICE_IMPL (skeleton));
++  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
++
++  connection = g_dbus_method_invocation_get_connection (invocation);
++  credentials = g_dbus_connection_get_peer_credentials (connection);
++
++  if (credentials)
++    {
++      g_autoptr(GError) error = NULL;
++      uid_t peer_uid = g_credentials_get_unix_user (credentials, &error);
++      if (error)
++        {
++          g_assert(peer_uid == -1);
++          g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
++                                                 G_DBUS_ERROR,
++                                                 G_DBUS_ERROR_ACCESS_DENIED,
++                                                 "Could not obtain remote user credentials: %s",
++                                                 error->message);
++        }
++      else if (peer_uid == 0)
++        return TRUE;
++      else
++        g_dbus_method_invocation_return_error_literal (g_steal_pointer (&invocation),
++                                                       G_DBUS_ERROR,
++                                                       G_DBUS_ERROR_ACCESS_DENIED,
++                                                       "Not authorized to make request");
++    }
++  else
++    g_dbus_method_invocation_return_error_literal (g_steal_pointer (&invocation),
++                                                   G_DBUS_ERROR,
++                                                   G_DBUS_ERROR_ACCESS_DENIED,
++                                                   "Could not obtain connection peer credentials");
++
++  return FALSE;
++}
+ #endif
+ 
+ static gboolean
+@@ -444,11 +487,9 @@ G_DEFINE_TYPE_WITH_CODE (IpcServiceImpl, ipc_service_impl, IPC_TYPE_SERVICE_SKEL
+ static void
+ ipc_service_impl_class_init (IpcServiceImplClass *klass)
+ {
+-#if HAVE_POLKIT
+   GDBusInterfaceSkeletonClass *skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+ 
+   skeleton_class->g_authorize_method = ipc_service_impl_g_authorize_method;
+-#endif
+ 
+   signals [ACTIVITY] =
+     g_signal_new ("activity",

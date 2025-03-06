@@ -1,0 +1,154 @@
+From 2d48084e136ca515737515918ebd0cff291dc144 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Wed, 28 Aug 2024 15:07:36 +0300
+Subject: [PATCH] Make PolKit usage a build-time option
+
+Allow compiling without PolKit to gain elevated privileges to start
+the RAPL profiler (by means of turbostat) and instruct sysprofd to
+start gathering profiling data. Using these features should be still
+possible by running e.g. sysprof-cli as root, or allowing other users
+in the bus configuration XML.
+
+Disabling PolKit is more likely to be used in embedded systems, in
+which case it seems reasonable to have less build dependencies, and
+assume that either integrators would be able to either customize the
+bus configuration, or use Sysprof only in development builds where
+running as root may be acceptable.
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/sysprof/-/merge_requests/103]
+---
+ meson.build                      | 12 ++++++++----
+ meson_options.txt                |  6 ++++++
+ src/sysprofd/ipc-rapl-profiler.c |  9 +++++++--
+ src/sysprofd/ipc-service-impl.c  |  6 ++++++
+ 4 files changed, 27 insertions(+), 6 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 69475b0..b7461ca 100644
+--- a/meson.build
++++ b/meson.build
+@@ -100,12 +100,16 @@ config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
+ config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
+ config_h.set10('HAVE_LIBSYSTEMD', libsystemd_dep.found())
+ 
+-polkit_agent_dep = dependency('polkit-agent-1', required: get_option('polkit-agent'))
+-config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
+-
+-polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
++polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: get_option('polkit'))
+ config_h.set10('HAVE_POLKIT', polkit_dep.found())
+ 
++if polkit_dep.found()
++  polkit_agent_dep = dependency('polkit-agent-1', required: get_option('polkit-agent'))
++else
++  polkit_agent_dep = disabler()
++endif
++config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
++
+ if need_libsysprof
+   libunwind_dep = dependency('libunwind', required: true)
+   config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
+diff --git a/meson_options.txt b/meson_options.txt
+index 2f78fc3..f1d766e 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -11,6 +11,12 @@ option('gtk', type: 'boolean')
+ # Allow disabling the installation of libsysprof-capture*.a
+ option('install-static', type: 'boolean')
+ 
++# Allow disabling of features that depend on polkit.
++option('polkit', type: 'feature',
++  value: 'auto',
++  description: 'Enable features which require polkit'
++)
++
+ # Allow disabling of features that depend on polkit-agent.
+ option('polkit-agent', type: 'feature',
+   value: 'auto',
+diff --git a/src/sysprofd/ipc-rapl-profiler.c b/src/sysprofd/ipc-rapl-profiler.c
+index 9b91847..93791d1 100644
+--- a/src/sysprofd/ipc-rapl-profiler.c
++++ b/src/sysprofd/ipc-rapl-profiler.c
+@@ -25,7 +25,9 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <gio/gunixfdlist.h>
++#if HAVE_POLKIT
+ #include <polkit/polkit.h>
++#endif
+ #include <sysprof-capture.h>
+ #include <unistd.h>
+ 
+@@ -177,6 +179,7 @@ get_counter_base (SysprofCaptureWriter *writer,
+   return add_counter_base (writer, counters, core, cpu);
+ }
+ 
++#if HAVE_POLKIT
+ static gboolean
+ ipc_rapl_profiler_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
+                                       GDBusMethodInvocation  *invocation)
+@@ -218,6 +221,7 @@ ipc_rapl_profiler_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
+ 
+   return ret;
+ }
++#endif
+ 
+ static void
+ ipc_rapl_profiler_finalize (GObject *object)
+@@ -234,11 +238,12 @@ static void
+ ipc_rapl_profiler_class_init (IpcRaplProfilerClass *klass)
+ {
+   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+-  GDBusInterfaceSkeletonClass *skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+-
+   object_class->finalize = ipc_rapl_profiler_finalize;
+ 
++#if HAVE_POLKIT
++  GDBusInterfaceSkeletonClass *skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+   skeleton_class->g_authorize_method = ipc_rapl_profiler_g_authorize_method;
++#endif
+ 
+   /**
+    * IpcRaplProfiler::activity:
+diff --git a/src/sysprofd/ipc-service-impl.c b/src/sysprofd/ipc-service-impl.c
+index 50825cf..f1c1205 100644
+--- a/src/sysprofd/ipc-service-impl.c
++++ b/src/sysprofd/ipc-service-impl.c
+@@ -25,7 +25,9 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <gio/gunixfdlist.h>
++#if HAVE_POLKIT
+ #include <polkit/polkit.h>
++#endif
+ #include <string.h>
+ #include <sys/syscall.h>
+ #include <time.h>
+@@ -255,6 +257,7 @@ ipc_service_impl_handle_perf_event_open (IpcService            *service,
+   return TRUE;
+ }
+ 
++#if HAVE_POLKIT
+ static gboolean
+ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
+                                      GDBusMethodInvocation  *invocation)
+@@ -296,6 +299,7 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
+ 
+   return ret;
+ }
++#endif
+ 
+ static gboolean
+ ipc_service_impl_handle_get_process_info (IpcService            *service,
+@@ -440,9 +444,11 @@ G_DEFINE_TYPE_WITH_CODE (IpcServiceImpl, ipc_service_impl, IPC_TYPE_SERVICE_SKEL
+ static void
+ ipc_service_impl_class_init (IpcServiceImplClass *klass)
+ {
++#if HAVE_POLKIT
+   GDBusInterfaceSkeletonClass *skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+ 
+   skeleton_class->g_authorize_method = ipc_service_impl_g_authorize_method;
++#endif
+ 
+   signals [ACTIVITY] =
+     g_signal_new ("activity",
