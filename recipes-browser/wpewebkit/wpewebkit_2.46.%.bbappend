@@ -11,6 +11,8 @@ PV:class-devupstream = "trunk"
 
 RCONFLICTS:${PN}:class-devupstream = ""
 
+PACKAGECONFIG[sysprof] = "-DUSE_SYSTEM_SYSPROF_CAPTURE=ON, -DUSE_SYSTEM_SYSPROF_CAPTURE=OFF,"
+
 PACKAGECONFIG:append = " experimental-wpe-platform lbse offscreen-canvas"
 PACKAGECONFIG:remove = "speech-synthesis"
 
