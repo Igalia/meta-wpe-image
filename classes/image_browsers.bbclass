@@ -48,6 +48,7 @@ IMAGE_INSTALL:append = " \
     packagegroup-core-full-cmdline \
     parted pv \
     perf \
+    python3-uinput \
     openssh-sftp \
     openssh-sftp-server \
     smem \
