@@ -52,6 +52,7 @@ IMAGE_INSTALL:append = " \
     openssh-sftp \
     openssh-sftp-server \
     smem \
+    stress-ng \
     systemd-analyze \
     valgrind \
     weston-xwayland \
