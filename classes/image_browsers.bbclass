@@ -56,6 +56,7 @@ IMAGE_INSTALL:append = " \
     systemd-analyze \
     valgrind \
     weston-xwayland \
+    wpe-testbed \
     "
 
 # Dependencies for graphic demos based on Vulkan
