@@ -45,6 +45,7 @@ IMAGE_INSTALL:append = " \
     gdb \
     gdbserver \
     gstreamer1.0-libav \
+    mesa-demos \
     packagegroup-core-full-cmdline \
     parted pv \
     perf \
