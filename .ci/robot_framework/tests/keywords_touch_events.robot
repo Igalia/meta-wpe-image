@@ -17,6 +17,37 @@ Resource   variables.robot
 Resource   keywords_common.robot
 
 *** Keywords ***
+Check Browser Button Left Click Event Using Uinput
+    ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
+    ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
+    ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
+    ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
+    ${PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/button_left_click.html
+
+    Go to    ${PAGE}
+    Capture Page Screenshot
+
+    # Press button: Valid
+    Go to    ${PAGE}
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/button-left-click.py 200 200
+    Capture Page Screenshot
+    ${result}=    Execute JavaScript    return window.result;
+    Should Be Equal As Strings     ${result}   green
+
+    # Press button: Not valid
+    Go to    ${PAGE}
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/button-left-click.py 200 200 20 0
+    Capture Page Screenshot
+    ${result}=    Execute JavaScript    return window.result;
+    Should Be Equal As Strings     ${result}   white
+
+    # Press button: Not valid
+    Go to    ${PAGE}
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/button-left-click.py 200 200 0 20
+    Capture Page Screenshot
+    ${result}=    Execute JavaScript    return window.result;
+    Should Be Equal As Strings     ${result}   white
+
 Check Browser Touch Events Using Uinput
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
     ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP

@@ -14,6 +14,10 @@ Resource   variables.robot
 Resource   keywords_touch_events.robot
 
 *** Test Cases ***
+Test Check Browser Button Left Click Event Using Uinput
+    [Tags]    ignoreonfail
+    Check Browser Button Left Click Event Using Uinput
+
 Test Check Browser Touch Events Using Uinput
     [Tags]    ignoreonfail
     Check Browser Touch Events Using Uinput
