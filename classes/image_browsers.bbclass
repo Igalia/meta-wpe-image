@@ -44,6 +44,7 @@ IMAGE_INSTALL:append = " \
     e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks e2fsprogs-resize2fs \
     gdb \
     gdbserver \
+    glmark2 \
     gstreamer1.0-libav \
     mesa-demos \
     packagegroup-core-full-cmdline \
