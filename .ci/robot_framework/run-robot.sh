@@ -33,6 +33,7 @@ fi
 exec robot --name "WPE image tests" \
            --consolewidth 158 \
            --exclude skip \
+           --test "Verify Full HD 30 FPS" \
            --skiponfailure ignoreonfail \
            --listener RetryFailed:2 \
            ../../robot_framework/tests/tests_*.robot
