@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['wandboard-mesa']
-        wpe_vers: ['2_46']
+        wpe_vers: ['2_48']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
     needs: scarthgap-repo
@@ -42,7 +42,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['wandboard-mesa']
-        wpe_vers: ['2_46']
+        wpe_vers: ['2_48']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:
