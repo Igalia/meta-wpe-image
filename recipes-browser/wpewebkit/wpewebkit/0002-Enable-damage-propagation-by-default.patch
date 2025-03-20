@@ -1,0 +1,39 @@
+From 11062c05ebcfbf17210fb959048f3e661aac4897 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Mon, 3 Jun 2024 12:47:24 +0300
+Subject: [PATCH 2/2] Enable damage propagation by default
+
+Reviewed by NOBODY (OOPS!).
+
+Enable propagation of frame damage information by default. It can still
+be disabled using the features API as usual.
+
+* Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml:
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+---
+ Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml b/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
+index 49520c9c..673be0dd 100644
+--- a/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
++++ b/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
+@@ -5993,11 +5993,11 @@ PropagateDamagingInformation:
+    condition: USE(COORDINATED_GRAPHICS)
+    defaultValue:
+      WebCore:
+-       default: false
++       default: true
+      WebKitLegacy:
+-       default: false
++       default: true
+      WebKit:
+-       default: false
++       default: true
+ 
+ PunchOutWhiteBackgroundsInDarkMode:
+   type: bool
+-- 
+2.34.1
+
