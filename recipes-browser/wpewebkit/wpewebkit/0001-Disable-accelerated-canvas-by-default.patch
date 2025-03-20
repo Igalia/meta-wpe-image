@@ -1,0 +1,29 @@
+From b7bda044e8335091f7f443f33db530fd374017e1 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Fri, 14 Jun 2024 22:31:38 +0300
+Subject: [PATCH 1/2] Disable accelerated canvas by default
+
+* Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml: Disable
+  accelerated canvas, given we are using Skia with CPU rendering for
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+---
+ Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml b/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
+index 0140e856..49520c9c 100644
+--- a/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
++++ b/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
+@@ -1853,7 +1853,7 @@ CanvasUsesAcceleratedDrawing:
+       "PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true
+       default: false
+     WebKit:
+-      default: true
++      default: false
+     WebCore:
+       default: false
+ 
+-- 
+2.34.1
+
