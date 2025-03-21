@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test button click using a touch event</title>
+<style>
+
+body {
+    background-color: white;
+    margin: 10px;
+}
+
+textarea {
+    margin-top: 20px;
+}
+
+button.big-button {
+    padding: 20px;
+    font-size: 16pt;
+}
+
+</style>
+
+</head>
+
+<body>
+    <button name="button" class="big-button" onclick="changeColor();">Click me</button>
+    <form>
+        <textarea id="textarea-1" cols="100" rows="50"></textarea>
+    </form>
+</body>
+
+<script type="application/javascript">
+    var result = 'white';
+
+    let textarea = document.querySelector('#textarea-1');
+
+    function log(str) {
+        textarea.value += str + "\n";
+    }
+
+    function changeColor(e) {
+        document.body.style['background-color'] = 'lightgreen';
+        result = 'green';
+        log('button clicked!');
+        setTimeout(() => {
+            document.body.style['background-color'] = 'white';
+            result = 'white';
+        }, 1000);
+    }
+
+    window.addEventListener('touchstart', (e) => {
+        let touch = e.touches[0];
+        log(`pressed button at: ${touch.clientX}, ${touch.clientY}`);
+    });
+</script>
+
+</html>

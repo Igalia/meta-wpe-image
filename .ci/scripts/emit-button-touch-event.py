@@ -15,26 +15,26 @@ Simulate button left click at (start_x, start_y).
 When offset_x or offset_y are set, their value is added at the cursor position
 before release the button.
 """
-def button_left_click(device, start_x, start_y, offset_x=0, offset_y=0):
+def button_left_click(device, start_x, start_y, offset_x=0, offset_y=0, touch_delay=0):
+
     # Move to cursor to start position.
     device.emit(uinput.ABS_X, start_x, syn=False)
     device.emit(uinput.ABS_Y, start_y, syn=False)
     device.syn()
-    time.sleep(0.1)
 
-    # Press button.
-    device.emit(uinput.BTN_LEFT, 1)
-    time.sleep(0.1)
+    # Press touch.
+    device.emit(uinput.BTN_TOUCH, 1)
 
     # If offset is set, shift cursor offset pixels.
     if (offset_x > 0 or offset_y > 0):
         device.emit(uinput.ABS_X, start_x + offset_x, syn=False)
         device.emit(uinput.ABS_Y, start_y + offset_y, syn=False)
         device.syn()
-        time.sleep(0.1)
+
+    time.sleep(touch_delay)
 
     # Release button.
-    device.emit(uinput.BTN_LEFT, 0)
+    device.emit(uinput.BTN_TOUCH, 0)
 
 def main():
     parser = argparse.ArgumentParser(description="Simulate a button left click.")
@@ -46,6 +46,8 @@ def main():
                         help="Offset X position.")
     parser.add_argument("offset_y", type=int, nargs='?', default=0,
                         help="Offset Y position.")
+    parser.add_argument("--touch-delay", type=float, default=0,
+                        help="Delay between touch down and touch up.")
 
     args = parser.parse_args()
 
@@ -53,15 +55,13 @@ def main():
     device = uinput.Device([
         uinput.ABS_X + (0, DISPLAY_WIDTH, 0, 0),
         uinput.ABS_Y + (0, DISPLAY_HEIGHT, 0, 0),
-        uinput.BTN_LEFT,
-        uinput.REL_X,
-        uinput.REL_Y
+        uinput.BTN_TOUCH
     ])
 
     time.sleep(DEVICE_READY_TIMEOUT)
 
     button_left_click(device, args.start_x, args.start_y,
-                      args.offset_x, args.offset_y)
+                      args.offset_x, args.offset_y, args.touch_delay)
 
 
 if __name__ == "__main__":
