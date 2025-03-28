@@ -49,6 +49,8 @@ fi
 exec robot --name "WPE image tests" \
            --consolewidth 158 \
            --exclude skip \
+           --test "Configure Mockup Pages" \
+           --test "Test Check Browser Touch*" \
            --skiponfailure ignoreonfail \
            --listener RetryFailed:2 \
            "${TESTS[@]}"
