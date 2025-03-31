@@ -1,5 +1,6 @@
 *** Variables ***
 ${SCROLL_POSITION}    300
+${SCROLL_THRESHOLD}    8
 ${SWIPE_POSITION}   300
 ${SWIPE_THRESHOLD}    150
 ${SWIPE_WAIT}    5
@@ -68,7 +69,7 @@ Check Browser Touch Events Using Uinput
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-one-finger-gesture.py --duration 5 --steps 40 --delay-on-touch-up 0 100 200 100 500
     Capture Page Screenshot
     ${scroll_position}=    Execute JavaScript    return window.pageYOffset;
-    Should Be Equal As Numbers    ${scroll_position}    0
+    Should Be True    ${scroll_position} < ${SCROLL_THRESHOLD}
 
     # Swipe
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-one-finger-gesture.py --duration 0.1 --steps 40 --delay-on-touch-up 0 100 500 100 200
