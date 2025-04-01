@@ -25,6 +25,7 @@ scpi() {
 
 pushd "${BASEPATH}"
 scpi scripts
+scpi tests-baselines
 popd
 
 sshi "/usr/bin/kill-demo || true"
