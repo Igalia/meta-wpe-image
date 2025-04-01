@@ -10,12 +10,12 @@ DISPLAY_HEIGHT = 1080
 
 
 """
-Simulate button left click at (start_x, start_y).
+Simulate simple touch at (start_x, start_y).
 
 When offset_x or offset_y are set, their value is added at the cursor position
 before release the button.
 """
-def button_left_click(device, start_x, start_y, offset_x=0, offset_y=0, touch_delay=0):
+def do_touch(device, start_x, start_y, offset_x=0, offset_y=0, touch_delay=0):
 
     # Move to cursor to start position.
     device.emit(uinput.ABS_X, start_x, syn=False)
@@ -37,7 +37,7 @@ def button_left_click(device, start_x, start_y, offset_x=0, offset_y=0, touch_de
     device.emit(uinput.BTN_TOUCH, 0)
 
 def main():
-    parser = argparse.ArgumentParser(description="Simulate a button left click.")
+    parser = argparse.ArgumentParser(description="Simulate a simple touch.")
     parser.add_argument("start_x", type=int,
                         help="Starting X position.")
     parser.add_argument("start_y", type=int,
@@ -60,7 +60,7 @@ def main():
 
     time.sleep(DEVICE_READY_TIMEOUT)
 
-    button_left_click(device, args.start_x, args.start_y,
+    do_touch(device, args.start_x, args.start_y,
                       args.offset_x, args.offset_y, args.touch_delay)
 
 

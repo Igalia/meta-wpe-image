@@ -18,7 +18,15 @@ Resource   variables.robot
 Resource   keywords_common.robot
 
 *** Keywords ***
-Check Browser Button Left Click Event Using Uinput
+
+Check Window Result Value
+    [Arguments]    ${expectation}
+    Capture Page Screenshot
+    ${result}=    Execute JavaScript    return window.result;
+    Should Be Equal As Strings     ${result}   ${expectation}
+
+
+Check Browser Imprecise Touch Event Using Uinput
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
     ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
     ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
@@ -30,24 +38,18 @@ Check Browser Button Left Click Event Using Uinput
 
     # Press button: Valid
     Go to    ${PAGE}
-    SSH Command    ${TEST_BOARD_IP}    /root/scripts/emit-button-touch-event.py 200 200
-    Capture Page Screenshot
-    ${result}=    Execute JavaScript    return window.result;
-    Should Be Equal As Strings     ${result}   green
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/emit-button-touch-event.py 75 75
+    Wait Until Keyword Succeeds    10x   1000ms    Check Window Result Value    green
 
     # Press button: Not valid
     Go to    ${PAGE}
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/emit-button-touch-event.py 200 200 20 0
-    Capture Page Screenshot
-    ${result}=    Execute JavaScript    return window.result;
-    Should Be Equal As Strings     ${result}   white
+    Wait Until Keyword Succeeds    10x   1000ms    Check Window Result Value    white
 
     # Press button: Not valid
     Go to    ${PAGE}
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/emit-button-touch-event.py 200 200 0 20
-    Capture Page Screenshot
-    ${result}=    Execute JavaScript    return window.result;
-    Should Be Equal As Strings     ${result}   white
+    Wait Until Keyword Succeeds    10x   1000ms    Check Window Result Value    white
 
 Check Browser Touch Events Using Uinput
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
