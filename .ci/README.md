@@ -31,6 +31,21 @@ Once the environment is running, you can trigger the tests with the
 ```sh
 ./run-tests.sh
 ```
+
+By default, the `run-tests.sh` script runs all the Robot Framework tests inside
+`.ci/robot_framework/tests`. To filter which tests to run, pass the path to the
+test as argument. For example:
+
+```sh
+./run-tests.sh robot_framework/tests/tests_005_basics.robot
+```
+
+It's possible to pass more than one test:
+
+```sh
+./run-tests.sh robot_framework/tests/tests_005_basics.robot robot_framework/tests/tests_010_input_events.robot
+```
+
 ### Services Setup
 
 The `./podman-compose.sh up` command initializes the following services:

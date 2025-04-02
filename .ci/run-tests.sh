@@ -12,6 +12,7 @@ EOF
 # Check arguments
 force_recreate=false
 
+ARGS=""
 for arg in "$@"; do
     case $arg in
         --force-recreate)
@@ -21,10 +22,13 @@ for arg in "$@"; do
             show_help
             exit 0
             ;;
-        *)
+        --*)
             echo "Unknown option: $arg"
             show_help
             exit 1
+            ;;
+        *)
+            ARGS="$ARGS $arg"
             ;;
     esac
 done
@@ -35,6 +39,4 @@ if [ "$force_recreate" = true ]; then
 fi
 
 # Run the test script
-podman exec -ti ci_robot_1 ./robot_framework/run-robot.sh
-
-
+podman exec -ti ci_robot_1 ./robot_framework/run-robot.sh "$ARGS"
