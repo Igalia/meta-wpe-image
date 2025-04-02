@@ -1,0 +1,28 @@
+From f51d4f1f335e6cfa06549142d15e02bece9e6a90 Mon Sep 17 00:00:00 2001
+From: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+Date: Mon, 23 Sep 2024 17:06:31 -0300
+Subject: [PATCH] drm: try other planes that may support fences
+
+Do not skip all the planes if a single one of them do not support
+fences. The other may do.
+
+Signed-off-by: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+---
+ libweston/backend-drm/state-propose.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Upstream-Status: Backport [https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/1621]
+
+diff --git a/libweston/backend-drm/state-propose.c b/libweston/backend-drm/state-propose.c
+index 2b42e3d..74739ae 100644
+--- a/libweston/backend-drm/state-propose.c
++++ b/libweston/backend-drm/state-propose.c
+@@ -549,7 +549,7 @@ drm_output_find_plane_for_view(struct drm_output_state *state,
+ 		    plane->props[WDRM_PLANE_IN_FENCE_FD].prop_id == 0) {
+ 			drm_debug(b, "\t\t\t\t[%s] not placing view %p on %s: "
+ 			          "no in-fence support\n", p_name, ev, p_name);
+-			return NULL;
++			continue;
+ 		}
+ 
+ 		if (mode == DRM_OUTPUT_PROPOSE_STATE_MIXED) {

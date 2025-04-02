@@ -1,0 +1,32 @@
+From 2ece717ab5dfc20413d9332c4b917a18bc495c6f Mon Sep 17 00:00:00 2001
+From: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+Date: Tue, 24 Sep 2024 10:08:51 -0300
+Subject: [PATCH] drm: fix issue with enum being wrongly used
+
+FAILURE_REASONS_ADD_FB_FAILED is defined as (1 << 3), so when we are
+accumulating "failure reasons" in a variable we don't need to do the bit
+shift again.
+
+This results in an issue, because (1 << FAILURE_REASONS_ADD_FB_FAILED)
+results in (1 << (1 << 3)) == (1 << 8).
+
+Signed-off-by: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+---
+ libweston/backend-drm/fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Upstream-Status: Backport [https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/1621]
+
+diff --git a/libweston/backend-drm/fb.c b/libweston/backend-drm/fb.c
+index 8c200b8..09436e6 100644
+--- a/libweston/backend-drm/fb.c
++++ b/libweston/backend-drm/fb.c
+@@ -743,7 +743,7 @@ drm_fb_get_from_paint_node(struct drm_output_state *state,
+ 		fb = drm_fb_get_from_bo(bo, device, is_opaque, BUFFER_CLIENT);
+ 		if (!fb) {
+ 			pnode->try_view_on_plane_failure_reasons |=
+-				(1 << FAILURE_REASONS_ADD_FB_FAILED);
++				FAILURE_REASONS_ADD_FB_FAILED;
+ 			gbm_bo_destroy(bo);
+ 			goto unsuitable;
+ 		}
