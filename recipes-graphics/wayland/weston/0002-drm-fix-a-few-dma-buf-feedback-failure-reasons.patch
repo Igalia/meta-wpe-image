@@ -1,0 +1,76 @@
+From 707a38a8c2b29555f5a97891d0f10ac5868fbf18 Mon Sep 17 00:00:00 2001
+From: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+Date: Tue, 24 Sep 2024 10:08:05 -0300
+Subject: [PATCH] drm: fix a few dma-buf feedback failure reasons
+
+There are a few points in the code where we are wrongly using
+FAILURE_REASONS_ADD_FB_FAILED, probably because we didn't have so many
+"failure reasons" previously. This update such cases to use enum's that
+make sense.
+
+Signed-off-by: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+---
+ libweston/backend-drm/drm-internal.h  | 11 ++++++-----
+ libweston/backend-drm/state-propose.c |  8 ++++----
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+
+Upstream-Status: Backport [https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/1621]
+
+diff --git a/libweston/backend-drm/drm-internal.h b/libweston/backend-drm/drm-internal.h
+index 48bc243..8405e8a 100644
+--- a/libweston/backend-drm/drm-internal.h
++++ b/libweston/backend-drm/drm-internal.h
+@@ -282,11 +282,12 @@ enum try_view_on_plane_failure_reasons {
+ 	FAILURE_REASONS_INADEQUATE_CONTENT_PROTECTION = 1 << 6,
+ 	FAILURE_REASONS_INCOMPATIBLE_TRANSFORM = 1 << 7,
+ 	FAILURE_REASONS_NO_BUFFER = 1 << 8,
+-	FAILURE_REASONS_BUFFER_TYPE = 1 << 9,
+-	FAILURE_REASONS_GLOBAL_ALPHA = 1 << 10,
+-	FAILURE_REASONS_NO_GBM = 1 << 11,
+-	FAILURE_REASONS_GBM_BO_IMPORT_FAILED = 1 << 12,
+-	FAILURE_REASONS_GBM_BO_GET_HANDLE_FAILED = 1 << 13,
++	FAILURE_REASONS_BUFFER_TOO_BIG = 1 << 9,
++	FAILURE_REASONS_BUFFER_TYPE = 1 << 10,
++	FAILURE_REASONS_GLOBAL_ALPHA = 1 << 11,
++	FAILURE_REASONS_NO_GBM = 1 << 12,
++	FAILURE_REASONS_GBM_BO_IMPORT_FAILED = 1 << 13,
++	FAILURE_REASONS_GBM_BO_GET_HANDLE_FAILED = 1 << 14,
+ };
+ 
+ /**
+diff --git a/libweston/backend-drm/state-propose.c b/libweston/backend-drm/state-propose.c
+index 74739ae..30b287e 100644
+--- a/libweston/backend-drm/state-propose.c
++++ b/libweston/backend-drm/state-propose.c
+@@ -400,19 +400,19 @@ drm_output_find_plane_for_view(struct drm_output_state *state,
+ 	/* check view for valid buffer, doesn't make sense to even try */
+ 	if (!weston_view_has_valid_buffer(ev)) {
+ 		pnode->try_view_on_plane_failure_reasons |=
+-			FAILURE_REASONS_FB_FORMAT_INCOMPATIBLE;
++			FAILURE_REASONS_NO_BUFFER;
+ 		return NULL;
+ 	}
+ 
+ 	buffer = ev->surface->buffer_ref.buffer;
+ 	if (buffer->type == WESTON_BUFFER_SOLID) {
+ 		pnode->try_view_on_plane_failure_reasons |=
+-			FAILURE_REASONS_FB_FORMAT_INCOMPATIBLE;
++			FAILURE_REASONS_BUFFER_TYPE;
+ 		return NULL;
+ 	} else if (buffer->type == WESTON_BUFFER_SHM) {
+ 		if (!output->cursor_plane || device->cursors_are_broken) {
+ 			pnode->try_view_on_plane_failure_reasons |=
+-				FAILURE_REASONS_FB_FORMAT_INCOMPATIBLE;
++				FAILURE_REASONS_BUFFER_TYPE;
+ 			return NULL;
+ 		}
+ 
+@@ -433,7 +433,7 @@ drm_output_find_plane_for_view(struct drm_output_state *state,
+ 				     "(buffer (%dx%d) too large for cursor plane)\n",
+ 				     ev, buffer->width, buffer->height);
+ 			pnode->try_view_on_plane_failure_reasons |=
+-				FAILURE_REASONS_FB_FORMAT_INCOMPATIBLE;
++				FAILURE_REASONS_BUFFER_TOO_BIG;
+ 			return NULL;
+ 		}
+ 
