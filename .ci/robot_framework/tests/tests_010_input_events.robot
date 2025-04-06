@@ -1,7 +1,7 @@
 *** Settings ***
 Test Timeout    60 seconds
 
-Suite Setup       Webdriver Remote Start    --maximized
+Suite Setup       Wait Until Keyword Succeeds    20x   1000ms    Webdriver Remote Start Maximized
 Suite Teardown    Webdriver Remote Stop
 
 Library    Collections
