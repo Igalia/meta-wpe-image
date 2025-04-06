@@ -1,11 +1,11 @@
-*** Variables ***
-${BASELINE_IMAGES_PATH}    /app/robot_framework/images/
-
 *** Settings ***
 Library    Collections
 Library    DocTest.VisualTest
 Library    OperatingSystem
+Library    SeleniumLibrary
 Library    ../libs/TestUtils.py
+
+Resource   variables.robot
 
 *** Keywords ***
 Create WPEWebKitOptions
@@ -65,6 +65,23 @@ Webdriver Remote Start
 
     ${wpe_options} =    Create WPEWebKitOptions    wpe-simple-launcher    /usr/bin/wpe-exported-wayland    --automation    @{other_params}
     Create Webdriver    Remote    command_executor=${TEST_BOARD_IP}:${TEST_BOARD_WEBDRIVER_PORT}    options=${wpe_options}
+
+Webdriver Remote Start Maximized
+    [Arguments]    @{other_params}
+    [Timeout]      2 minutes
+
+    ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
+    ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
+    ${PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/home-page.html
+
+    Webdriver Remote Start    --maximized
+    Go to    ${PAGE}
+    Wait Until Page Contains    Home Page    timeout=10s
+
+    ${inner_width}=    Execute JavaScript    return window.innerWidth;
+    Should Be True    ${inner_width} == 1920
+    ${inner_height}=    Execute JavaScript    return window.innerHeight;
+    Should Be True    ${inner_height} == 1048
 
 Webdriver Remote Stop
     [Timeout]      2 minutes
