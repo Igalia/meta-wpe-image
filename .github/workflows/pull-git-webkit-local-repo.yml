@@ -8,6 +8,9 @@ on:
 jobs:
   update-git-webkit:
     runs-on: [self-hosted, builder]
+    strategy:
+      matrix:
+        runner: [builder, wk-contrib-gh-actions]
     steps:
       - name: Update local Git repo
         run: |
