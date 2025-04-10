@@ -24,3 +24,9 @@ Memory Stress Test
     ${stdout}=        SSH Command                               ${TEST_BOARD_IP}             /root/scripts/stress-test.py --report --filter memory
     ${data}=          Evaluate                                  json.loads('''${stdout}[0]''')  json
     Should Be True    ${data['actual']} >= ${data['expected']}
+
+2D Rendering Stress Test
+    ${TEST_BOARD_IP}  Get Environment Variable                  TEST_BOARD_IP
+    ${stdout}=        SSH Command                               ${TEST_BOARD_IP}                /root/scripts/stress-test.py --report --filter rendering
+    ${data}=          Evaluate                                  json.loads('''${stdout}[0]''')  json
+    Should Be True    ${data['actual']} >= ${data['expected']}
