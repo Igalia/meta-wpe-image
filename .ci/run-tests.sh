@@ -1,5 +1,10 @@
 #!/bin/sh
 
+fatal() {
+    echo "$@"
+    exit 1
+}
+
 show_help() {
     cat<<EOF
 Usage: $(basename "$0") [options]
@@ -8,6 +13,8 @@ Options:
   --help Show this help message
 EOF
 }
+
+TESTS_PATH="$(git rev-parse --show-toplevel)/.ci/robot_framework/tests/"
 
 # Check arguments
 force_recreate=false
@@ -28,6 +35,9 @@ for arg in "$@"; do
             exit 1
             ;;
         *)
+            if ! test -f "$arg" && ! test -f "$TESTS_PATH/$arg"; then
+                fatal "File not found: '$arg'"
+            fi
             ARGS="$ARGS $arg"
             ;;
     esac
