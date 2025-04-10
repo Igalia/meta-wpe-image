@@ -25,7 +25,7 @@ def run_stress_test(cmd):
     cmd = "%s --metrics-brief --yaml %s &>/dev/null" % (cmd, output)
     subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
 
-    if not os.path.exists(output):
+    if not os.path.exists(output) or os.stat(output).st_size == 0:
         return
 
     metrics = parse_yaml(output)
@@ -53,11 +53,13 @@ def parse_yaml(filename):
     return results
 
 def run_glmark2_es2_wayland():
+    WAYLAND_DISPLAY="/run/wayland-0"
     output = "/tmp/results.xml"
-    cmd = "glmark2-es2-wayland -b effect2d:duration=5.0 --results-file %s &>/dev/null" % output
+
+    cmd = f"WAYLAND_DISPLAY={WAYLAND_DISPLAY} glmark2-es2-wayland -b effect2d:duration=5.0 --results-file {output} &>/dev/null"
     subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
 
-    if not os.path.exists(output):
+    if not os.path.exists(output) or os.stat(output).st_size == 0:
         return
 
     with open(output, "r") as fd:
@@ -133,7 +135,7 @@ def get_platform():
         return "other"
 
 def dump(results):
-	print(json.dumps(results))
+    print(json.dumps(results))
 
 def main(argument_list):
     args = parse_args(argument_list)
