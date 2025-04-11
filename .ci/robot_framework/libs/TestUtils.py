@@ -15,6 +15,31 @@ class TestUtils:
     def __init__(self):
         self.driver = None
 
+    def get_machine_expectation(self, id, machine, wpeversion, type="text"):
+        # Define file paths to search in order
+        files = [
+                os.path.join("..", "..", "robot_framework", "expectations", wpeversion, f"{machine}.expectations"),
+                os.path.join("..", "..", "robot_framework", "expectations", f"{machine}.expectations"),
+                os.path.join("..", "..", "robot_framework", "expectations", wpeversion, "generic.expectations"),
+                os.path.join("..", "..", "robot_framework", "expectations", "generic.expectations")
+                ]
+
+        for f in files:
+            if os.path.exists(f):
+                with open(f, "r", encoding="utf-8") as fp:
+                    for line in fp:
+                        # Remove comments and whitespace then process line
+                        line = line.split("#", 1)[0].strip()
+                        if not line:
+                            continue
+                        # Each line should be in the format key:value
+                        if ":" in line:
+                            key, value = [x.strip() for x in line.split(":", 1)]
+                            if key == id:
+                                return value
+        # Return default if not found
+        return 0 if type == "number" else ""
+
     def print_envvar(starts_with=""):
         test_args_env_vars = {key: value for key, value in os.environ.items() if
                               key.startswith(starts_with)}

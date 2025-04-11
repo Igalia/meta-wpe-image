@@ -34,6 +34,8 @@ Capture Images Until Test Completion
 *** Test Cases ***
 Run MotionMark Benchmark And Validate Score
     [Documentation]    Loads MotionMark benchmark, runs it, waits for the score, and validates.
+    ${TEST_MACHINE}    Get Environment Variable    TEST_MACHINE
+    ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
 
     Go to    ${URL}
     Wait Until Page Contains Element    ${RUN_BENCHMARK_BUTTON}
@@ -45,5 +47,6 @@ Run MotionMark Benchmark And Validate Score
     Capture Page Screenshot
     ${score}=    Get Text    ${SCORE_SELECTOR}
     Log    MotionMark Score : ${score}
+    ${MOTIONMARK_MIN_SCORE}=    Get Machine Expectation    id=motionmark-min-score    machine=${TEST_MACHINE}    wpeversion=${TEST_WPEWEBKIT_VERSION}    type=number
     Should Be True    ${score} > ${MOTIONMARK_MIN_SCORE}
 
