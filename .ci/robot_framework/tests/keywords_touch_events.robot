@@ -1,10 +1,4 @@
 *** Variables ***
-${SCROLL_MAX_POSITION}    10000
-${SCROLL_POSITION}    745
-${SCROLL_THRESHOLD}    8
-${SWIPE_POSITION}   2650
-${SWIPE_THRESHOLD}    350
-
 ${BASELINE_IMAGES_PATH}    /app/robot_framework/images/
 ${PINCH_GESTURE_IMAGE}    pinch-gesture.png
 ${ZOOM_GESTURE_IMAGE}    zoom-gesture.png
@@ -58,12 +52,20 @@ Check Browser Imprecise Touch Event Using Uinput
     Wait Until Keyword Succeeds    10x   1000ms    Check Window Result Value    white
 
 Check Browser Touch Events Using Uinput
+    ${TEST_MACHINE}    Get Environment Variable    TEST_MACHINE
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
     ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
     ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
     ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     ${PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/vertical_scroll.html
     ${PAGE2}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/rbyers/paint.html
+
+    ${SCROLL_POSITION}=    Get Machine Expectation    id=scroll-position    machine=${TEST_MACHINE}    wpeversion=${TEST_WPEWEBKIT_VERSION}    type=number
+    ${SCROLL_MAX_POSITION}=    Get Machine Expectation    id=scroll-max-position    machine=${TEST_MACHINE}    wpeversion=${TEST_WPEWEBKIT_VERSION}    type=number
+    ${SCROLL_THRESHOLD}=    Get Machine Expectation    id=scroll-threshold    machine=${TEST_MACHINE}    wpeversion=${TEST_WPEWEBKIT_VERSION}    type=number
+
+    ${SWIPE_POSITION}=    Get Machine Expectation    id=swipe-position    machine=${TEST_MACHINE}    wpeversion=${TEST_WPEWEBKIT_VERSION}    type=number
+    ${SWIPE_THRESHOLD}=    Get Machine Expectation    id=swipe-threshold    machine=${TEST_MACHINE}    wpeversion=${TEST_WPEWEBKIT_VERSION}    type=number
 
     Go to    ${PAGE}
     Capture Page Screenshot
