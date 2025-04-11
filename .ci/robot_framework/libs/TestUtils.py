@@ -1,6 +1,7 @@
 import argparse
 import os
 import paramiko
+import re
 import subprocess
 import sys
 import time
@@ -14,6 +15,33 @@ class TestUtils:
 
     def __init__(self):
         self.driver = None
+
+    def get_machine_expectation(self, id, machine, wpeversion, type="text"):
+        # Define file paths to search in order
+        files = [
+            f"../../robot_framework/expectations/{wpeversion}/{machine}.expectations",
+            f"../../robot_framework/expectations/{machine}.expectations",
+            f"../../robot_framework/expectations/{wpeversion}/generic.expectations",
+            f"../../robot_framework/expectations/generic.expectations"
+        ]
+
+        for f in files:
+            if not os.path.exists(f):
+                continue
+            with open(f, "r", encoding="utf-8") as fp:
+                for line in fp:
+                    # Remove comments and whitespace then process line
+                    line = line.split("#", 1)[0].strip()
+                    if not line:
+                        continue
+                    # Each line should be in the format key:value
+                    m = re.match("^(.+?):(.+?)$", line)
+                    if m:
+                        key, value = m.group(1), m.group(2)
+                        if key == id:
+                            return value
+        # Return default if not found
+        return 0 if type == "number" else ""
 
     def print_envvar(starts_with=""):
         test_args_env_vars = {key: value for key, value in os.environ.items() if
