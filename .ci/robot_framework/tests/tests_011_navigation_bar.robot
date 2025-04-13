@@ -26,6 +26,7 @@ Configure Mockup Pages
     ${HOME_PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/home-page.html
     ${SEARCH_PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/search-page.html
 
+    SSH Command    ${TEST_BOARD_IP}    sed -i 's|ExecStart=/usr/bin/weston --modules=systemd-notify.so|ExecStart=/usr/bin/weston --continue-without-input --modules=systemd-notify.so --debug|' /lib/systemd/system/weston.service
     SSH Command    ${TEST_BOARD_IP}    sed -i 's|ExecStart=/usr/bin/weston --continue-without-input --modules=systemd-notify.so|ExecStart=/usr/bin/weston --continue-without-input --modules=systemd-notify.so --debug|' /lib/systemd/system/weston.service
     SSH Command    ${TEST_BOARD_IP}    sed -i 's|https://www.wpewebkit.org|${HOME_PAGE}|g' /usr/bin/demo-wpe-website
     SSH Command    ${TEST_BOARD_IP}    sed -i 's|https://duckduckgo.com/|${SEARCH_PAGE}|g' /usr/bin/demo-wpe-duckduckgo
