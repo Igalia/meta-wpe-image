@@ -30,20 +30,49 @@ then
     ../../prepare-board.sh
 fi
 
-# Set tests to run.
 TESTS_DIR="../../robot_framework/tests"
-TESTS=()
 
-ARGS=($@)
-for each in ${ARGS[@]}; do
-    testname="$TESTS_DIR/$(basename "$each")"
-    TESTS+=($testname)
-done
+# Select tests to run.
+tests() {
+    local ret=()
 
-# In case no test set, run all tests.
-if [[ ${#TESTS[@]} -eq 0 ]]; then
-    TESTS+=("$TESTS_DIR/tests_*.robot")
-fi
+    # Parse arguments.
+    ARGS=($@)
+    for each in ${ARGS[@]}; do
+        testname="$TESTS_DIR/$(basename "$each")"
+        ret+=($testname)
+    done
+
+    # In case no test set, run all tests.
+    if [[ ${#ret[@]} -eq 0 ]]; then
+        tests_default
+    else
+        echo "${ret[@]}"
+    fi
+}
+
+# Return all tests available.
+#
+# In the case of RPi3, skip 'motionmark' and 'canvas' tests.
+tests_default() {
+    local ret=()
+
+    while read testname; do
+        if isRPi3; then
+            if [[ "$testname" == *motionmark.robot || "$testname" == *canvas.robot ]]; then
+                continue
+            fi
+            ret+=($testname)
+        fi
+    done <<< $(find $TESTS_DIR -name "*.robot" -print)
+
+    echo "${ret[@]}"
+}
+
+# Check host is RPi3.
+isRPi3() {
+    [[ $(hostname) =~ raspberrypi3 ]]
+}
 
 # Run tests.
 exec robot --name "WPE image tests" \
@@ -51,4 +80,4 @@ exec robot --name "WPE image tests" \
            --exclude skip \
            --skiponfailure ignoreonfail \
            --listener RetryFailed:2 \
-           "${TESTS[@]}"
+           $(tests "$@")
