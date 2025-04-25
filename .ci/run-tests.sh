@@ -7,7 +7,7 @@ fatal() {
 
 show_help() {
     cat<<EOF
-Usage: $(basename "$0") [options]
+Usage: $(basename "$0") [options] [TESTNAME...]
 Options:
   --force-recreate Recreate and build containers before running tests
   --help Show this help message
