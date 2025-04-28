@@ -16,3 +16,5 @@ PACKAGECONFIG[sysprof] = "-DUSE_SYSTEM_SYSPROF_CAPTURE=ON, -DUSE_SYSTEM_SYSPROF_
 PACKAGECONFIG:append = " experimental-wpe-platform"
 PACKAGECONFIG:remove = "speech-synthesis"
 
+TOOLCHAIN:aarch64 = "clang"
+LIBCPLUSPLUS:aarch64 = "-stdlib=libc++"
