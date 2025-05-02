@@ -18,8 +18,7 @@
   <project remote="yocto" revision="scarthgap" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
   <project remote="yocto" revision="scarthgap" name="meta-virtualization" path="sources/meta-virtualization"/>
 
-  <!-- Branch: master; Date: 2025-04-22 -->
-  <project remote="github" revision="2fce2ac01c68697b74f29f3a4076e8e92d8e7e76" name="psaavedra/meta-clang.git" path="sources/meta-clang"/>
+  <project remote="github" revision="scarthgap" name="kraj/meta-clang.git" path="sources/meta-clang"/>
 
   <project remote="freescale" revision="scarthgap" name="meta-freescale" path="sources/meta-freescale"/>
   <project remote="freescale" revision="scarthgap" name="meta-freescale-3rdparty" path="sources/meta-freescale-3rdparty"/>
