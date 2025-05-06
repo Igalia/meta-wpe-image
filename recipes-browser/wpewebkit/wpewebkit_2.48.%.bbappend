@@ -6,7 +6,7 @@ SRCBRANCH:class-devupstream = "main"
 SRC_URI:class-devupstream = "git://github.com/WebKit/WebKit.git;protocol=https;branch=${SRCBRANCH} \
                              file://WPEPlatform-Disable-sync-observer-for-Wayland-screen.patch \
                              file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.50.patch "
-SRCREV:class-devupstream = "347de29970599c886ec99b6a825eaf5bfacc92ac"
+SRCREV:class-devupstream = "6e3d7a52dc5f675749756551e68b203517ee930c"
 # SRCREV:class-devupstream = "${AUTOREV}"
 
 PV:class-devupstream = "trunk"
