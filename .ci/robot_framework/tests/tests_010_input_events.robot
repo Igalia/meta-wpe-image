@@ -18,6 +18,5 @@ Test Check Browser Imprecise Touch Event Using Uinput
     Check Browser Imprecise Touch Event Using Uinput
 
 Test Check Browser Touch Events Using Uinput
-    [Tags]    ignoreonfail
     Check Browser Touch Events Using Uinput
 
