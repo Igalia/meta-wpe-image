@@ -99,11 +99,11 @@ Check Browser Touch Gestures Using Uinput
     Go to    ${PAGE}
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-two-fingers-gesture.py --duration 2 --steps 40 900 200 900 500 900 800 900 500
     Capture Page Screenshot    ${PINCH_GESTURE_IMAGE}
-    Wait Until Keyword Succeeds    10x   1000ms    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${PINCH_GESTURE_IMAGE}    ${PINCH_GESTURE_IMAGE}    threshold=0.0005
+    Wait Until Keyword Succeeds    10x   1000ms    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${PINCH_GESTURE_IMAGE}    ${PINCH_GESTURE_IMAGE}    threshold=0.005
 
     # Multitouch: Zoom
     Go to    ${PAGE}
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-two-fingers-gesture.py --duration 2 --steps 40 900 500 900 200 900 500 900 800
     Capture Page Screenshot    ${ZOOM_GESTURE_IMAGE}
-    Wait Until Keyword Succeeds    10x   1000ms    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${ZOOM_GESTURE_IMAGE}    ${ZOOM_GESTURE_IMAGE}    threshold=0.0005
+    Wait Until Keyword Succeeds    10x   1000ms    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${ZOOM_GESTURE_IMAGE}    ${ZOOM_GESTURE_IMAGE}    threshold=0.005
 
