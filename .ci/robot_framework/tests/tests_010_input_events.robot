@@ -17,6 +17,9 @@ Resource   keywords_touch_events.robot
 Test Check Browser Imprecise Touch Event Using Uinput
     Check Browser Imprecise Touch Event Using Uinput
 
-Test Check Browser Touch Events Using Uinput
-    Check Browser Touch Events Using Uinput
+Test Check Browser Touch Scroll Using Uinput
+    Check Browser Touch Scroll Using Uinput
+
+Test Check Browser Touch Gestures Using Uinput
+    Check Browser Touch Gestures Using Uinput
 
