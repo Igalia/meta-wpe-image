@@ -18,6 +18,7 @@ jobs:
         wpe_vers: ['2_48']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
+    environment: Build Env
     needs: scarthgap-repo
     steps:
       - uses: actions/checkout@v3
