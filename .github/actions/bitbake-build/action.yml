@@ -77,6 +77,9 @@ runs:
             fi
         done
         ${{ inputs.bitbake_prefix }} bitbake ${{ inputs.bitbake_target }}
+        TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
+        GITHUB_PR_SHA=${GITHUB_SHA}
+        echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ~/ci-message-${TIMESTAMP}-${{ inputs.bitbake_buildname }}.txt
     - name: Artifacts
       if: always()
       shell: bash
@@ -89,8 +92,14 @@ runs:
             s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs-dbg.tar.bz2 \
             s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.dbg.tar.bz2
+    - name: Comment on the pull request
+      uses: mshick/add-pr-comment@v2
+      with:
+        message-id: ${{ inputs.bitbake_buildname }}-${{ steps.timestamp.outputs.timestamp }}
+        message-path: |
+             ~/ci-message-${{ steps.timestamp.outputs.timestamp }}-${{ inputs.bitbake_buildname }}.txt
     - name: Clean the tmp dir
       if: always()
       shell: bash
       run:  |
-        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp
+        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp ~/ci-message-${{ steps.timestamp.outputs.timestamp }}-${{ inputs.bitbake_buildname }}.txt
