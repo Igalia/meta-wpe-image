@@ -1,0 +1,34 @@
+From 1ba7e949eccea54e663b9ff446ee9a5f127b52f4 Mon Sep 17 00:00:00 2001
+From: Pablo Saavedra <psaavedra@igalia.com>
+Date: Wed, 9 Jul 2025 11:53:12 +0200
+Subject: =?UTF-8?q?[WPEPlatform]=20Disable=20sync=20observer=20for=20Wayla?=
+ =?UTF-8?q?nd=20screen=20with=20LIBDRM=0ANeed=20the=20bug=20URL=20(OOPS!).?=
+
+Reviewed by NOBODY (OOPS!).
+
+Modify WPEScreenWayland.cpp to conditionally disable get_sync_observer
+
+* Source/WebKit/WPEPlatform/wpe/wayland/WPEScreenWayland.cpp:
+(wpe_screen_wayland_class_init):
+
+Pending
+---
+ Source/WebKit/WPEPlatform/wpe/wayland/WPEScreenWayland.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebKit/WPEPlatform/wpe/wayland/WPEScreenWayland.cpp b/Source/WebKit/WPEPlatform/wpe/wayland/WPEScreenWayland.cpp
+index 6c474e9915fb..d8f0711dc6ca 100644
+--- a/Source/WebKit/WPEPlatform/wpe/wayland/WPEScreenWayland.cpp
++++ b/Source/WebKit/WPEPlatform/wpe/wayland/WPEScreenWayland.cpp
+@@ -161,7 +161,7 @@ static void wpe_screen_wayland_class_init(WPEScreenWaylandClass* screenWaylandCl
+ 
+     WPEScreenClass* screenClass = WPE_SCREEN_CLASS(screenWaylandClass);
+     screenClass->invalidate = wpeScreenWaylandInvalidate;
+-#if USE(LIBDRM)
++#if USE(LIBDRM) && 0
+     screenClass->get_sync_observer = wpeScreenWaylandGetSyncObserver;
+ #endif
+ }
+-- 
+2.43.0
+
