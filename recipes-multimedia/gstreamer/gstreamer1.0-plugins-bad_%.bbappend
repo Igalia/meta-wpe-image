@@ -1,1 +1,1 @@
-PACKAGECONFIG += "sctp dtls webrtc"
+PACKAGECONFIG += "srtp sctp dtls webrtc"
