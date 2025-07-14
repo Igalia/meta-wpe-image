@@ -1,4 +1,3 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-PACKAGECONFIG:append = " experimental-features minibrowser webrtc"
-
+PACKAGECONFIG:append = " experimental-features minibrowser webrtc libwebrtc"
