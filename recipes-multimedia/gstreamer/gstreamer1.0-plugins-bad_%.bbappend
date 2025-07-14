@@ -1,1 +1,1 @@
-PACKAGECONFIG += "dtls webrtc"
+PACKAGECONFIG += "webrtc"
