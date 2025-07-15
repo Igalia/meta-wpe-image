@@ -80,6 +80,11 @@ runs:
         TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
         GITHUB_PR_SHA=${GITHUB_SHA}
         echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ~/ci-message-${TIMESTAMP}-${{ inputs.bitbake_buildname }}.txt
+        eval $(bitbake -e wpewebkit | grep -E "^B=")
+        echo "${B}/CMakeCache.txt"
+        eval $(bitbake -e wpewebkit | grep -E "^T=")
+        echo "${T}/log.do_configure"
+        echo "${T}/log.do_compile"
     - name: Artifacts
       if: always()
       shell: bash
