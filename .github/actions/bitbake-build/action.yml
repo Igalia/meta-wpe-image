@@ -81,10 +81,11 @@ runs:
         GITHUB_PR_SHA=${GITHUB_SHA}
         echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ~/ci-message-${TIMESTAMP}-${{ inputs.bitbake_buildname }}.txt
         eval $(bitbake -e wpewebkit | grep -E "^B=")
-        cat "${B}/CMakeCache.txt"
+        [[ -d "${B}" ]] && ls "${B}/"
+        [[ -f "${B}/CMakeCache.txt" ]] && cat "${B}/CMakeCache.txt"
         eval $(bitbake -e wpewebkit | grep -E "^T=")
-        cat "${T}/log.do_configure"
-        cat "${T}/log.do_compile"
+        [[ -f "${T}/log.do_configure" ]] && cat "${T}/log.do_configure"
+        [[ -f "${T}/log.do_compile" ]] && cat "${T}/log.do_compile"
     - name: Artifacts
       if: always()
       shell: bash
