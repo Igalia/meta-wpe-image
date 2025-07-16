@@ -1,0 +1,24 @@
+From 1d4ded00eb3ddd197752e07bb3c8b86bba8d1501 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez-Calvar <calvaris@igalia.com>
+Date: Wed, 16 Jul 2025 10:58:07 +0200
+Subject: [PATCH] webrtc: enable libwebrtc
+
+---
+ Source/cmake/GStreamerDefinitions.cmake | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/cmake/GStreamerDefinitions.cmake b/Source/cmake/GStreamerDefinitions.cmake
+index a508f4955d85..66986dc72ec8 100644
+--- a/Source/cmake/GStreamerDefinitions.cmake
++++ b/Source/cmake/GStreamerDefinitions.cmake
+@@ -7,5 +7,6 @@ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer G
+ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_MPEGTS "Whether to enable support for MPEG-TS" PRIVATE OFF)
+ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_FULL "Whether to enable support for static GStreamer builds" PRIVATE OFF)
+ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_TRANSCODER "Whether to enable support for GStreamer MediaRecorder backend" PUBLIC ON)
+-WEBKIT_OPTION_DEFINE(USE_GSTREAMER_WEBRTC "Whether to enable support for WebRTC" PUBLIC ON)
++WEBKIT_OPTION_DEFINE(USE_GSTREAMER_WEBRTC "Whether to enable support for GstWebRTC" PUBLIC OFF)
++WEBKIT_OPTION_DEFINE(USE_LIBWEBRTC "Whether to enable support for LibWebRTC" PUBLIC ON)
+ WEBKIT_OPTION_DEFINE(ENABLE_MEDIA_TELEMETRY "Whether to enable support for media telemetry" PRIVATE OFF)
+-- 
+2.47.2
+
