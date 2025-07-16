@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi5']
-        wpe_vers: ['2_48']
+        wpe_vers: ['nightly']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
     environment: Build Env
@@ -43,7 +43,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi4-64-mesa']
-        wpe_vers: ['2_48']
+        wpe_vers: ['nightly']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
     if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request'"
