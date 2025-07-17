@@ -15,7 +15,7 @@ jobs:
       - name: Update local Git repo
         run: |
           cd ~/git/WebKit
-          git fetch --all
+          git reset --hard && git clean -fd && git fetch --all
           git checkout webkitglib/2.48
           git pull
           git checkout main
