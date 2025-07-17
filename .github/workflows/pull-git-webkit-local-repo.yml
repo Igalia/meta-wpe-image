@@ -16,7 +16,8 @@ jobs:
         run: |
           cd ~/git/WebKit
           git fetch --all
+          git checkout webkitglib/2.48
+          git pull
           git checkout main
           git pull
           echo "::notice:: $(git log --pretty=format:'%H %s' -1)"
-
