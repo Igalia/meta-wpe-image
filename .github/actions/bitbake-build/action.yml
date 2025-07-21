@@ -80,10 +80,10 @@ runs:
         TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
         GITHUB_PR_SHA=${GITHUB_SHA}
         echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ~/ci-message-${TIMESTAMP}-${{ inputs.bitbake_buildname }}.txt
-        bitbake -e wpewebkit
-        eval $(bitbake -e wpewebkit | grep -E "^B=")
+        # bitbake -e wpewebkit
+        eval $(bitbake -e wpewebkit | grep -E "WORKDIR=")
         [[ -d "${B}" ]] && ls "${B}/"
-        [[ -f "${B}/CMakeCache.txt" ]] && cat "${B}/CMakeCache.txt"
+        [[ -f "${B}/CMakeCache.txt" ]] && cat "${B}/build/CMakeCache.txt"
         eval $(bitbake -e wpewebkit | grep -E "^T=")
         [[ -f "${T}/log.do_configure" ]] && cat "${T}/log.do_configure"
         [[ -f "${T}/log.do_compile" ]] && cat "${T}/log.do_compile"
