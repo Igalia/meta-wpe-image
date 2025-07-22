@@ -81,12 +81,16 @@ runs:
         GITHUB_PR_SHA=${GITHUB_SHA}
         echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ~/ci-message-${TIMESTAMP}-${{ inputs.bitbake_buildname }}.txt
         # bitbake -e wpewebkit
+        set -x
         eval $(bitbake -e wpewebkit | grep -E "^B=")
         echo $B
         eval $(bitbake -e wpewebkit | grep -E "^WORKDIR=")
         echo $WORKDIR
-        [[ -d "${WORKDIR}" ]] && ls "${WORKDIR}/"
+        echo "one"
+        [[ -d "${WORKDIR}" ]] && tree "${WORKDIR}/"
+        echo "two"
         [[ -f "${WORKDIR}/build/CMakeCache.txt" ]] && cat "${WORKDIR}/build/CMakeCache.txt"
+        echo "three"
         [[ -f "${WORKDIR}/build/CMakeCache.txt" ]] && cp "${WORKDIR}/build/CMakeCache.txt" /tmp/
         eval $(bitbake -e wpewebkit | grep -E "^T=")
         [[ -f "${T}/log.do_configure" ]] && cat "${T}/log.do_configure"
