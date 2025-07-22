@@ -1,0 +1,27 @@
+From 1b77d079a8bf904c2bf2ec2a0ef056233fcc95de Mon Sep 17 00:00:00 2001
+From: Diego Pino Garcia <dpino@igalia.com>
+Date: Tue, 22 Jul 2025 09:24:45 +0000
+Subject: REGRESSION(296498@main): Do not create vblank monitor if display
+ is 0
+
+---
+ Source/WebKit/UIProcess/glib/DisplayLinkGLib.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/WebKit/UIProcess/glib/DisplayLinkGLib.cpp b/Source/WebKit/UIProcess/glib/DisplayLinkGLib.cpp
+index 86a764e788b8..2aa756d5d24c 100644
+--- a/Source/WebKit/UIProcess/glib/DisplayLinkGLib.cpp
++++ b/Source/WebKit/UIProcess/glib/DisplayLinkGLib.cpp
+@@ -33,6 +33,8 @@ using namespace WebCore;
+ void DisplayLink::platformInitialize()
+ {
+     // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case DisplayVBlankMonitor defaults to the main screen.
++    if (!m_displayID)
++        return;
+     m_vblankMonitor = DisplayVBlankMonitor::create(m_displayID);
+     m_vblankMonitor->setHandler([this] {
+         notifyObserversDisplayDidRefresh();
+-- 
+2.39.5
+
+
