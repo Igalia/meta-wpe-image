@@ -15,6 +15,7 @@ jobs:
       - name: Update local Git repo
         run: |
           cd ~/git/WebKit
+          rm -rf .git/refs/remotes/origin/main.lock
           git reset --hard && git clean -fd && git fetch --all
           git checkout webkitglib/2.48
           git pull
