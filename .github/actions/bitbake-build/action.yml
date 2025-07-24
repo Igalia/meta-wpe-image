@@ -76,7 +76,27 @@ runs:
                 echo "Max retries reached. Some sources may still be missing."
             fi
         done
+        eval $(bitbake -e wpewebkit | grep -E "^B=")
+        echo $B
+        eval $(bitbake -e wpewebkit | grep -E "^WORKDIR=")
+        echo $WORKDIR
+        echo "one"
+        eval $(bitbake -e wpewebkit | grep -E "^T=")
+ 
         ${{ inputs.bitbake_prefix }} bitbake ${{ inputs.bitbake_target }}
+        TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
+        GITHUB_PR_SHA=${GITHUB_SHA}
+        echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ~/ci-message-${TIMESTAMP}-${{ inputs.bitbake_buildname }}.txt
+
+        set -x
+        echo "two"
+        [[ -f "${WORKDIR}/build/CMakeCache.txt" ]] && cat "${WORKDIR}/build/CMakeCache.txt"
+        [[ -f "${WORKDIR}/build/cmakeconfig.h" ]] && cat "${WORKDIR}/build/cmakeconfig.h"
+        echo "three"
+        [[ -f "${WORKDIR}/build/CMakeCache.txt" ]] && cp "${WORKDIR}/build/CMakeCache.txt" /tmp/
+        [[ -f "${WORKDIR}/build/cmakeconfig.h" ]] && cp "${WORKDIR}/build/cmakeconfig.h" /tmp/
+        [[ -f "${T}/log.do_configure" ]] && cat "${T}/log.do_configure"
+        [[ -f "${T}/log.do_compile" ]] && cat "${T}/log.do_compile"
     - name: Artifacts
       if: always()
       shell: bash
@@ -89,8 +109,14 @@ runs:
             s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs-dbg.tar.bz2 \
             s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.dbg.tar.bz2
+    - name: Comment on the pull request
+      uses: mshick/add-pr-comment@v2
+      with:
+        message-id: ${{ inputs.bitbake_buildname }}-${{ steps.timestamp.outputs.timestamp }}
+        message-path: |
+             ~/ci-message-${{ steps.timestamp.outputs.timestamp }}-${{ inputs.bitbake_buildname }}.txt
     - name: Clean the tmp dir
       if: always()
       shell: bash
       run:  |
-        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp
+        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp ~/ci-message-${{ steps.timestamp.outputs.timestamp }}-${{ inputs.bitbake_buildname }}.txt
