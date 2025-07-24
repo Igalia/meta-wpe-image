@@ -19,4 +19,4 @@ PACKAGECONFIG:remove = "speech-synthesis"
 TOOLCHAIN:aarch64 = "clang"
 LIBCPLUSPLUS:aarch64 = "-stdlib=libc++"
 
-EXTRA_OECMAKE += " -DFANECAS=OFF "
+EXTRA_OECMAKE += " -DFANECAS2=OFF "
