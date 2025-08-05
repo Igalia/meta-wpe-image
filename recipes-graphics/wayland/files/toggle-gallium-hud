@@ -1,3 +1,2 @@
-#! /bin/bash
-/usr/bin/pkill --signal 10 -f "WPEWebProcess"
-
+#!/bin/bash
+pkill --signal 35 -f "weston"
