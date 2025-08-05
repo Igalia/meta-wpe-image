@@ -1,4 +1,3 @@
 #!/bin/bash
 /usr/bin/kill-demo
-export WEBKIT_SHOW_FPS=0 GALLIUM_HUD_TOGGLE_SIGNAL=10 GALLIUM_HUD_VISIBLE=0 GALLIUM_HUD=cpu+fps
 /usr/bin/wpe-exported-wayland --maximized https://duckduckgo.com/
