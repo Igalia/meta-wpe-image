@@ -45,7 +45,7 @@ Run MotionMark Benchmark And Validate Score
 
     Wait Until Page Contains Element    ${TEST_AGAIN_BUTTON}    timeout=600s
     Capture Page Screenshot
-    ${score}=    Get Text    ${SCORE_SELECTOR}
+    ${score}=    SeleniumLibrary.Get Text    ${SCORE_SELECTOR}
     Log    MotionMark Score : ${score}
     ${MOTIONMARK_MIN_SCORE}=    Get Machine Expectation    id=motionmark-min-score    machine=${TEST_MACHINE}    wpeversion=${TEST_WPEWEBKIT_VERSION}    type=number
     Should Be True    ${score} > ${MOTIONMARK_MIN_SCORE}

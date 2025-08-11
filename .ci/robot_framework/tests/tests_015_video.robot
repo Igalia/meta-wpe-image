@@ -12,7 +12,7 @@ Resource   keywords_common.robot
 
 *** Keywords ***
 Get FPS Value
-    ${fps_text}=    Get Text    id=fps
+    ${fps_text}=    SeleniumLibrary.Get Text    id=fps
     ${fps}=    Convert To Number    ${fps_text.split(":")[1].strip()}
     RETURN    ${fps}
 

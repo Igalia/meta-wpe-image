@@ -12,17 +12,17 @@ Resource   keywords_common.robot
 
 *** Keywords ***
 Get FPS Value
-    ${fps_text}=    Get Text    id=fps
+    ${fps_text}=    SeleniumLibrary.Get Text    id=fps
     ${fps}=    Convert To Number    ${fps_text.split(":")[1].strip()}
     RETURN    ${fps}
 
 Get Average Value
-    ${average_text}=    Get Text    id=average
+    ${average_text}=    SeleniumLibrary.Get Text    id=average
     ${average}=    Convert To Number    ${average_text.split(":")[1].strip()}
     RETURN    ${average}
 
 Get Std Deviation Value
-    ${std_deviation_text}=    Get Text    id=std-deviation
+    ${std_deviation_text}=    SeleniumLibrary.Get Text    id=std-deviation
     ${std_deviation}=    Convert To Number    ${std_deviation_text.split(":")[1].strip()}
     RETURN    ${std_deviation}
 
