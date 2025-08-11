@@ -1,0 +1,72 @@
+From b4c70248f27537a73857d71998bb86ac07f3d455 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez-Calvar <calvaris@igalia.com>
+Date: Wed, 16 Jul 2025 10:58:07 +0200
+Subject: [PATCH] webrtc: enable libwebrtc
+
+---
+ Source/cmake/GStreamerChecks.cmake      | 15 +--------------
+ Source/cmake/GStreamerDefinitions.cmake |  5 ++++-
+ Source/cmake/OptionsWPE.cmake           |  2 +-
+ 3 files changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/Source/cmake/GStreamerChecks.cmake b/Source/cmake/GStreamerChecks.cmake
+index 47222f94153d..fc65ed990709 100644
+--- a/Source/cmake/GStreamerChecks.cmake
++++ b/Source/cmake/GStreamerChecks.cmake
+@@ -57,20 +57,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO OR ENABLE_WEB_CODECS)
+       endif ()
+ endif ()
+ 
+-if (ENABLE_MEDIA_STREAM AND ENABLE_WEB_RTC)
+-    if (USE_GSTREAMER_WEBRTC)
+-        SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC FALSE)
+-        # OpenSSL is required for SFrame encryption support.
+-        find_package(OpenSSL)
+-        if (NOT OPENSSL_FOUND OR OPENSSL_VERSION VERSION_LESS "3.0.0")
+-            message(FATAL_ERROR "OpenSSL 3 is needed for ENABLE_WEB_RTC.")
+-        endif ()
+-    else ()
+-        SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC TRUE)
+-    endif ()
+-else ()
+-    SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC FALSE)
+-endif ()
++SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC TRUE)
+ 
+ if (NOT ENABLE_WPE_PLATFORM)
+   SET_AND_EXPOSE_TO_BUILD(ENABLE_MEDIA_TELEMETRY OFF)
+diff --git a/Source/cmake/GStreamerDefinitions.cmake b/Source/cmake/GStreamerDefinitions.cmake
+index a508f4955d85..268ce7ebaf78 100644
+--- a/Source/cmake/GStreamerDefinitions.cmake
++++ b/Source/cmake/GStreamerDefinitions.cmake
+@@ -2,10 +2,13 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO PUBLIC ON)
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_AUDIO PUBLIC ON)
+ 
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SOURCE PRIVATE ON)
++WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_STREAM PUBLIC ON)
++WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PUBLIC ON)
+ 
+ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer GL" PRIVATE ON)
+ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_MPEGTS "Whether to enable support for MPEG-TS" PRIVATE OFF)
+ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_FULL "Whether to enable support for static GStreamer builds" PRIVATE OFF)
+ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_TRANSCODER "Whether to enable support for GStreamer MediaRecorder backend" PUBLIC ON)
+-WEBKIT_OPTION_DEFINE(USE_GSTREAMER_WEBRTC "Whether to enable support for WebRTC" PUBLIC ON)
++WEBKIT_OPTION_DEFINE(USE_GSTREAMER_WEBRTC "Whether to enable support for GstWebRTC" PUBLIC OFF)
++WEBKIT_OPTION_DEFINE(USE_LIB_WEBRTC "Whether to enable support for LibWebRTC" PUBLIC ON)
+ WEBKIT_OPTION_DEFINE(ENABLE_MEDIA_TELEMETRY "Whether to enable support for media telemetry" PRIVATE OFF)
+diff --git a/Source/cmake/OptionsWPE.cmake b/Source/cmake/OptionsWPE.cmake
+index d04d2c2504b8..cd05fcd49f27 100644
+--- a/Source/cmake/OptionsWPE.cmake
++++ b/Source/cmake/OptionsWPE.cmake
+@@ -71,7 +71,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_THUNDER PRIVATE ${ENABLE_DEVELOPER_MODE}
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_EVENTS PRIVATE ON)
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VARIATION_FONTS PRIVATE ON)
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_CODECS PRIVATE ON)
+-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
++WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PUBLIC ON)
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_BIDI PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+ 
+-- 
+2.47.2
+
