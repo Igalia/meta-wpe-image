@@ -9,6 +9,7 @@
   <remote fetch="https://github.com/Igalia" name="igalia"/>
   <remote fetch="https://gitlab.com" name="gitlab"/>
   <remote fetch="http://code.qt.io/yocto" name="qt"/>
+  <remote fetch="https://git.toradex.com" name="tdx"/>
 
   <project remote="oe" revision="scarthgap" name="meta-openembedded" path="sources/meta-openembedded"/>
   <!-- revision: scarthgap date: 2025-06-13-->
@@ -17,6 +18,13 @@
 
   <project remote="yocto" revision="scarthgap" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
   <project remote="yocto" revision="scarthgap" name="meta-virtualization" path="sources/meta-virtualization"/>
+
+  <project remote="yocto" revision="a8fe9d22eaefc294f91096c6a32663e2f4ab3b10" name="meta-arm" path="sources/meta-arm" upstream="scarthgap"/>
+  <project remote="yocto" revision="b8aaaebbabb96e57d06048c7efe7fabdb067028d" name="meta-ti" path="sources/meta-ti" upstream="scarthgap"/>
+
+  <project remote="tdx" revision="9fefcf9e0f64a0eeb3a2614c25f6676fc5dae0e5" name="meta-toradex-nxp.git" path="sources/meta-toradex-nxp" upstream="scarthgap-7.x.y"/>
+  <project remote="tdx" revision="a3d027526e97baa2031e145078f4691b46f39118" name="meta-toradex-ti.git" path="sources/meta-toradex-ti" upstream="scarthgap-7.x.y"/>
+  <project remote="tdx" revision="3184fa3819294f59ad51e8f4c996d0a32187de65" name="meta-toradex-bsp-common.git" path="sources/meta-toradex-bsp-common" upstream="scarthgap-7.x.y"/>
 
   <project remote="github" revision="scarthgap" name="kraj/meta-clang.git" path="sources/meta-clang"/>
 

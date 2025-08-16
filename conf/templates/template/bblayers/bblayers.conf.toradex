@@ -1,0 +1,42 @@
+BBLAYERS_NXP ?= " \
+  ${BSPDIR}/sources/meta-toradex-nxp \
+  ${BSPDIR}/sources/meta-freescale \
+  ${BSPDIR}/sources/meta-freescale-3rdparty \
+"
+
+BBLAYERS_TI ?= " \
+  ${BSPDIR}/sources/meta-toradex-ti \
+  ${BSPDIR}/sources/meta-arm/meta-arm-toolchain \
+  ${BSPDIR}/sources/meta-arm/meta-arm \
+  ${BSPDIR}/sources/meta-ti/meta-ti-bsp \
+  ${BSPDIR}/sources/meta-ti/meta-ti-extras \
+"
+
+BBLAYERS = " \
+  ${BBLAYERS_NXP} \
+  ${BBLAYERS_TI} \
+  \
+  ${BSPDIR}/sources/meta-toradex-bsp-common \
+  \
+  ${BSPDIR}/sources/poky/meta \
+  ${BSPDIR}/sources/poky/meta-poky \
+  \
+  ${BSPDIR}/sources/meta-openembedded/meta-oe \
+  ${BSPDIR}/sources/meta-openembedded/meta-gnome \
+  ${BSPDIR}/sources/meta-openembedded/meta-multimedia \
+  ${BSPDIR}/sources/meta-openembedded/meta-perl \
+  ${BSPDIR}/sources/meta-openembedded/meta-python \
+  ${BSPDIR}/sources/meta-openembedded/meta-networking \
+  ${BSPDIR}/sources/meta-openembedded/meta-filesystems \
+  ${BSPDIR}/sources/meta-openembedded/meta-webserver \
+  \
+  ${BSPDIR}/sources/meta-clang \
+  ${BSPDIR}/sources/meta-virtualization \
+  \
+  ${BSPDIR}/sources/meta-freescale-distro \
+  ${BSPDIR}/sources/meta-security/meta-tpm \
+  \
+  ${BSPDIR}/sources/meta-webkit \
+  ${BSPDIR}/sources/meta-wpe-image \
+"
+
