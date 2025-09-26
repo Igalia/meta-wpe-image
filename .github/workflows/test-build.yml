@@ -32,10 +32,13 @@ jobs:
           secret_key: ${S3_SECRET_KEY}
           host_base: ${S3_HOST_BASE}
       - uses: ./.github/actions/bitbake-build
+        env:
+          S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           bitbake_source: 'poky-wayland layers.raspberrypi conf.wpe-${{ matrix.wpe_vers }} --update-config'
+          s3_storage: ${S3_STORAGE}
           repo_release: ${{ matrix.yocto_rel }}
 
   test-raspberrypi5-stable:
@@ -63,10 +66,12 @@ jobs:
       - uses: ./.github/actions/podman-robot
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
+          S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           github_token: ${GITHUB_TOKEN}
+          s3_storage: ${S3_STORAGE}
           wpe_vers: ${{ matrix.wpe_vers }}
 
   build-raspberrypi-rest-stable:
@@ -91,10 +96,13 @@ jobs:
           secret_key: ${S3_SECRET_KEY}
           host_base: ${S3_HOST_BASE}
       - uses: ./.github/actions/bitbake-build
+        env:
+          S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           bitbake_source: 'poky-wayland layers.raspberrypi conf.wpe-${{ matrix.wpe_vers }} --update-config'
+          s3_storage: ${S3_STORAGE}
           repo_release: ${{ matrix.yocto_rel }}
 
   test-raspberrypi-rest-stable:
@@ -122,10 +130,12 @@ jobs:
       - uses: ./.github/actions/podman-robot
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
+          S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           github_token: ${GITHUB_TOKEN}
+          s3_storage: ${S3_STORAGE}
           wpe_vers: ${{ matrix.wpe_vers }}
 
   build-freescale-stable:
@@ -151,10 +161,13 @@ jobs:
           secret_key: ${S3_SECRET_KEY}
           host_base: ${S3_HOST_BASE}
       - uses: ./.github/actions/bitbake-build
+        env:
+          S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           bitbake_source: 'poky-wayland layers.freescale conf.wpe-${{ matrix.wpe_vers }} --update-config'
+          s3_storage: ${S3_STORAGE}
           repo_release: ${{ matrix.yocto_rel }}
 
   test-freescale-stable:
@@ -182,8 +195,10 @@ jobs:
       - uses: ./.github/actions/podman-robot
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
+          S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           github_token: ${GITHUB_TOKEN}
+          s3_storage: ${S3_STORAGE}
           wpe_vers: ${{ matrix.wpe_vers }}

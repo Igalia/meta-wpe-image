@@ -13,6 +13,8 @@ inputs:
     required: true
   repo_release:
     default: 'scarthgap'
+  s3_storage:
+    required: true
   wpe_vers:
     required: true
 runs:
@@ -53,8 +55,8 @@ runs:
       shell: bash
       run:  |
         TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
-        s3cmd get -F s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
-        s3cmd get -F s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
         sudo flash ${{ inputs.bitbake_target }} ${{ inputs.bitbake_machine }}
     - name: Test
       shell: bash
@@ -82,7 +84,7 @@ runs:
           echo "::warning file=.ci/run-tests.sh,title=Robot Framework tests::${MESSAGE}"
           echo "* ⚠️  ${MESSAGE}" >> ci-message.txt
         fi
-        s3cmd put -r -F tests_results/robot s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/
+        s3cmd put -r -F tests_results/robot s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/
     - name: Comment on the pull request
       uses: mshick/add-pr-comment@v2
       with:

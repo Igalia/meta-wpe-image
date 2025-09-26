@@ -11,6 +11,8 @@ inputs:
     default: 'source'
   repo_release:
     default: 'scarthgap'
+  s3_storage:
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -84,11 +86,11 @@ runs:
         ls -lh ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/
         TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs.wic.bmap \
-            s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
+            s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs.wic.bz2 \
-            s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
+            s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
         s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/builds/${{ inputs.bitbake_buildname }}/tmp/deploy/images/${{ inputs.bitbake_machine }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.rootfs-dbg.tar.bz2 \
-            s3://yocto/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.dbg.tar.bz2
+            s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.dbg.tar.bz2
     - name: Clean the tmp dir
       if: always()
       shell: bash
