@@ -1,4 +1,4 @@
-From b267566e47d21ab8fc4ee383f9926660f79832a3 Mon Sep 17 00:00:00 2001
+From 5fb4b3703fc19683a3689d3df557560079a71df0 Mon Sep 17 00:00:00 2001
 From: Pablo Saavedra <psaavedra@igalia.com>
 Date: Wed, 24 May 2023 13:50:19 +0000
 Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE and
@@ -11,10 +11,10 @@ Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE and
  3 files changed, 30 insertions(+)
 
 diff --git a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
-index df1381b577be..6a6e1418b929 100644
+index 277b4cdf..4ae56c8e 100644
 --- a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
 +++ b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
-@@ -3534,6 +3534,9 @@ void webkit_web_view_reload(WebKitWebView* webView)
+@@ -3578,6 +3578,9 @@ void webkit_web_view_reload(WebKitWebView* webView)
  {
      g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
  
@@ -25,10 +25,10 @@ index df1381b577be..6a6e1418b929 100644
  }
  
 diff --git a/Source/WebKit/UIProcess/WebPageProxy.cpp b/Source/WebKit/UIProcess/WebPageProxy.cpp
-index a18f6637a180..4ab33a1bf988 100644
+index ffa22ccd..e8771a55 100644
 --- a/Source/WebKit/UIProcess/WebPageProxy.cpp
 +++ b/Source/WebKit/UIProcess/WebPageProxy.cpp
-@@ -1108,8 +1108,10 @@ void WebPageProxy::notifyProcessPoolToPrewarm()
+@@ -1147,8 +1147,10 @@ void WebPageProxy::notifyProcessPoolToPrewarm()
  
  void WebPageProxy::setPreferences(WebPreferences& preferences)
  {
@@ -40,11 +40,11 @@ index a18f6637a180..4ab33a1bf988 100644
      protectedPreferences()->removePage(*this);
      m_preferences = preferences;
 diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-index 29c02f572646..f20e754deaff 100644
+index bf2d3f7e..ea95b826 100644
 --- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
 +++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-@@ -485,6 +485,10 @@
- #include "CoreIPCAuditToken.h"
+@@ -497,6 +497,10 @@
+ #include <WebKitAdditions/WebPreferencesDefaultValuesAdditions.h>
  #endif
  
 +#if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -54,7 +54,7 @@ index 29c02f572646..f20e754deaff 100644
  namespace WebKit {
  using namespace JSC;
  using namespace WebCore;
-@@ -4787,6 +4791,27 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
+@@ -4781,6 +4785,27 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
  
      updateSettingsGenerated(store, settings);
  
