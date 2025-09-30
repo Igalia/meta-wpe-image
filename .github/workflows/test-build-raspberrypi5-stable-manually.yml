@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi5']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
     needs: scarthgap-repo
@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi5']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:

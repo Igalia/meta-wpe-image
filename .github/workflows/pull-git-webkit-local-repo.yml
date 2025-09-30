@@ -17,7 +17,7 @@ jobs:
           cd ~/git/WebKit
           find .git/ -type f -name "*.lock" -exec rm -f {} +
           git reset --hard && git clean -fd && git fetch --all
-          git checkout webkitglib/2.48
+          git checkout webkitglib/2.50
           git pull
           git checkout main
           git pull
