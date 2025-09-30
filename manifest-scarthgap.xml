@@ -24,7 +24,8 @@
   <project remote="freescale" revision="scarthgap" name="meta-freescale-3rdparty" path="sources/meta-freescale-3rdparty"/>
   <project remote="freescale" revision="scarthgap" name="meta-freescale-distro" path="sources/meta-freescale-distro"/>
 
-  <project remote="igalia" revision="main" name="meta-webkit.git" path="sources/meta-webkit"/>
+  <!-- meta-webkit branch: main -->
+  <project remote="igalia" revision="b2561179a7959c5551e510e0afa5132db55e62cb" name="meta-webkit.git" path="sources/meta-webkit"/>
 
   <project remote="igalia" revision="main" name="meta-wpe-image.git" path="sources/meta-wpe-image">
      <copyfile src="scripts/setup-environment" dest="setup-environment"/>
