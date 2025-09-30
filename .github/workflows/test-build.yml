@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi5']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
     environment: Build Env
@@ -46,7 +46,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi5']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:
@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi3-mesa', 'raspberrypi4-64-mesa']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, builder]
     if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request' && !github.event.pull_request.draft"
@@ -110,7 +110,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi3-mesa']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:
@@ -143,7 +143,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['wandboard-mesa']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     continue-on-error: true
     runs-on: [self-hosted, builder]
@@ -175,7 +175,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['wandboard-mesa']
-        wpe_vers: ['2_48']
+        wpe_vers: ['2_50']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:
