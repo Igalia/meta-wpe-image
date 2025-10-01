@@ -49,6 +49,13 @@ Remote Weston Check Screenshot
     Remote Weston Capture Screenshot    ${image}
     Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${image}    ${image}    threshold=0.0050
 
+Remote Weston Check Screenshot Contain Template
+    [Arguments]    ${template}
+    ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
+    Remote Weston Capture Screenshot    screenshot-${template}
+    Image Should Contain Template    screenshot-${template}    ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${template}
+    ...    take_screenshots=True    threshold=0.9
+
 Webdriver Remote Start
     [Arguments]    @{other_params}
     [Timeout]      2 minutes

@@ -65,6 +65,13 @@ Toggle Fullscreen
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/keyboard-input-special-keys.py f11
     Wait Until Keyword Succeeds    20x   1000ms    Remote Weston Check Screenshot    ${HOME_SCREEN_IMAGE}
 
+Toggle Gallium HUD
+    ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-one-finger-gesture.py --duration 1 --steps 1 --delay-on-touch-up 0 535 15 535 15
+    Wait Until Keyword Succeeds    20x   1000ms    Remote Weston Check Screenshot Contain Template    ${GALLIUM_HUD_TEMPLATE}
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-one-finger-gesture.py --duration 1 --steps 1 --delay-on-touch-up 0 535 15 535 15
+    Wait Until Keyword Succeeds    20x   1000ms    Run Keyword And Expect Error    *Template was not found in the Image.*    Remote Weston Check Screenshot Contain Template    ${GALLIUM_HUD_TEMPLATE}
+
 *** Test Cases ***
 Test Check Navigation Bar
     [Tags]    test:retry(0)
@@ -79,3 +86,4 @@ Test Check Navigation Bar
     Navigation Back
     Open Search
     Terminate Browser
+    Toggle Gallium HUD
