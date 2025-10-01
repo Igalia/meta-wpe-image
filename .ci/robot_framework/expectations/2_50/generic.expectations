@@ -5,7 +5,7 @@ canvas-fps-threshold-memory-used:650
 canvas-fps-threshold-std-deviation:1
 motionmark-min-score:400
 scroll-max-position:10000
-scroll-position:745
+scroll-position:300
 scroll-threshold:8
-swipe-position:2650
-swipe-threshold:350
+swipe-position:1047
+swipe-threshold:8
