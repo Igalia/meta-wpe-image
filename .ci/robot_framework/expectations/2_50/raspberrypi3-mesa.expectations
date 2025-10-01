@@ -3,3 +3,4 @@ canvas-fps-threshold-average:32
 canvas-fps-threshold-cpu-load:1.8
 canvas-fps-threshold-std-deviation:8
 motionmark-min-score:1.7
+swipe-position:957
