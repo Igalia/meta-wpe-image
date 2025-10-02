@@ -58,12 +58,20 @@ Terminate Browser
     SSH Command    ${TEST_BOARD_IP}    /root/scripts/touch-one-finger-gesture.py --duration 1 --steps 1 --delay-on-touch-up 0 595 15 595 15
     Wait Until Keyword Succeeds    20x   1000ms    Remote Weston Check Screenshot    ${INIT_SCREEN_IMAGE}
 
+Toggle Fullscreen
+    ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/keyboard-input-special-keys.py f11
+    Wait Until Keyword Succeeds    20x   1000ms    Remote Weston Check Screenshot    ${FULL_HOME_SCREEN_IMAGE}
+    SSH Command    ${TEST_BOARD_IP}    /root/scripts/keyboard-input-special-keys.py f11
+    Wait Until Keyword Succeeds    20x   1000ms    Remote Weston Check Screenshot    ${HOME_SCREEN_IMAGE}
+
 *** Test Cases ***
 Test Check Navigation Bar
     [Tags]    test:retry(0)
 
     Terminate Browser
     Open Home
+    Toggle Fullscreen
     Click On Search Link In Home
     Navigation Back
     Navigation Forward
