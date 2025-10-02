@@ -60,6 +60,8 @@ Terminate Browser
 
 *** Test Cases ***
 Test Check Navigation Bar
+    [Tags]    test:retry(0)
+
     Terminate Browser
     Open Home
     Click On Search Link In Home
