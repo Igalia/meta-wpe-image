@@ -46,7 +46,7 @@ jobs:
       fail-fast: false
       matrix:
         machine: ['raspberrypi5']
-        wpe_vers: ['2_50']
+        wpe_vers: ['nightly']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:
