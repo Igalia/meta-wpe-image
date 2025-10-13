@@ -3,7 +3,7 @@
 # Disable sandboxing for WebKit (dangerous, use with caution)
 # export WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
 
-export WEBKIT_INSPECTOR_HTTP_SERVER=0.0.0.0:12321
+# export WEBKIT_INSPECTOR_HTTP_SERVER=0.0.0.0:12321
 
 # Lower rank of AV1 decoder to disable it
 export GST_PLUGIN_FEATURE_RANK="avdec_av1:0"
