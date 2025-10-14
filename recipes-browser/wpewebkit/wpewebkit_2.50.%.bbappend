@@ -12,7 +12,7 @@ PV:class-devupstream = "trunk"
 
 RCONFLICTS:${PN}:class-devupstream = ""
 
-PACKAGECONFIG:append = " wpe-platform"
+PACKAGECONFIG:append = " minibrowser wpe-platform"
 PACKAGECONFIG:remove = "speech-synthesis"
 
 TOOLCHAIN:aarch64 = "clang"
