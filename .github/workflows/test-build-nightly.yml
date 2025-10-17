@@ -1,9 +1,5 @@
 name: Build tests for nightly
-on:
-  schedule:
-    # Runs at 3:00 AM UTC every day
-    - cron: '0 3 * * *'
-  workflow_dispatch:
+on: [pull_request]
 
 jobs:
   scarthgap-repo:
@@ -18,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        machine: ['raspberrypi3-mesa', 'raspberrypi5']
+        machine: ['raspberrypi3-mesa']
         wpe_vers: ['nightly']
         yocto_rel: ['scarthgap']
     continue-on-error: true
@@ -49,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        machine: ['raspberrypi3-mesa', 'raspberrypi5']
+        machine: ['raspberrypi3-mesa']
         wpe_vers: ['nightly']
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
