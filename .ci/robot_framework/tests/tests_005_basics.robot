@@ -7,6 +7,18 @@ Library    ../libs/TestUtils.py
 Resource   variables.robot
 
 *** Test Cases ***
+List buildinfo
+    ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
+    ${stdout}=    SSH Command    ${TEST_BOARD_IP}    cat /etc/buildinfo
+    ${formatted}=    Evaluate    """${stdout}[0]"""
+    Log    ${formatted}
+
+List installed packages
+    ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
+    ${stdout}=    SSH Command    ${TEST_BOARD_IP}    rpm -qa
+    ${formatted}=    Evaluate    """${stdout}[0]"""
+    Log    ${formatted}
+
 Check Kernel Configuration available in /proc/config.gz
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
     ${stdout}=    SSH Command    ${TEST_BOARD_IP}    zcat /proc/config.gz |grep "Kernel Configuration"
