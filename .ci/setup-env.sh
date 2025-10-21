@@ -14,6 +14,8 @@ export TEST_BOARD_NAME="rpi5"
 export TEST_WEBSERVER_IP="192.168.1.92"
 export TEST_WEBSERVER_PORT="8008"
 
+export TEST_WEBKIT_INSPECTOR_HTTP_SERVER_PORT="22322"
+
 ################################################################################
 # Load local setup
 #################################################################################
