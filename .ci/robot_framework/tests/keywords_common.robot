@@ -8,6 +8,20 @@ Library    ../libs/TestUtils.py
 Resource   variables.robot
 
 *** Keywords ***
+Configure Mockup Pages
+    ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
+    ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
+    ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
+    ${HOME_PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/home-page.html
+    ${SEARCH_PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/search-page.html
+
+    SSH Command    ${TEST_BOARD_IP}    sed -i 's|ExecStart=/usr/bin/weston --modules=systemd-notify.so|ExecStart=/usr/bin/weston --continue-without-input --modules=systemd-notify.so --debug|' /lib/systemd/system/weston.service
+    SSH Command    ${TEST_BOARD_IP}    sed -i 's|ExecStart=/usr/bin/weston --continue-without-input --modules=systemd-notify.so|ExecStart=/usr/bin/weston --continue-without-input --modules=systemd-notify.so --debug|' /lib/systemd/system/weston.service
+    SSH Command    ${TEST_BOARD_IP}    sed -i 's|https://www.wpewebkit.org|${HOME_PAGE}|g' /usr/bin/demo-wpe-website
+    SSH Command    ${TEST_BOARD_IP}    sed -i 's|https://duckduckgo.com/|${SEARCH_PAGE}|g' /usr/bin/demo-wpe-duckduckgo
+    SSH Command    ${TEST_BOARD_IP}    systemctl daemon-reload && systemctl restart weston
+    Wait Until Keyword Succeeds    20x   1000ms    Remote Weston Check Screenshot    ${HOME_SCREEN_IMAGE}
+
 Create WPEWebKitOptions
     [Arguments]    ${binary_name}    ${binary_path}    @{other_params}
 
