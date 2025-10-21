@@ -15,7 +15,8 @@ set -e
 apt-get update -y
 apt-get install -y git ssh \
     build-essential \
-    imagemagick tesseract-ocr ghostscript libdmtx0b libzbar0
+    imagemagick tesseract-ocr ghostscript libdmtx0b libzbar0 \
+    chromium-driver
 
 pip install --root-user-action ignore --upgrade pip
 
