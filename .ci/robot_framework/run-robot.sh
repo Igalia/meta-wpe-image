@@ -3,6 +3,22 @@
 set -e
 
 SETUPENV="./setup-env.sh"
+LOCKFILE="/tmp/init-robot.lock"
+TIMEOUT=300    # 5 minutes
+INTERVAL=10    # Check every 5 seconds
+ELAPSED=0
+
+while [ -e "$LOCKFILE" ] && [ $ELAPSED -lt $TIMEOUT ]; do
+    WAIT=$((TIMEOUT - ELAPSED))
+    echo "Waiting robot container being ready ($LOCKFILE). Waiting up to $WAIT seconds."
+    sleep $INTERVAL
+    ELAPSED=$((ELAPSED + INTERVAL))
+done
+
+if [ -e "$LOCKFILE" ]; then
+    echo "Timeout waiting for $LOCKFILE after $TIMEOUT seconds."
+    exit 1
+fi
 
 if [ ! -e "${SETUPENV}" ]
 then

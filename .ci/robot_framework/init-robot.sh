@@ -1,5 +1,15 @@
 #! /bin/bash
 
+LOCKFILE="/tmp/init-robot.lock"
+
+# Create lock and ensure removal on exit
+trap 'rm -f "$LOCKFILE"' EXIT
+if [ -e "$LOCKFILE" ]; then
+    echo "Script is already running. Exiting."
+    exit 1
+fi
+touch "$LOCKFILE"
+
 set -e
 
 apt-get update -y
@@ -23,5 +33,7 @@ if [ ! -d "rbyers" ]; then
     git clone https://github.com/RByers/rbyers.github.io.git rbyers
 fi
 popd
+
+rm "$LOCKFILE"
 
 tail -f /dev/null
