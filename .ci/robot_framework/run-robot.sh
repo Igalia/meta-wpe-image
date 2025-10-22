@@ -2,8 +2,6 @@
 
 set -e
 
-. ./.venv_robot_framework/bin/activate
-
 SETUPENV="./setup-env.sh"
 
 if [ ! -e "${SETUPENV}" ]
