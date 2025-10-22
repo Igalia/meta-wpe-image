@@ -7,13 +7,11 @@ apt-get install -y git ssh \
     build-essential \
     imagemagick tesseract-ocr ghostscript libdmtx0b libzbar0
 
-pip install virtualenv
-
-virtualenv .venv_robot_framework
-. ./.venv_robot_framework/bin/activate
+pip install --root-user-action ignore --upgrade pip
 
 # Install Robot depends
-pip install gitpython pygithub \
+pip install --root-user-action ignore \
+            gitpython pygithub \
             robotframework \
             robotframework-doctestlibrary \
             robotframework-retryfailed \
