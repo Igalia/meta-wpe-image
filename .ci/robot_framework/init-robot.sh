@@ -22,12 +22,14 @@ pip install --root-user-action ignore --upgrade pip
 
 # Install Robot depends
 pip install --root-user-action ignore \
-            gitpython pygithub \
-            robotframework \
-            robotframework-doctestlibrary \
-            robotframework-retryfailed \
-            robotframework-seleniumlibrary \
-            robotframework-sshlibrary
+    gitpython==3.1.45 \
+    pygithub==2.8.1 \
+    robotframework==7.3.2 \
+    robotframework-doctestlibrary==0.27.0 \
+    robotframework-pythonlibcore==4.4.1 \
+    robotframework-retryfailed==0.2.0 \
+    robotframework-seleniumlibrary==6.8.0 \
+    robotframework-sshlibrary==3.8.0
 
 pushd robot_framework/html/
 if [ ! -d "rbyers" ]; then
