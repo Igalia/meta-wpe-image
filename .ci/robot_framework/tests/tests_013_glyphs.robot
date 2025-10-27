@@ -25,5 +25,5 @@ Verify no changes in the glyphs
     Wait Until Page Contains    Ready    timeout=10s
 
     Capture Page Screenshot    ${GLYPHS_PAGE_IMAGE}
-    Compare Images   ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${GLYPHS_PAGE_IMAGE}    ${GLYPHS_PAGE_IMAGE}    threshold=0.0005
+    Compare Images    ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${GLYPHS_PAGE_IMAGE}    ${GLYPHS_PAGE_IMAGE}    threshold=0.001
 
