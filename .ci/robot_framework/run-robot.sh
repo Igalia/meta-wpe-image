@@ -63,6 +63,8 @@ fi
 exec robot --name "WPE image tests" \
            --consolewidth 158 \
            --exclude skip \
+           --test "Configure Mockup Pages" \
+           --test "Verify no changes in the glyphs*" \
            --skiponfailure ignoreonfail \
            --listener RetryFailed:2 \
            "${TESTS[@]}"
