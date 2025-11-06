@@ -23,7 +23,7 @@ container=ci_robot_1
 lockfile=/tmp/init-robot.lock
 
 # Wait for container initialization indicated by presence of lock file
-while ! podman exec "$container" test -f "$lockfile"; do
+while podman exec "$container" test -f "$lockfile"; do
   echo "Waiting for container init to finish..."
   sleep 20
 done
