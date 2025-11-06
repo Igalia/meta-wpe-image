@@ -23,7 +23,7 @@ jobs:
       - name: Install Podman
         run: |
           sudo apt update
-          sudo apt install -y podman
+          sudo apt install -y podman podman-compose
 
       - name: Run CI Robot image deploy script
         run: |
