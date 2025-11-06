@@ -36,7 +36,7 @@ jobs:
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
-          bitbake_source: 'poky-wayland layers.raspberrypi conf.wpe-${{ matrix.wpe_vers }} --update-config'
+          bitbake_source: 'poky-wayland layers.raspberrypi conf.reproducible-core.wpe-${{ matrix.wpe_vers }} --update-config'
           s3_storage: ${S3_STORAGE}
           repo_release: ${{ matrix.yocto_rel }}
 
