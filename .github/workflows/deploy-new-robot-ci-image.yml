@@ -1,0 +1,32 @@
+name: Deploy CI Robot Image
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.ci/docker/robot/Dockerfile'
+      - '.ci/robot_framework/init-robot.sh'
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHON_RELEASE: 3.12
+      DOCKER_REGISTRY_USER: ${{ secrets.DOCKER_REGISTRY_USER }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Podman
+        run: |
+          sudo apt update
+          sudo apt install -y podman
+
+      - name: Run CI Robot image deploy script
+        run: |
+          cd .ci
+          ./deploy-robot-ci-image.sh
+
