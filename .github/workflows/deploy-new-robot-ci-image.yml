@@ -13,8 +13,8 @@ jobs:
 
     env:
       PYTHON_RELEASE: 3.12
-      DOCKER_REGISTRY_USER: ${{ secrets.DOCKER_REGISTRY_USER }}
-      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      REGISTRY_USER: ${{ secrets.DOCKER_REGISTRY_USER }}
+      REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
     steps:
       - name: Checkout repository
