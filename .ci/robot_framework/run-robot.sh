@@ -63,6 +63,7 @@ fi
 exec robot --name "WPE image tests" \
            --consolewidth 158 \
            --exclude skip \
+           --test "Run MotionMark And Validate Score" \
            --skiponfailure ignoreonfail \
            --listener RetryFailed:2 \
            "${TESTS[@]}"
