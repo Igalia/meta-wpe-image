@@ -15,6 +15,12 @@ REGISTRY_PATH=${REGISTRY_PATH:-igalia}
 IMAGE=${IMAGE:-meta-wpe-image-ci-robot}
 IMAGE_DOCKER="docker://${REGISTRY}/${REGISTRY_PATH}/${IMAGE}:${PYTHON_RELEASE}-${ARCH}"
 
+# Ensure containers config directory exists and write registries.conf securely
+mkdir -p ~/.config/containers
+cat > ~/.config/containers/registries.conf << EOF
+unqualified-search-registries = ['${REGISTRY}']
+EOF
+
 # Start and build containers
 ./podman-compose.sh up --force-recreate --always-recreate-deps --build -d
 
@@ -30,12 +36,6 @@ done
 
 # Commit container state to image
 podman commit "$container" meta-wpe-image-ci-robot
-
-# Ensure containers config directory exists and write registries.conf securely
-mkdir -p ~/.config/containers
-cat > ~/.config/containers/registries.conf << EOF
-unqualified-search-registries = ['${REGISTRY}']
-EOF
 
 # Login to container registry securely using --password-stdin
 echo "${REGISTRY_PASSWORD}" | podman login -u "${REGISTRY_USER}" --password-stdin "${REGISTRY}"
