@@ -20,6 +20,7 @@ ${TEST_AGAIN_BUTTON}
 *** Test Cases ***
 Run MotionMark And Validate Score
     [Documentation]    Loads MotionMark benchmark, runs it, waits for the score, and validates.
+    [Tags]    test:retry(0)
 
     Go To    ${URL}
     Wait Until Page Contains Element    ${RUN_BENCHMARK_BUTTON}
