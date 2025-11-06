@@ -1,0 +1,5 @@
+SRCREV:pn-libwpe = "e0814ca7d4f87594a46732ebd309494872d2520e"
+SRCREV:pn-wpe-simple-launcher = "4f0e576194b5c4f632e988d31ff990bdcb5060cc"
+SRCREV:pn-wpe-testbed = "d7ac4675d0392bf843526700fdae9f0fd4c84756"
+SRCREV:pn-wpebackend-fdo = "33863c3ce25120515d81730916792bf5736f9c58"
+SRCREV:pn-wpewebkit = "357be3fbe30706b6170958d8ab0ac72df4526a31"

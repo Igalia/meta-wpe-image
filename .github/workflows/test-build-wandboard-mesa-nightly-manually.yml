@@ -36,7 +36,7 @@ jobs:
         with:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
-          bitbake_source: 'poky-wayland layers.freescale conf.wpe-${{ matrix.wpe_vers }} --update-config'
+          bitbake_source: 'poky-wayland layers.freescale conf.reproducible-core.wpe-${{ matrix.wpe_vers }} --update-config'
           repo_release: ${{ matrix.yocto_rel }}
           s3_storage: ${S3_STORAGE}
 
