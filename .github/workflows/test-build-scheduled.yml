@@ -59,7 +59,7 @@ jobs:
         wpe_vers: ${{ fromJSON(needs.define-matrix.outputs.wpe_vers) }}
         yocto_rel: ['scarthgap']
     continue-on-error: true
-    runs-on: ubuntu-22.04
+    runs-on: [self-hosted, builder]
     needs: [define-matrix, scarthgap-repo]
     steps:
       - uses: actions/checkout@v5
