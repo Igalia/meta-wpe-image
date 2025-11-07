@@ -19,7 +19,7 @@ on:
         required: true
         type: choice
         options:
-          - 2_50
+          - '2_50'
           - nightly
 
 jobs:
