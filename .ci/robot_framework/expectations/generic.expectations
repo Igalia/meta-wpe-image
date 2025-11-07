@@ -1,5 +1,5 @@
 canvas-fps-threshold-fps:59
-canvas-fps-threshold-average:16
+canvas-fps-threshold-average:17.5
 canvas-fps-threshold-cpu-load:1.3
 canvas-fps-threshold-memory-used:650
 canvas-fps-threshold-std-deviation:1
