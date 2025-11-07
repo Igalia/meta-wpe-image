@@ -1,5 +1,26 @@
-name: Build tests raspberrypi3-mesa nightly manually
-on: workflow_dispatch
+name: Build tests
+on:
+  schedule:
+    # Runs at 3:00 AM UTC every day
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      machine:
+        description: 'Select machine'
+        required: true
+        type: choice
+        options:
+          - raspberrypi3-mesa
+          - raspberrypi4-64-mesa
+          - raspberrypi5
+          - wandboard-mesa
+      wpe_vers:
+        description: 'Select WPEWebKit version'
+        required: true
+        type: choice
+        options:
+          - 2_50
+          - nightly
 
 jobs:
   scarthgap-repo:
@@ -10,13 +31,14 @@ jobs:
         with:
           repo_release: 'scarthgap'
 
-  build-raspberrypi3-mesa-nightly:
+  build:
     strategy:
       fail-fast: false
       matrix:
-        machine: ['raspberrypi3-mesa']
-        wpe_vers: ['nightly']
+        machine: ${{ inputs.machine != '' && inputs.machine || ['raspberrypi3-mesa', 'raspberrypi5'] }}
+        wpe_vers: ${{ inputs.wpe_vers != '' && inputs.wpe_vers || ['nightly'] }}
         yocto_rel: ['scarthgap']
+    continue-on-error: true
     runs-on: [self-hosted, builder]
     needs: scarthgap-repo
     steps:
@@ -37,20 +59,20 @@ jobs:
           bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
           bitbake_machine: ${{ matrix.machine }}
           bitbake_source: 'poky-wayland layers.raspberrypi conf.reproducible-core.wpe-${{ matrix.wpe_vers }} --update-config'
-          repo_release: ${{ matrix.yocto_rel }}
           s3_storage: ${S3_STORAGE}
+          repo_release: ${{ matrix.yocto_rel }}
 
-  test-raspberrypi3-mesa-nightly:
+  test:
     strategy:
       fail-fast: false
       matrix:
-        machine: ['raspberrypi3-mesa']
-        wpe_vers: ['nightly']
+        machine: ${{ inputs.machine != '' && inputs.machine || ['raspberrypi3-mesa', 'raspberrypi5'] }}
+        wpe_vers: ${{ inputs.wpe_vers != '' && inputs.wpe_vers || ['nightly'] }}
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:
       pull-requests: write
-    needs: build-raspberrypi3-mesa-nightly
+    needs: build
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/s3-configure
