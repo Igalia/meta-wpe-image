@@ -31,6 +31,37 @@ jobs:
         with:
           repo_release: 'scarthgap'
 
+  buildhistory-collect-srcrevs:
+    strategy:
+      fail-fast: false
+      matrix:
+        machine: ${{ inputs.machine != '' && inputs.machine || ['raspberrypi3-mesa', 'raspberrypi5'] }}
+        wpe_vers: ${{ inputs.wpe_vers != '' && inputs.wpe_vers || ['nightly'] }}
+        yocto_rel: ['scarthgap']
+    continue-on-error: true
+    runs-on: ubuntu-22.04
+    needs: scarthgap-repo
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/s3-configure
+        env:
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          S3_HOST_BASE: ${{ secrets.S3_HOST_BASE }}
+        with:
+          access_key: ${S3_ACCESS_KEY}
+          secret_key: ${S3_SECRET_KEY}
+          host_base: ${S3_HOST_BASE}
+      - uses: ./.github/actions/buildhistory-collect-srcrevs
+        env:
+          S3_STORAGE: ${{ secrets.S3_STORAGE }}
+        with:
+          bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
+          bitbake_machine: ${{ matrix.machine }}
+          bitbake_source: 'poky-wayland layers.raspberrypi conf.buildhistory.wpe-${{ matrix.wpe_vers }} --update-config'
+          s3_storage: ${S3_STORAGE}
+          repo_release: ${{ matrix.yocto_rel }}
+
   build:
     strategy:
       fail-fast: false
