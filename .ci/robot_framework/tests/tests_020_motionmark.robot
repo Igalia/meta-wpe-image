@@ -71,7 +71,7 @@ Get Test Names
     [Documentation]    Returns a list of test names from the results section.
     @{tests}=    Get WebElements
     ...    xpath=//table[@id="results-header"]/tbody/tr/td[not(contains(@class,"suites-separator"))]
-    VAR    @{names}    ${EMPTY}
+    VAR    @{names}=    ${EMPTY}
     FOR    ${test}    IN    @{tests}
         ${name}=    SeleniumLibrary.Get Text    ${test}
         Append To List    ${names}    ${name}
@@ -82,7 +82,7 @@ Get Test Scores
     [Documentation]    Returns a list of per-test scores from the results section.
     @{scores}=    Get WebElements
     ...    xpath=//table[@id="results-score"]/tbody/tr/td[not(contains(@class,"suites-separator"))]
-    VAR    @{values}    ${EMPTY}
+    VAR    @{values}=    ${EMPTY}
     FOR    ${score}    IN    @{scores}
         ${value}=    SeleniumLibrary.Get Text    ${score}
         Append To List    ${values}    ${value}
