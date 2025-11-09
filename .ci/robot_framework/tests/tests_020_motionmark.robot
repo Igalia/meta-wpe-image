@@ -47,15 +47,16 @@ Run MotionMark And Validate Score
 
 *** Keywords ***
 Capture Images Until Test Completion
-    [Documentation]    Captures a screenshot each time a new test section loads until the "Test Again" button appears.
+    [Documentation]    Captures a screenshot each time a new test section loads until the "Test Again" button appears
+    ...    or the max iterations are reached.
+    [Arguments]    ${max_iterations}=45
 
-    VAR    ${index}    1
-    WHILE    "True"
+    VAR    ${index}=    1
+    WHILE    ${index} <= ${max_iterations}
         Sleep    20s
         Capture Page Screenshot    motionmark_test_${index}.png
         ${index}=    Evaluate    ${index} + 1
 
-        Run Keyword And Ignore Error    Element Should Be Visible    ${TEST_AGAIN_BUTTON}
         ${is_test_again_visible}=    Run Keyword And Return Status    Element Should Be Visible    ${TEST_AGAIN_BUTTON}
         IF    ${is_test_again_visible}    BREAK
     END
