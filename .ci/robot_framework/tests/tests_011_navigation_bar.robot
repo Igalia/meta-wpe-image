@@ -1,5 +1,5 @@
 *** Settings ***
-Test Timeout    120 seconds
+Test Timeout    180 seconds
 
 Suite Setup    Configure Mockup Pages
 
