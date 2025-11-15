@@ -18,12 +18,29 @@ Get FPS Value
 
 *** Test Cases ***
 Verify Full HD 30 FPS
+    ${TEST_MACHINE}=    Get Environment Variable    TEST_MACHINE
     ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
     ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT
+    ${TEST_WPEWEBKIT_VERSION}=    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     ${PAGE}    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/video_fps.html
 
     Go to    ${PAGE}
     Sleep    20 seconds
+
+    ${VIDEO_30_FPS_THRESHOLD_FPS}=    Get Machine Expectation
+    ...    id=video-30-fps-threshold-fps
+    ...    machine=${TEST_MACHINE}
+    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
+
+    ${VIDEO_30_FPS_THRESHOLD_CPU_LOAD}=    Get Machine Expectation
+    ...    id=video-30-fps-threshold-cpu-load
+    ...    machine=${TEST_MACHINE}
+    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
+
+    ${VIDEO_30_FPS_THRESHOLD_MEMORY_USED}=    Get Machine Expectation
+    ...    id=video-30-fps-threshold-memory-used
+    ...    machine=${TEST_MACHINE}
+    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
 
     ${memory_used}=    Get Remote Memory Used
     Log    Memory used: ${memory_used}
