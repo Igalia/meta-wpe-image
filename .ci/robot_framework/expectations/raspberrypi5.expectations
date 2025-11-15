@@ -1,0 +1,8 @@
+canvas-fps-threshold-fps:59
+canvas-fps-threshold-average:17.0
+canvas-fps-threshold-cpu-load:1.7
+canvas-fps-threshold-memory-used:600
+canvas-fps-threshold-std-deviation:0.55
+video-30-fps-threshold-cpu-load:3
+video-30-fps-threshold-fps:29
+video-30-fps-threshold-memory-used:900
