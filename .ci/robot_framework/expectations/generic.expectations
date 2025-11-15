@@ -9,3 +9,6 @@ scroll-position:300
 scroll-threshold:8
 swipe-position:1047
 swipe-threshold:8
+video-30-fps-threshold-cpu-load:3
+video-30-fps-threshold-fps:28
+video-30-fps-threshold-memory-used:850
