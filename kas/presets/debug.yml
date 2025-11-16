@@ -1,0 +1,9 @@
+header:
+  version: 11
+
+local_conf_header:
+  enable-debug: |
+    # DEBUG_BUILD = "1"
+    IMAGE_GEN_DEBUGFS = "1"
+    IMAGE_FSTYPES_DEBUGFS = "tar.bz2"
+

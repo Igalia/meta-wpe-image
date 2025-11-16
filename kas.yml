@@ -1,0 +1,21 @@
+header:
+  version: 11
+  includes:
+    - kas/repos/common.yml
+    - kas/presets/debug.yml
+
+machine: qemux86-64
+
+distro: poky-wayland
+
+target:
+  - core-image-weston-wpe
+
+local_conf_header:
+  igalia-demos-settings: |
+    # 1GByte extra space
+    IMAGE_ROOTFS_EXTRA_SPACE = "1048576"
+
+    require conf/templates/template/presets/conf.conf
+    require conf/templates/template/presets/reproducible-core.conf
+

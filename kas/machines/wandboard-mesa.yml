@@ -1,0 +1,6 @@
+header:
+  version: 11
+  includes:
+    - kas/repos/freescale.yml
+
+machine: wandboard-mesa
