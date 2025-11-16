@@ -1,140 +1,135 @@
+# WPE Image meta layer for Yocto
+
+This repository provides build configurations for generating WPE images using
+the Yocto Project and kas. It supports multiple target devices (e.g. Raspberry
+Pi 3, 4, and 5) and includes instructions for building an SDK toolchain.
+
 # Getting the BSP
 
-* Install `repo`:  `apt-get install repo`
-* Install the [required Yocto dependencies][yocto-deps] in your system.
-* Create your workdir:
+1. Install `kas` and the container engine:
 
-  ```bash
-  CI_COMMIT_REF_NAME="main"
-  YOCTO_RELEASE="kirkstone"
+   ```sh
+   # default:
+   sudo apt-get install docker-ce
+   # alternative option:
+   sudo apt-get install podman
+   export KAS_CONTAINER_ENGINE=podman
+   ```
 
-  mkdir -p ~/workdir/wpe-image
-  cd ~/workdir/wpe-image
-  repo init -u https://github.com/igalia/meta-wpe-image.git -m manifest-${YOCTO_RELEASE}.xml -b $CI_COMMIT_REF_NAME
-  repo sync --force-sync
-  ```
+   ```sh
+   sudo apt-get install pipx
+   pipx install kas>=5.0
+   ```
 
-[yocto-deps]: https://docs.yoctoproject.org/ref-manual/system-requirements.html#required-packages-for-the-build-host
+1. Create your workdir:
 
-# Activating your work environment
-
-Several environments can be defined your build environment. For example:
-
-* RPI3:
-
-  ```bash
-  $ source setup-environment rpi3-mesa-wpe-nightly raspberrypi3-mesa poky-wayland layers.raspberrypi conf.wpe-nightly --update-config
-  ```
-
-* RPI4-64 using the propietary graphics stack (vc4graphics):
-
-  ```bash
-  $ source setup-environment rpi4-mesa-wpe-nightly raspberrypi4-64-mesa poky-wayland layers.raspberrypi conf.wpe-nightly --update-config
-  ```
-
-See more options running the command with no arguments:
-
-```bash
-$ source setup-environment
-Usage: setup-environment targetname
-       setup-environment targetname machine distro bblayers presets --update-config
-
-Targets:
-
-<<new>>
-mynewone
-...
-
-Machines:
-
-...
-
-Distros:
-
-poky-wayland
-
-Bitbake layers:
-
-...
-
-Presets:
-
-...
-```
+   ```sh
+   mkdir -p ~/workdir/wpe-image
+   cd ~/workdir/wpe-image
+   git clone https://github.com/igalia/meta-wpe-image.git
+   cd meta-wpe-image
+   ```
 
 # Building the image
 
-Once activated your working environment, you can build your target image:
+1. Define external paths for the download and the shared state cached dirs:
 
-```bash
- $ bitbake-layers show-recipes  "*image*" | grep -B 1 meta-wpe-image
-core-image-weston-wpe:
-  meta-wpe-image    1.0
-...
-```
+   ```sh
+   export DL_DIR=$PWD/../cache/downloads/
+   export SSTATE_DIR=$PWD/../cache/sstate-cache/
+   ```
 
-```bash
-rm -rf tmp
-bitbake core-image-weston-wpe
-```
+1. Build your target enviroment. Examples:
 
-The image will be available in `tmp/deploy/images/<<machine>>/`
+   * RPI3:
 
+     ```sh
+     export KAS_WORK_DIR="workdir/wpe-image-rpi3"
+     mkdir -p ${KAS_WORK_DIR}
+     kas-container build kas.yml:kas/machines/raspberrypi3-mesa.yml:kas/presets/wpe-nightly.yml
+     ```
+
+   * RPI4-64 using the propietary graphics stack (vc4graphics):
+
+     ```sh
+     export KAS_WORK_DIR="workdir/wpe-image-rpi4-64"
+     mkdir -p ${KAS_WORK_DIR}
+     kas-container build kas.yml:kas/machines/raspberrypi4-64-mesa.yml:kas/presets/wpe-nightly.yml
+     ```
+
+   * RPI5:
+
+     ```sh
+     export KAS_WORK_DIR="workdir/wpe-image-rpi5"
+     mkdir -p ${KAS_WORK_DIR}
+     kas-container build kas.yml:kas/machines/raspberrypi5.yml:kas/presets/wpe-nightly.yml
+     ```
+
+💡 **Tip**: Check the `kas/machines/` directory for additional target configurations.
+
+After the build completes, the generated image will be located at:
+`${KAS_WORK_DIR}/build/deploy/images/<<machine>>/`
 
 # SDK Toolchain
 
+1. Preparing the SDK Toolchain
 
-## Preparing the SDK Toolchain
+   The following example targets `raspberrypi3-mesa`, but the same steps apply
+   to other machines with minor adjustments.
 
-The following steps are for a Wandboard+mesa but you can reuse it with small changes for any other machine variant:
+   ```sh
+   export KAS_WORK_DIR="workdir/wpe-image"
+   BASE_IMAGE=core-image-wpe-base
+   kas-container shell kas.yml:kas/machines/raspberrypi3-mesa.yml -c "bitbake ${BASE_IMAGE} -c populate_sdk"
+   ```
 
-```bash
-source setup-environment wandboard-mesa-wpe-base-trunk raspberrypi3-mesa poky-wayland layers.raspberrypi conf.wpe-nightly --update-config
-rm -rf tmp
-bitbake core-image-wpe-base -c populate_sdk
-# The resulting image:
-ls ./tmp/deploy/sdk/poky-wayland-*-raspberrypi3-mesa-toolchain-*.sh
-```
+   Check the resulting SDK installer:
 
-## Installing the SDK Toolchain
+   ```sh
+   ls ${KAS_WORK_DIR}/build/tmp/deploy/sdk/poky-wayland-*-raspberrypi3-mesa-toolchain-*.sh
+   ```
 
-```bash
-# execute the desired version
-./tmp/deploy/sdk/poky-wayland-*-raspberrypi3-mesa-toolchain-*.sh -d ~/toolchain_env -y
-```
+2. Installing the SDK Toolchain
 
-## Activating the SDK Toolchain
+   ```sh
+   # execute the desired version
+   ./tmp/deploy/sdk/poky-wayland-*-raspberrypi3-mesa-toolchain-*.sh -d ~/toolchain_env -y
+   ```
 
-```bash
-. ~/toolchain_env/environment-setup-*
-```
+3. Activate the SDK Toolchain
 
-```bash
-$ env | grep OE
-...
-OECORE_SDK_VERSION=2.6.1
-OECORE_NATIVE_SYSROOT="${HOME}"/toolchain_env/sysroots/x86_64-pokysdk-linux
-OECORE_TARGET_OS=linux-gnueabi
-OECORE_TARGET_ARCH=arm
-...
+   ```sh
+   . ~/toolchain_env/environment-setup-*
+   ```
 
-$ env | grep poky
-...
-CC=arm-poky-linux-gnueabi-gcc  ...
-CXX=arm-poky-linux-gnueabi-g++ ...
-...
-```
+   Expected output includes variables such as:
 
-## Running WPE launcher:
+   ```sh
+   $ env | grep OE
+   ...
+   OECORE_NATIVE_SYSROOT="${HOME}"/toolchain_env/sysroots/x86_64-pokysdk-linux
+   OECORE_TARGET_OS=linux-gnueabi
+   OECORE_TARGET_ARCH=arm
+   ...
 
-* WPE with FDO backend in Weston: `/usr/bin/wpe-exported-wayland https://wpewebkit.org`
-* WPE with DRM backend directly in framebuffer: `export WPE_DISPLAY="wpe-display-drm"; /usr/bin/wpe-exported-wayland https://wpewebkit.org`
+   $ env | grep poky
+   ...
+   CC=arm-poky-linux-gnueabi-gcc  ...
+   CXX=arm-poky-linux-gnueabi-g++ ...
+   ...
+   ```
 
-All this commands will execute the browsers as `weston` user.
+# Running WPE launcher:
+
+* Weston: `/usr/bin/wpe-exported-wayland https://wpewebkit.org`
+* DRM: `export WPE_DISPLAY="wpe-display-drm"; /usr/bin/wpe-exported-wayland https://wpewebkit.org`
 
 ## How to contribute
 
-Contributions are welcomed. Please send your patches as
+Contributions are welcomed!. Please send your patches as
 [Pull Requests](https://github.com/Igalia/meta-wpe-image/pulls) or fill a
 [Issue report](https://github.com/Igalia/meta-wpe-image/issues) in case you need
 to ask for help.
+
+Please follow standard Yocto contribution guidelines and ensure patches are
+well‑tested before submission.
