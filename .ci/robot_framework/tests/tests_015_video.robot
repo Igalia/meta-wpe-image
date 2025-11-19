@@ -18,6 +18,8 @@ Get FPS Value
 
 *** Test Cases ***
 Verify Full HD 30 FPS
+    Wait Until Keyword Succeeds    18x    10s    Check Device Is IDLE
+
     ${TEST_MACHINE}=    Get Environment Variable    TEST_MACHINE
     ${TEST_WEBSERVER_IP}    Get Environment Variable    TEST_WEBSERVER_IP
     ${TEST_WEBSERVER_PORT}    Get Environment Variable    TEST_WEBSERVER_PORT

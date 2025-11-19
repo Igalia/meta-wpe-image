@@ -21,6 +21,8 @@ Verify Canvas Animation 60 FPS
     ${TEST_WPEWEBKIT_VERSION}=    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     ${PAGE}=    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/canvas_fps.html
 
+    Wait Until Keyword Succeeds    18x    10s    Check Device Is IDLE
+
     Go To    ${PAGE}
     Sleep    22 seconds
 

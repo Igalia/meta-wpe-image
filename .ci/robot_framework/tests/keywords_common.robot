@@ -33,6 +33,16 @@ Create WPEWebKitOptions
     Call Method    ${wpe_options}    set_capability    browserName    ${binary_name}
     RETURN    ${wpe_options}
 
+Check Device Is IDLE
+    [Documentation]    Check if the Device is idle.
+    ${cpu_load}    Get Remote CPU Load
+    Log    CPU load: ${cpu_load}
+    Should Be True    ${cpu_load} < ${CPU_LOAD_ON_IDLE}
+
+    ${memory_used}    Get Remote Memory Used
+    Log    Memory used: ${memory_used}
+    Should Be True    ${memory_used} < ${MEMORY_LOAD_ON_IDLE}
+
 Get Remote CPU Load
     [Timeout]      30 seconds
 
