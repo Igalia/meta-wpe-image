@@ -10,17 +10,17 @@ from harness import BaselineHandler, TestRunner, dump, isWandboard, parse_args, 
 
 
 def run_stress_cpu_1_core():
-    ret = run_stress_test("stress-ng --cpu 1 --timeout 10s")
+    ret = run_stress_test("chrt -f 90 stress-ng --cpu 1 --timeout 10s")
     return ret and int(ret['bogo-ops'])
 
 
 def run_stress_cpu_4_core():
-    ret = run_stress_test("stress-ng --cpu 4 --timeout 10s")
+    ret = run_stress_test("chrt -f 90 stress-ng --cpu 4 --timeout 10s")
     return ret and int(ret['bogo-ops'])
 
 
 def run_stress_memory():
-    ret = run_stress_test("stress-ng --vm 1 --vm-bytes 500M --timeout 10s")
+    ret = run_stress_test("chrt -f 90 stress-ng --vm 1 --vm-bytes 500M --timeout 10s")
     return ret and int(ret['bogo-ops'])
 
 
@@ -42,7 +42,7 @@ def run_glmark2_es2_wayland():
     output = "/tmp/results.xml"
 
     WAYLAND_DISPLAY = wayland_display()
-    cmd = f"WAYLAND_DISPLAY={WAYLAND_DISPLAY} glmark2-es2-wayland -b effect2d:duration=5.0 --results-file {output} &>/dev/null"  # noqa: E501
+    cmd = f"WAYLAND_DISPLAY={WAYLAND_DISPLAY} chrt -f 90 glmark2-es2-wayland -b effect2d:duration=5.0 --results-file {output} &>/dev/null"  # noqa: E501
     subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
 
     if not os.path.exists(output) or os.stat(output).st_size == 0:
