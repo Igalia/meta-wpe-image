@@ -33,7 +33,7 @@ runs:
 
         git config --global user.email "meta-wpe-image-bot@igalia.com"
         git config --global user.name "meta-wpe-image CI Bot"
-        git clone ${{ inputs.repo_url }} ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
+        GIT_LFS_SKIP_SMUDGE=1 git clone ${{ inputs.repo_url }} ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
         cd ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
 
         git remote remove tmp || true
