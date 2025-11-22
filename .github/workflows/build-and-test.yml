@@ -1,5 +1,6 @@
-name: Build tests
+name: Build and Test
 on:
+  pull_request:
   schedule:
     # Runs at 3:00 AM UTC every day
     - cron: '0 3 * * *'
@@ -14,7 +15,7 @@ on:
           - raspberrypi4-64-mesa
           - raspberrypi5
           - wandboard-mesa
-      wpe_vers:
+      wpe_version:
         description: 'Select WPEWebKit version'
         required: true
         type: choice
@@ -23,44 +24,66 @@ on:
           - nightly
 
 jobs:
-  scarthgap-repo:
+  timestamp:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v5
-      - uses: ./.github/actions/bitbake-repo
-        with:
-          repo_release: 'scarthgap'
+      - uses: ./.github/actions/timestamp
 
   define-matrix:
     runs-on: ubuntu-22.04
     outputs:
       machine: ${{ steps.define.outputs.machines }}
-      wpe_vers: ${{ steps.define.outputs.wpe_vers }}
+      wpe_version: ${{ steps.define.outputs.wpe_version }}
     steps:
       - name: Define matrix values
         id: define
         run: |
-          if [ -n "${{ github.event.inputs.machine }}" ]; then
+          if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.draft }}" == "true" ]; then
+            echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo 'machines=["raspberrypi3-mesa", "raspberrypi5", "wandboard-mesa"]' >> $GITHUB_OUTPUT
+          elif [ -n "${{ github.event.inputs.machine }}" ]; then
             echo "machines=[\"${{ github.event.inputs.machine }}\"]" >> $GITHUB_OUTPUT
           else
             echo 'machines=["raspberrypi3-mesa", "raspberrypi5"]' >> $GITHUB_OUTPUT
           fi
-          if [ -n "${{ github.event.inputs.wpe_vers }}" ]; then
-            echo "wpe_vers=[\"${{ github.event.inputs.wpe_vers }}\"]" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo 'wpe_version=["2_50"]' >> $GITHUB_OUTPUT
+          elif [ -n "${{ github.event.inputs.wpe_version }}" ]; then
+            echo "wpe_version=[\"${{ github.event.inputs.wpe_version }}\"]" >> $GITHUB_OUTPUT
           else
-            echo 'wpe_vers=["nightly"]' >> $GITHUB_OUTPUT
+            echo 'wpe_version=["nightly"]' >> $GITHUB_OUTPUT
           fi
+
+  scarthgap-repo-init:
+    strategy:
+      fail-fast: false
+      matrix:
+        machine: ${{ fromJSON(needs.define-matrix.outputs.machine) }}
+        wpe_version: ${{ fromJSON(needs.define-matrix.outputs.wpe_version) }}
+        yocto_rel: ['scarthgap']
+    continue-on-error: true
+    runs-on: ubuntu-22.04
+    needs: [define-matrix]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/kas-checkout
+        with:
+          machine: ${{ matrix.machine }}
+          repo_release: ${{ matrix.yocto_rel }}
+          wpe_version: ${{ matrix.wpe_version }}
 
   buildhistory-collect-srcrevs:
     strategy:
       fail-fast: false
       matrix:
         machine: ${{ fromJSON(needs.define-matrix.outputs.machine) }}
-        wpe_vers: ${{ fromJSON(needs.define-matrix.outputs.wpe_vers) }}
+        wpe_version: ${{ fromJSON(needs.define-matrix.outputs.wpe_version) }}
         yocto_rel: ['scarthgap']
     continue-on-error: true
     runs-on: [self-hosted, builder]
-    needs: [define-matrix, scarthgap-repo]
+    needs: [define-matrix, scarthgap-repo-init, timestamp]
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/s3-configure
@@ -76,22 +99,21 @@ jobs:
         env:
           S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
-          bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
-          bitbake_machine: ${{ matrix.machine }}
-          bitbake_source: 'poky-wayland layers.raspberrypi conf.buildhistory.wpe-${{ matrix.wpe_vers }} --update-config'
-          s3_storage: ${S3_STORAGE}
+          machine: ${{ matrix.machine }}
           repo_release: ${{ matrix.yocto_rel }}
+          s3_storage: ${S3_STORAGE}
+          wpe_version: ${{ matrix.wpe_version }}
 
   build:
     strategy:
       fail-fast: false
       matrix:
         machine: ${{ fromJSON(needs.define-matrix.outputs.machine) }}
-        wpe_vers: ${{ fromJSON(needs.define-matrix.outputs.wpe_vers) }}
+        wpe_version: ${{ fromJSON(needs.define-matrix.outputs.wpe_version) }}
         yocto_rel: ['scarthgap']
     continue-on-error: true
     runs-on: [self-hosted, builder]
-    needs: [define-matrix, scarthgap-repo]
+    needs: [define-matrix, scarthgap-repo-init]
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/s3-configure
@@ -103,22 +125,21 @@ jobs:
           access_key: ${S3_ACCESS_KEY}
           secret_key: ${S3_SECRET_KEY}
           host_base: ${S3_HOST_BASE}
-      - uses: ./.github/actions/bitbake-build
+      - uses: ./.github/actions/kas-build
         env:
           S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
-          bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
-          bitbake_machine: ${{ matrix.machine }}
-          bitbake_source: 'poky-wayland layers.raspberrypi conf.reproducible-core.wpe-${{ matrix.wpe_vers }} --update-config'
-          s3_storage: ${S3_STORAGE}
+          machine: ${{ matrix.machine }}
           repo_release: ${{ matrix.yocto_rel }}
+          s3_storage: ${S3_STORAGE}
+          wpe_version: ${{ matrix.wpe_version }}
 
   test:
     strategy:
       fail-fast: false
       matrix:
         machine: ${{ fromJSON(needs.define-matrix.outputs.machine) }}
-        wpe_vers: ${{ fromJSON(needs.define-matrix.outputs.wpe_vers) }}
+        wpe_version: ${{ fromJSON(needs.define-matrix.outputs.wpe_version) }}
         yocto_rel: ['scarthgap']
     runs-on: [self-hosted, podman]
     permissions:
@@ -140,8 +161,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.github_token }}
           S3_STORAGE: ${{ secrets.S3_STORAGE }}
         with:
-          bitbake_buildname: wpe-${{ matrix.wpe_vers }}-${{ matrix.machine }}
-          bitbake_machine: ${{ matrix.machine }}
+          machine: ${{ matrix.machine }}
           github_token: ${GITHUB_TOKEN}
           s3_storage: ${S3_STORAGE}
-          wpe_vers: ${{ matrix.wpe_vers }}
+          wpe_version: ${{ matrix.wpe_version }}

@@ -1,0 +1,12 @@
+header:
+  version: 14
+
+repos:
+  meta-security:
+    url: https://git.yoctoproject.org/git/meta-security
+    commit: bc865c5276c2ab4031229916e8d7c20148dfbac3
+
+local_conf_header:
+  distro-features-add-security: |
+    DISTRO_FEATURES:append = " security"
+
