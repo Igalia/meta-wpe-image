@@ -59,6 +59,11 @@ Create WPEWebKitOptions
 
 Check Device Is IDLE
     [Documentation]    Check if the Device is idle.
+
+    ${stdout}    SSH Command    %{TEST_BOARD_IP}    ps -auxfww
+    ${formatted}    Evaluate    """${stdout}[0]"""
+    Log    ${formatted}
+
     ${cpu_load}    Get Remote CPU Load
     Log    CPU load: ${cpu_load}
     Should Be True    ${cpu_load} < ${CPU_LOAD_ON_IDLE}
