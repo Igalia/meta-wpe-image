@@ -60,7 +60,7 @@ Create WPEWebKitOptions
 Check Device Is IDLE
     [Documentation]    Check if the Device is idle.
 
-    ${stdout}    SSH Command    %{TEST_BOARD_IP}    ps -auxfww
+    ${stdout}    SSH Command    %{TEST_BOARD_IP}    ps -auxww
     ${formatted}    Evaluate    """${stdout}[0]"""
     Log    ${formatted}
 
