@@ -10,7 +10,7 @@ Test Timeout        300 seconds
 
 *** Test Cases ***
 Verify Full HD 30 FPS
-    VAR    ${PAGE}    Set Variable    http://%{TEST_WEBSERVER_IP}:%{TEST_WEBSERVER_PORT}/robot_framework/html/video_fps.html
+    VAR    ${PAGE}    http://%{TEST_WEBSERVER_IP}:%{TEST_WEBSERVER_PORT}/robot_framework/html/video_fps.html
 
     Go To    ${PAGE}
     Sleep    20 seconds

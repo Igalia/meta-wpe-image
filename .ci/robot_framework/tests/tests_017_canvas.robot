@@ -15,7 +15,7 @@ Verify Canvas Animation 60 FPS
     [Documentation]    Verifies that canvas animation runs at 60 FPS with acceptable CPU and memory usage.
     [Tags]    test:retry(1)
 
-    VAR    ${PAGE}    Set Variable    http://%{TEST_WEBSERVER_IP}:%{TEST_WEBSERVER_PORT}/robot_framework/html/canvas_fps.html
+    VAR    ${PAGE}    http://%{TEST_WEBSERVER_IP}:%{TEST_WEBSERVER_PORT}/robot_framework/html/canvas_fps.html
 
     Go To    ${PAGE}
     Sleep    22 seconds
