@@ -1,21 +1,13 @@
 inputs:
-  bitbake_buildname:
-    default: 'build'
-  bitbake_prefix:
-    default: ''
-  bitbake_machine:
+  machine:
     default: 'raspberrypi5'
-  bitbake_target:
+  target:
     default: 'core-image-weston-wpe'
-  bitbake_source:
-    default: 'source'
   github_token:
     required: true
-  repo_release:
-    default: 'scarthgap'
   s3_storage:
     required: true
-  wpe_vers:
+  wpe_version:
     required: true
 runs:
   using: 'composite'
@@ -25,12 +17,10 @@ runs:
       run:  |
         echo "Environment:"
         echo "======================================================================"
-        echo "BITBAKE_BUILDNAME=${{ inputs.bitbake_buildname }}"
-        echo "BITBAKE_MACHINE=${{ inputs.bitbake_machine }}"
-        echo "BITBAKE_PREFIX=${{ inputs.bitbake_prefix }}"
-        echo "BITBAKE_SOURCE=${{ inputs.bitbake_source }}"
-        echo "BITBAKE_TARGET=${{ inputs.bitbake_target }}"
-        echo "RELEASE=${{ inputs.repo_release }}"
+        echo "MACHINE=${{ inputs.machine }}"
+        echo "S3_STORAGE=${{ inputs.s3_storage }}"
+        echo "TARGET=${{ inputs.target }}"
+        echo "WPE_VERSION=${{ inputs.wpe_version }}"
         echo "======================================================================"
     - name: Download timestamp artifact
       uses: actions/download-artifact@v4
@@ -55,9 +45,9 @@ runs:
       shell: bash
       run:  |
         TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
-        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
-        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
-        sudo flash ${{ inputs.bitbake_target }} ${{ inputs.bitbake_machine }}
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bmap
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bz2
+        sudo flash ${{ inputs.target }} ${{ inputs.machine }}
     - name: Test
       shell: bash
       run:  |
@@ -67,33 +57,33 @@ runs:
             GITHUB_PR_SHA=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
         fi
         cd .ci
-        echo "💿️ **Image for [${{ inputs.bitbake_buildname }}](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/) (ref: ${GITHUB_PR_SHA}).**" > ci-message.txt
-        IP=$(sudo manage-devices -c /etc/manage-devices.yml ip ${{ inputs.bitbake_machine }})
+        echo "💿️ **Image for [wpe-${{ inputs.wpe_version }}-${{ inputs.machine }](https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }/) (ref: ${GITHUB_PR_SHA}).**" > ci-message.txt
+        IP=$(sudo manage-devices -c /etc/manage-devices.yml ip ${{ inputs.machine }})
         WEBSERVER_IP=$(ip -4 addr show eno1 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
         echo "#!/bin/sh" > setup-env-local.sh
         echo "export TEST_BOARD_IP=${IP}" >> setup-env-local.sh
         echo "export TEST_WEBSERVER_IP=${WEBSERVER_IP}" >> setup-env-local.sh
-        echo "export TEST_WPEWEBKIT_VERSION=${{ inputs.wpe_vers }}" >> setup-env-local.sh
-        echo "export TEST_MACHINE=${{ inputs.bitbake_machine }}" >> setup-env-local.sh
+        echo "export TEST_WPEWEBKIT_VERSION=${{ inputs.wpe_version }}" >> setup-env-local.sh
+        echo "export TEST_MACHINE=${{ inputs.machine }}" >> setup-env-local.sh
         if ./run-tests.sh; then
-          MESSAGE="Tests results: https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/robot/report.html - Tests passed for \`${{ inputs.bitbake_buildname }}\` on \`${{ inputs.bitbake_target }}\`."
+          MESSAGE="Tests results: https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }/robot/report.html - Tests passed for \`wpe-${{ inputs.wpe_version }}-${{ inputs.machine }\` on \`${{ inputs.target }}\`."
           echo "::notice file=.ci/run-tests.sh,title=Robot Framework tests::${MESSAGE}"
           echo "* ✅️ ${MESSAGE}" >> ci-message.txt
         else
-          MESSAGE="Tests results: https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/robot/report.html - Failures were detected in the test results for \`${{ inputs.bitbake_buildname }}\` on \`${{ inputs.bitbake_target }}\`."
+          MESSAGE="Tests results: https://wk-contrib.igalia.com/yocto/meta-wpe-image/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }/robot/report.html - Failures were detected in the test results for \`wpe-${{ inputs.wpe_version }}-${{ inputs.machine }\` on \`${{ inputs.target }}\`."
           echo "::warning file=.ci/run-tests.sh,title=Robot Framework tests::${MESSAGE}"
           echo "* ⚠️  ${MESSAGE}" >> ci-message.txt
         fi
-        s3cmd put -r -F tests_results/robot s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/
+        s3cmd put -r -F tests_results/robot s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }/
     - name: Comment on the pull request
       uses: mshick/add-pr-comment@v2
       with:
-        message-id: ${{ inputs.bitbake_buildname }}-${{ steps.timestamp.outputs.timestamp }}
+        message-id: wpe-${{ inputs.wpe_version }}-${{ inputs.machine }-${{ steps.timestamp.outputs.timestamp }}
         message-path: |
             .ci/ci-message.txt
     - name: Stop DUT and Clean the tests directory
       if: always()
       shell: bash
       run:  |
-        sudo manage-devices -c /etc/manage-devices.yml down ${{ inputs.bitbake_machine }}
+        sudo manage-devices -c /etc/manage-devices.yml down ${{ inputs.machine }}
         rm -rf .ci/setup-env-local.sh .ci/tests_results .ci/ci-message.txt

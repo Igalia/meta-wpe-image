@@ -1,6 +1,8 @@
 inputs:
   machine:
     default: 'raspberrypi5'
+  presets_extra:
+    default: ''
   repo_release:
     default: 'scarthgap'
   s3_storage:
@@ -19,6 +21,7 @@ runs:
         echo "Environment:"
         echo "======================================================================"
         echo "MACHINE=${{ inputs.machine }}"
+        echo "PRESETS_EXTRA=${{ inputs.presets_extra }}"
         echo "RELEASE=${{ inputs.repo_release }}"
         echo "TARGET=${{ inputs.target }}"
         echo "WPE_VERSION=${{ inputs.wpe_version }}"
@@ -66,7 +69,7 @@ runs:
         MAX_RETRIES=5
         for i in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $i to fetch sources for $IMAGE..."
-            if kas shell kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas-local.yml -c "bitbake ${{ inputs.target }} --runall=fetch"; then
+           if kas shell kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas-local.yml -c "bitbake ${{ inputs.target }} --runall=fetch"; then
                 echo "All sources fetched successfully."
                 break
             fi
@@ -78,17 +81,21 @@ runs:
             fi
         done
 
-        kas shell \
-        kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas/presets/buildhistory.yml:kas-local.yml \
-            -c "buildhistory-collect-srcrevs -a > ../../srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc"
-        diff -u meta-wpe-image/conf/include/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc || true
-    - name: Upload buildhistory-collect-srcrevs.inc artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc
-        path: ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/srcrev_${{ inputs.bitbake_target }}_${{ inputs.bitbake_machine }}.inc
+        kas build kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml${{ inputs.presets_extra}}:kas-local.yml
+    - name: Artifacts
+      if: always()
+      shell: bash
+      run: |
+        ls -lh ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/${KAS_WORK_DIR}/build/tmp/deploy/images/${{ inputs.machine }}/
+        TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
+        s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/${KAS_WORK_DIR}/build/tmp/deploy/images/${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.rootfs.wic.bmap \
+            s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bmap
+        s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/${KAS_WORK_DIR}/build/tmp/deploy/images/${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.rootfs.wic.bz2 \
+            s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bz2
+        s3cmd put -F ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/${KAS_WORK_DIR}/build/tmp/deploy/images/${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.rootfs.dbg.tar.bz2 \
+            s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.dbg.tar.bz2
     - name: Clean the tmp dir
       if: always()
       shell: bash
       run:  |
-        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
+        # rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
