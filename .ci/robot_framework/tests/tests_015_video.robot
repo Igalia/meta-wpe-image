@@ -3,7 +3,7 @@ Library             SeleniumLibrary
 Resource            variables.robot
 Resource            keywords_common.robot
 
-Suite Setup         Wait Until Keyword Succeeds    20x    1000ms    Wait For Webdriver Remote Start Maximized
+Suite Setup         Wait For Webdriver Remote Start Maximized
 Suite Teardown      Webdriver Remote Stop
 Test Timeout        300 seconds
 
