@@ -15,11 +15,7 @@ Verify Canvas Animation 60 FPS
     [Documentation]    Verifies that canvas animation runs at 60 FPS with acceptable CPU and memory usage.
     [Tags]    test:retry(1)
 
-    ${TEST_MACHINE}=    Get Environment Variable    TEST_MACHINE
-    ${TEST_WEBSERVER_IP}=    Get Environment Variable    TEST_WEBSERVER_IP
-    ${TEST_WEBSERVER_PORT}=    Get Environment Variable    TEST_WEBSERVER_PORT
-    ${TEST_WPEWEBKIT_VERSION}=    Get Environment Variable    TEST_WPEWEBKIT_VERSION
-    ${PAGE}=    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/canvas_fps.html
+    VAR    ${PAGE}    Set Variable    http://%{TEST_WEBSERVER_IP}:%{TEST_WEBSERVER_PORT}/robot_framework/html/canvas_fps.html
 
     Go To    ${PAGE}
     Sleep    22 seconds
@@ -43,32 +39,32 @@ Verify Canvas Animation 60 FPS
 
     ${CANVAS_FPS_THRESHOLD_FPS}=    Get Machine Expectation
     ...    id=canvas-fps-threshold-fps
-    ...    machine=${TEST_MACHINE}
-    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
+    ...    machine=%{TEST_MACHINE}
+    ...    wpeversion=%{TEST_WPEWEBKIT_VERSION}
     ...    type=number
     Should Be True    ${fps} > ${CANVAS_FPS_THRESHOLD_FPS}
     ${CANVAS_FPS_THRESHOLD_AVERAGE}=    Get Machine Expectation
     ...    id=canvas-fps-threshold-average
-    ...    machine=${TEST_MACHINE}
-    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
+    ...    machine=%{TEST_MACHINE}
+    ...    wpeversion=%{TEST_WPEWEBKIT_VERSION}
     ...    type=number
     Should Be True    ${average} < ${CANVAS_FPS_THRESHOLD_AVERAGE}
     ${CANVAS_FPS_THRESHOLD_STD_DEVIATION}=    Get Machine Expectation
     ...    id=canvas-fps-threshold-std-deviation
-    ...    machine=${TEST_MACHINE}
-    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
+    ...    machine=%{TEST_MACHINE}
+    ...    wpeversion=%{TEST_WPEWEBKIT_VERSION}
     ...    type=number
     Should Be True    ${std_deviation} < ${CANVAS_FPS_THRESHOLD_STD_DEVIATION}
     ${CANVAS_FPS_THRESHOLD_CPU_LOAD}=    Get Machine Expectation
     ...    id=canvas-fps-threshold-cpu-load
-    ...    machine=${TEST_MACHINE}
-    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
+    ...    machine=%{TEST_MACHINE}
+    ...    wpeversion=%{TEST_WPEWEBKIT_VERSION}
     ...    type=number
     Should Be True    ${cpu_load} < ${CANVAS_FPS_THRESHOLD_CPU_LOAD}
     ${CANVAS_FPS_THRESHOLD_MEMORY_USED}=    Get Machine Expectation
     ...    id=canvas-fps-threshold-memory-used
-    ...    machine=${TEST_MACHINE}
-    ...    wpeversion=${TEST_WPEWEBKIT_VERSION}
+    ...    machine=%{TEST_MACHINE}
+    ...    wpeversion=%{TEST_WPEWEBKIT_VERSION}
     ...    type=number
     Should Be True    ${memory_used} < ${CANVAS_FPS_THRESHOLD_MEMORY_USED}
 
