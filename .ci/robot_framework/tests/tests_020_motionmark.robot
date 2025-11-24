@@ -5,7 +5,7 @@ Library             SeleniumLibrary
 Resource            variables.robot
 Resource            keywords_common.robot
 
-Suite Setup         Webdriver Remote Start
+Suite Setup         Wait For Webdriver Remote Start
 Suite Teardown      Webdriver Remote Stop
 Test Timeout        10 minutes
 
@@ -102,3 +102,7 @@ Get Test Name Score Mapping
         Set To Dictionary    ${mapping}    ${name}    ${score}
     END
     RETURN    ${mapping}
+
+Wait For Webdriver Remote Start
+    Wait Until Keyword Succeeds    18x    10s    Check Device Is IDLE
+    Wait Until Keyword Succeeds    20x    1000ms    Webdriver Remote Start

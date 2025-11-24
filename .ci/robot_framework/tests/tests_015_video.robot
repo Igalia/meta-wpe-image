@@ -2,7 +2,7 @@
 
 Test Timeout    300 seconds
 
-Suite Setup       Wait Until Keyword Succeeds    20x   1000ms    Webdriver Remote Start Maximized
+Suite Setup       Wait Until Keyword Succeeds    20x   1000ms    Wait For Webdriver Remote Start Maximized
 Suite Teardown    Webdriver Remote Stop
 
 Library    SeleniumLibrary
@@ -59,3 +59,6 @@ Verify Full HD 30 FPS
     Should Be True    ${cpu_load} < ${VIDEO_30_FPS_THRESHOLD_CPU_LOAD}
     Should Be True    ${memory_used} < ${VIDEO_30_FPS_THRESHOLD_MEMORY_USED}
 
+Wait For Webdriver Remote Start Maximized
+    Wait Until Keyword Succeeds    18x    10s    Check Device Is IDLE
+    Wait Until Keyword Succeeds    20x    1000ms    Webdriver Remote Start Maximized

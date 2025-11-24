@@ -5,7 +5,7 @@ Library             SeleniumLibrary
 Resource            variables.robot
 Resource            keywords_common.robot
 
-Suite Setup         Wait Until Keyword Succeeds    20x    1000ms    Webdriver Remote Start Maximized
+Suite Setup         Wait For Webdriver Remote Start Maximized
 Suite Teardown      Webdriver Remote Stop
 Test Timeout        300 seconds
 
@@ -20,8 +20,6 @@ Verify Canvas Animation 60 FPS
     ${TEST_WEBSERVER_PORT}=    Get Environment Variable    TEST_WEBSERVER_PORT
     ${TEST_WPEWEBKIT_VERSION}=    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     ${PAGE}=    Set Variable    http://${TEST_WEBSERVER_IP}:${TEST_WEBSERVER_PORT}/robot_framework/html/canvas_fps.html
-
-    Wait Until Keyword Succeeds    18x    10s    Check Device Is IDLE
 
     Go To    ${PAGE}
     Sleep    22 seconds
@@ -93,3 +91,7 @@ Get Std Deviation Value
     ${std_deviation_text}=    SeleniumLibrary.Get Text    id=std-deviation
     ${std_deviation}=    Convert To Number    ${std_deviation_text.split(":")[1].strip()}
     RETURN    ${std_deviation}
+
+Wait For Webdriver Remote Start Maximized
+    Wait Until Keyword Succeeds    18x    10s    Check Device Is IDLE
+    Wait Until Keyword Succeeds    20x    1000ms    Webdriver Remote Start Maximized
