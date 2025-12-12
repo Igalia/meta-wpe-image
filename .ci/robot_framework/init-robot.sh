@@ -16,9 +16,14 @@ apt-get update -y
 apt-get install -y git ssh \
     build-essential \
     imagemagick tesseract-ocr ghostscript libdmtx0b libzbar0 \
-    chromium-driver
+    chromium-driver \
+    webkit2gtk-driver
 
 pip install --root-user-action ignore --upgrade pip
+
+# Virtual display webkitgtk local webdriver headless
+apt-get install -y xvfb
+pip install --root-user-action ignore pyvirtualdisplay
 
 # Install Robot depends
 pip install --root-user-action ignore \
