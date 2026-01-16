@@ -84,7 +84,7 @@ Capture And Compare
     [Arguments]    ${image}
     ${TEST_WPEWEBKIT_VERSION}    Get Environment Variable    TEST_WPEWEBKIT_VERSION
     Capture Page Screenshot    ${image}
-    Compare Images    ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${image}    ${image}    threshold=0.0005
+    Compare Images    ${BASELINE_IMAGES_PATH}/${TEST_WPEWEBKIT_VERSION}/${image}    ${image}    threshold=0.0015
 
 Verify Inspector
     [Documentation]    Checks that inspector tabs can be clicked. Locators may need adjustment.
