@@ -46,6 +46,7 @@ IMAGE_INSTALL:append = " \
     gdbserver \
     glmark2 \
     gstreamer1.0-libav \
+    igt-gpu-tools \
     mesa-demos \
     packagegroup-core-full-cmdline \
     parted pv \
