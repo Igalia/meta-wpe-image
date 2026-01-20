@@ -16,3 +16,6 @@ PACKAGECONFIG:remove = "speech-synthesis"
 
 TOOLCHAIN:aarch64 = "clang"
 LIBCPLUSPLUS:aarch64 = "-stdlib=libc++"
+
+# Added for 2.52.x
+PACKAGECONFIG[libhyphen] = "-DUSE_LIBHYPHEN=ON,-DUSE_LIBHYPHEN=OFF,libhyphen"
