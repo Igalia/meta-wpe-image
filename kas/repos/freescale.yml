@@ -1,0 +1,14 @@
+header:
+  version: 14
+
+repos:
+  meta-freescale:
+    url: https://github.com/Freescale/meta-freescale
+    commit: 62423c69631d7f7cffe2bd20997412d76caa94ef
+  meta-freescale-3rdparty:
+    url: https://github.com/Freescale/meta-freescale-3rdparty
+    commit: 70c83e96c7f75e73245cb77f1b0cada9ed4bbc6d
+  meta-freescale-distro:
+    url: https://github.com/Freescale/meta-freescale-distro
+    commit: b9d6a5d9931922558046d230c1f5f4ef6ee72345
+

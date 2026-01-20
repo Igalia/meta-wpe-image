@@ -1,0 +1,8 @@
+header:
+  version: 14
+
+repos:
+  meta-raspberrypi:
+    url: https://git.yoctoproject.org/git/meta-raspberrypi
+    commit: 8767e2ff80ec3b09cd70dd22cdb18e783ab20d7b
+

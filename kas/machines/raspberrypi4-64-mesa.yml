@@ -1,0 +1,6 @@
+header:
+  version: 11
+  includes:
+    - kas/repos/raspberrypi.yml
+
+machine: raspberrypi4-64-mesa

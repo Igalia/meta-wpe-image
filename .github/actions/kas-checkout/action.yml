@@ -1,10 +1,15 @@
 inputs:
+  machine:
+    default: 'raspberrypi5'
   repo_url:
     default: https://github.com/${{ github.repository }}.git
   repo_ref:
     default: ${{ github.ref }}
   repo_release:
     default: 'scarthgap'
+  wpe_version:
+    default: 'nightly'
+
 runs:
   using: 'composite'
   steps:
@@ -15,48 +20,43 @@ runs:
         echo "======================================================================"
         echo "CI_REPOSITORY_URL=${{ inputs.repo_url }}"
         echo "CI_COMMIT_SHA=${{ inputs.repo_ref }}"
-        echo "CI_RELEASE=${{ inputs.repo_release }}"
+        echo "MACHINE=${{ inputs.machine }}"
+        echo "RELEASE=${{ inputs.repo_release }}"
+        echo "WPE_VERSION=${{ inputs.wpe_version }}"
         echo "======================================================================"
-    - name: Generate timestamped prefix
-      id: timestamp
-      shell: bash
-      run: |
-        TIMESTAMP=$(date +"%Y%m%d%H%M")
-        echo ${TIMESTAMP} > timestamp.txt
     - name: Set bitbake environment
       shell: bash
       run:  |
-        sudo apt-get install -y git git-lfs repo
-        mkdir -p ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
-        cd ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
-        repo init -u ${{ inputs.repo_url }} -m manifest-${{ inputs.repo_release }}.xml -b ${{ inputs.repo_ref }}
+        sudo apt-get install -y git pip
+        export PATH=$PATH:~/.local/bin
+        pip install kas
 
-        attempt=0
-        until repo sync --force-sync; do
-          attempt=$((attempt+1))
-          if [ $attempt -ge 5 ]; then
-            echo "repo sync failed after 5 attempts. Exiting."
-            exit 1
-          fi
-          echo "repo sync failed. Retrying in 30 seconds... ($attempt/5)"
-          sleep 30
-        done
-
-        pushd sources/meta-wpe-image
         git config --global user.email "meta-wpe-image-bot@igalia.com"
         git config --global user.name "meta-wpe-image CI Bot"
+        GIT_LFS_SKIP_SMUDGE=1 git clone ${{ inputs.repo_url }} ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
+        cd ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
+
         git remote remove tmp || true
         git remote add tmp ${{ inputs.repo_url }}
         git fetch tmp main
         git fetch tmp ${{ inputs.repo_ref }}:${{ inputs.repo_ref }}
         git checkout ${{ inputs.repo_ref }}
         git rebase tmp/main
-        popd
-    - name: Upload timestamp prefix artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: timestamp.txt
-        path: timestamp.txt
+
+        export KAS_CLONE_DEPTH="1"
+        export KAS_WORK_DIR="workdir"
+        mkdir "${KAS_WORK_DIR}"
+
+        attempt=0
+        until kas checkout kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml; do
+          attempt=$((attempt+1))
+          if [ $attempt -ge 5 ]; then
+            echo "kas checkout failed after 5 attempts. Exiting."
+            exit 1
+          fi
+          echo "kas checkout failed. Retrying in 30 seconds... ($attempt/5)"
+          sleep 30
+        done
     - name: Tar workdir
       shell: bash
       run:  |
@@ -65,6 +65,6 @@ runs:
     - name: Upload tar workdir artifact
       uses: actions/upload-artifact@v4
       with:
-        name: yocto-meta-wpe-image-${{ inputs.repo_release }}
+        name: yocto-meta-wpe-image-${{ inputs.repo_release }}-${{ inputs.machine }}-${{ inputs.wpe_version }}
         path:  ~/yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
 
