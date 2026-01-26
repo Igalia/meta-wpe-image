@@ -43,7 +43,7 @@ jobs:
           if [ -n "${{ github.event.inputs.machine }}" ]; then
             echo "machines=[\"${{ github.event.inputs.machine }}\"]" >> $GITHUB_OUTPUT
           else
-            echo 'machines=["raspberrypi3-mesa", "raspberrypi5"]' >> $GITHUB_OUTPUT
+            echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
           fi
           if [ -n "${{ github.event.inputs.wpe_vers }}" ]; then
             echo "wpe_vers=[\"${{ github.event.inputs.wpe_vers }}\"]" >> $GITHUB_OUTPUT
