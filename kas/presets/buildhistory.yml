@@ -1,0 +1,7 @@
+header:
+  version: 11
+
+local_conf_header:
+  enable-buildhistory: |
+    # DEBUG_BUILD = "1"
+    INHERIT += "buildhistory"
