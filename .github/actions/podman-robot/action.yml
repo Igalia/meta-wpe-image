@@ -55,7 +55,9 @@ runs:
       shell: bash
       run:  |
         TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
-        sudo manage-devices -c /etc/manage-devices.yml up ${{ inputs.bitbake_machine }}
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bmap
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-${{ inputs.bitbake_buildname }}/${{ inputs.bitbake_target }}-${{ inputs.bitbake_machine }}.wic.bz2
+        sudo flash ${{ inputs.bitbake_target }} ${{ inputs.bitbake_machine }}
     - name: Test
       shell: bash
       run:  |
