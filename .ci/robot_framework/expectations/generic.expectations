@@ -6,9 +6,9 @@ canvas-fps-threshold-std-deviation:1
 motionmark-min-score:400
 scroll-max-position:10000
 scroll-position:300
-scroll-threshold:8
+scroll-threshold:10
 swipe-position:1047
-swipe-threshold:8
+swipe-threshold:10
 video-30-fps-threshold-cpu-load:3
 video-30-fps-threshold-fps:28
 video-30-fps-threshold-memory-used:850
