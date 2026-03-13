@@ -83,7 +83,7 @@ runs:
             -c "buildhistory-collect-srcrevs -a > ../../srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc"
         diff -u conf/include/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc || true
     - name: Upload buildhistory-collect-srcrevs.inc artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc
         path: ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc
