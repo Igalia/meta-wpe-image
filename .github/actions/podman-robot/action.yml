@@ -23,7 +23,7 @@ runs:
         echo "WPE_VERSION=${{ inputs.wpe_version }}"
         echo "======================================================================"
     - name: Download timestamp artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         pattern: timestamp.txt
         merge-multiple: true
@@ -76,7 +76,7 @@ runs:
         fi
         s3cmd put -r -F tests_results/robot s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/
     - name: Comment on the pull request
-      uses: mshick/add-pr-comment@v2
+      uses: mshick/add-pr-comment@v3
       with:
         message-id: wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}-${{ steps.timestamp.outputs.timestamp }}
         message-path: |

@@ -23,6 +23,10 @@ on:
           - '2_50'
           - nightly
 
+# Opt into Node.js 24 for actions (avoids deprecation warning)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   timestamp:
     runs-on: ubuntu-22.04
@@ -146,7 +150,7 @@ jobs:
       pull-requests: write
     needs: [define-matrix, build]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/s3-configure
         env:
           S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}

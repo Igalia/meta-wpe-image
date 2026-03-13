@@ -24,7 +24,7 @@ runs:
         echo "WPE_VERSION=${{ inputs.wpe_version }}"
         echo "======================================================================"
     - name: Download timestamp artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         pattern: timestamp.txt
         merge-multiple: true
@@ -40,7 +40,7 @@ runs:
         rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
         rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
     - name: Download workdir artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: yocto-meta-wpe-image-${{ inputs.repo_release }}-${{ inputs.machine }}-${{ inputs.wpe_version }}
         path:  ~/
@@ -83,7 +83,7 @@ runs:
             -c "buildhistory-collect-srcrevs -a > ../../srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc"
         diff -u conf/include/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc || true
     - name: Upload buildhistory-collect-srcrevs.inc artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc
         path: ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc
