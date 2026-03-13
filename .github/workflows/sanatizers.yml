@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
 
     - name: Install requirements
       run: sudo apt-get install pycodestyle python3-flake8 python3-pycodestyle shellcheck

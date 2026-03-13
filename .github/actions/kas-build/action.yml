@@ -27,7 +27,7 @@ runs:
         echo "WPE_VERSION=${{ inputs.wpe_version }}"
         echo "======================================================================"
     - name: Download timestamp artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         pattern: timestamp.txt
         merge-multiple: true
@@ -43,7 +43,7 @@ runs:
         rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
         rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
     - name: Download workdir artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: yocto-meta-wpe-image-${{ inputs.repo_release }}-${{ inputs.machine }}-${{ inputs.wpe_version }}
         path:  ~/

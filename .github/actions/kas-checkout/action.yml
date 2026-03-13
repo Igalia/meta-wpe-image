@@ -64,7 +64,7 @@ runs:
         cd ~
         tar -cf yocto-meta-wpe-image-${{ inputs.repo_release }}.tar yocto-meta-wpe-image-${{ inputs.repo_release }}
     - name: Upload tar workdir artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: yocto-meta-wpe-image-${{ inputs.repo_release }}-${{ inputs.machine }}-${{ inputs.wpe_version }}
         path:  ~/yocto-meta-wpe-image-${{ inputs.repo_release }}.tar
