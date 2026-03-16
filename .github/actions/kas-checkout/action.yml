@@ -38,6 +38,7 @@ runs:
 
         git remote remove tmp || true
         git remote add tmp ${{ inputs.repo_url }}
+        git checkout --detach HEAD
         git fetch tmp main
         git fetch tmp ${{ inputs.repo_ref }}:${{ inputs.repo_ref }}
         git checkout ${{ inputs.repo_ref }}
