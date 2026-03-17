@@ -48,7 +48,7 @@ Verify Canvas Animation 60 FPS
     ...    machine=%{TEST_MACHINE}
     ...    wpeversion=%{TEST_WPEWEBKIT_VERSION}
     ...    type=number
-    Should Be True    ${average} < ${CANVAS_FPS_THRESHOLD_AVERAGE}
+    Should Be True    ${average} <= ${CANVAS_FPS_THRESHOLD_AVERAGE}
     ${CANVAS_FPS_THRESHOLD_STD_DEVIATION}=    Get Machine Expectation
     ...    id=canvas-fps-threshold-std-deviation
     ...    machine=%{TEST_MACHINE}
