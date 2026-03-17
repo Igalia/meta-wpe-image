@@ -124,7 +124,7 @@ After the build completes, the generated image will be located at:
 * Weston: `/usr/bin/wpe-exported-wayland https://wpewebkit.org`
 * DRM: `export WPE_DISPLAY="wpe-display-drm"; /usr/bin/wpe-exported-wayland https://wpewebkit.org`
 
-## How to contribute
+# How to contribute
 
 Contributions are welcomed!. Please send your patches as
 [Pull Requests](https://github.com/Igalia/meta-wpe-image/pulls) or fill a
