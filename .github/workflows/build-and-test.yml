@@ -53,7 +53,7 @@ jobs:
             echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
           fi
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo 'wpe_version=["2_50"]' >> $GITHUB_OUTPUT
+            echo 'wpe_version=["nightly"]' >> $GITHUB_OUTPUT
           elif [ -n "${{ github.event.inputs.wpe_version }}" ]; then
             echo "wpe_version=[\"${{ github.event.inputs.wpe_version }}\"]" >> $GITHUB_OUTPUT
           else
