@@ -20,7 +20,6 @@ on:
         required: true
         type: choice
         options:
-          - '2_50'
           - nightly
 
 # Opt into Node.js 24 for actions (avoids deprecation warning)
