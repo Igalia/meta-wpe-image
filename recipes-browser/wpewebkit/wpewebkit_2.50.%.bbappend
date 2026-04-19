@@ -5,7 +5,7 @@ SRC_URI += "file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.50.patch "
 SRCBRANCH:class-devupstream = "main"
 SRC_URI:class-devupstream = "git://github.com/WebKit/WebKit.git;protocol=https;branch=${SRCBRANCH} \
                              file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.50.patch "
-SRCREV:class-devupstream = "aef0bf9034507ee85c5fd12404928781a7f78154"
+SRCREV:class-devupstream = "d88037fb35e217fc7d9f6ba254e05b77d7e445b2"
 
 PV:class-devupstream = "trunk"
 
