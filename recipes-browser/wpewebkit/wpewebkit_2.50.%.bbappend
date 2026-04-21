@@ -4,7 +4,7 @@ SRC_URI += "file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.50.patch "
 
 SRCBRANCH:class-devupstream = "eng/GTK-WPE-Probe-dma-buf-mmap-capability-before-enabling-MemoryMappedGPUBuffer-path"
 SRC_URI:class-devupstream = "git://github.com/nikolaszimmermann/WebKit.git;protocol=https;branch=${SRCBRANCH}"
-SRCREV:class-devupstream = "21aebcdfd9607f82ae301be0ab068e090c195f6d"
+SRCREV:class-devupstream = "5acd4cf899e2904d29478f224b30d905c8ce4b39"
 
 PV:class-devupstream = "trunk"
 
