@@ -2,10 +2,9 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.50.patch "
 
-SRCBRANCH:class-devupstream = "main"
-SRC_URI:class-devupstream = "git://github.com/WebKit/WebKit.git;protocol=https;branch=${SRCBRANCH} \
-                             file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.50.patch "
-SRCREV:class-devupstream = "${AUTOREV}"
+SRCBRANCH:class-devupstream = "eng/GTK-WPE-Probe-dma-buf-mmap-capability-before-enabling-MemoryMappedGPUBuffer-path"
+SRC_URI:class-devupstream = "git://github.com/nikolaszimmermann/WebKit.git;protocol=https;branch=${SRCBRANCH}"
+SRCREV:class-devupstream = "58ff1fb4cb30604a8b98099fb600fab07735749b"
 
 PV:class-devupstream = "trunk"
 

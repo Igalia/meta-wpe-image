@@ -20,7 +20,6 @@ on:
         required: true
         type: choice
         options:
-          - '2_50'
           - nightly
 
 # Opt into Node.js 24 for actions (avoids deprecation warning)
@@ -53,7 +52,7 @@ jobs:
             echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
           fi
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo 'wpe_version=["2_50"]' >> $GITHUB_OUTPUT
+            echo 'wpe_version=["nightly"]' >> $GITHUB_OUTPUT
           elif [ -n "${{ github.event.inputs.wpe_version }}" ]; then
             echo "wpe_version=[\"${{ github.event.inputs.wpe_version }}\"]" >> $GITHUB_OUTPUT
           else
