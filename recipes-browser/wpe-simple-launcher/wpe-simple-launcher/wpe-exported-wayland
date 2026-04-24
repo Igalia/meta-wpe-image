@@ -34,14 +34,6 @@ if [ "$(hostname)" = "raspberrypi5" ]; then
     export WEBKIT_GST_DISABLE_GL_SINK=1
 fi
 
-# Regression. Hank in MotionMark since
-#   https://github.com/WebKit/WebKit/pull/63371#issuecomment-4302935972
-#
-# Apply regression workaround only if running on raspberrypi5
-if [ "$(hostname)" = "raspberrypi5" ]; then
-    export WEBKIT_DISABLE_DMABUF_ATLAS=1
-fi
-
 # Ensure Wayland and XDG runtime environment variables are propagated
 WAYLAND_DISPLAY=$(strings < "/proc/$(pidof weston-keyboard)/environ" | grep WAYLAND_DISPLAY)
 XDG_RUNTIME_DIR=$(strings < "/proc/$(pidof weston-keyboard)/environ" | grep XDG_RUNTIME_DIR)
