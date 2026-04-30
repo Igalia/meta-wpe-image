@@ -3,5 +3,5 @@ header:
 
 local_conf_header:
   release-channel: |
-    require conf/templates/template/presets/wpe-2_50.conf
+    require conf/templates/template/presets/wpe-2_52.conf
 

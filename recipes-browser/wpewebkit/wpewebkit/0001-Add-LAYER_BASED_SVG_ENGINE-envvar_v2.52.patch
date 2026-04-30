@@ -1,63 +1,46 @@
-From a25216c56a57e35496ca5f1e043c1685b8eb5298 Mon Sep 17 00:00:00 2001
-From: Pablo Saavedra <psaavedra@igalia.com>
-Date: Wed, 24 May 2023 13:50:19 +0000
-Subject: Add LAYER_BASED_SVG_ENGINE and LAYER_BASED_SVG_ENGINE_TOGGLER envvars
-
----
- .../UIProcess/API/glib/WebKitWebView.cpp      |  3 +++
- Source/WebKit/UIProcess/WebPageProxy.cpp      |  2 ++
- Source/WebKit/WebProcess/WebPage/WebPage.cpp  | 25 +++++++++++++++++++
- 3 files changed, 30 insertions(+)
-
 diff --git a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
-index 277b4cdf400f..4ae56c8ef1d3 100644
+index b24480e8f539..3b0c5689307c 100644
 --- a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
 +++ b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
-@@ -3578,6 +3578,9 @@ void webkit_web_view_reload(WebKitWebView* webView)
+@@ -3635,6 +3635,7 @@ void webkit_web_view_reload(WebKitWebView* webView)
  {
      g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
  
-+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 +    webkitWebViewUpdateSettings(webView);
-+#endif
      getPage(webView).reload({ });
  }
  
 diff --git a/Source/WebKit/UIProcess/WebPageProxy.cpp b/Source/WebKit/UIProcess/WebPageProxy.cpp
-index d3967b989dfe..2795c3b135b5 100644
+index ab18bc32c482..fb85a78344d3 100644
 --- a/Source/WebKit/UIProcess/WebPageProxy.cpp
 +++ b/Source/WebKit/UIProcess/WebPageProxy.cpp
-@@ -1147,8 +1147,10 @@ void WebPageProxy::notifyProcessPoolToPrewarm()
+@@ -1198,9 +1198,6 @@ void WebPageProxy::notifyProcessPoolToPrewarm()
  
  void WebPageProxy::setPreferences(WebPreferences& preferences)
  {
-+#if !ENABLE(LAYER_BASED_SVG_ENGINE)
-     if (&preferences == m_preferences.ptr())
-         return;
-+#endif
- 
+-    if (&preferences == m_preferences.ptr())
+-        return;
+-
      protectedPreferences()->removePage(*this);
      m_preferences = preferences;
+     protectedPreferences()->addPage(*this);
 diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-index 54ab23ec581c..2334446b86dc 100644
+index 87529320fa35..2a69d5449384 100644
 --- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
 +++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
-@@ -498,6 +498,10 @@
+@@ -506,6 +506,8 @@
  #include <WebKitAdditions/WebPreferencesDefaultValuesAdditions.h>
  #endif
  
-+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 +#include <filesystem>
-+#endif
 +
  namespace WebKit {
  using namespace JSC;
  using namespace WebCore;
-@@ -4782,6 +4786,27 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
+@@ -4802,6 +4804,25 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
  
      updateSettingsGenerated(store, settings);
  
-+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 +    const char* lbseEnabledToggler = getenv("LAYER_BASED_SVG_ENGINE_TOGGLER");
 +    if (lbseEnabledToggler != NULL) {
 +        if (std::filesystem::exists(std::filesystem::path {lbseEnabledToggler})) {
@@ -76,9 +59,7 @@ index 54ab23ec581c..2334446b86dc 100644
 +            settings.setLayerBasedSVGEngineEnabled(false);
 +        }
 +    }
-+#endif
 +
- #if !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION)
+ #if !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION) && !PLATFORM(WPE)
      if (!settings.acceleratedCompositingEnabled()) {
          WEBPAGE_RELEASE_LOG(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
-
