@@ -145,7 +145,7 @@ jobs:
         machine: ${{ fromJSON(needs.define-matrix.outputs.machine) }}
         wpe_version: ${{ fromJSON(needs.define-matrix.outputs.wpe_version) }}
         yocto_rel: ['scarthgap']
-    runs-on: [self-hosted, podman]
+    runs-on: [self-hosted, dutcontrol]
     permissions:
       pull-requests: write
     needs: [define-matrix, build]
