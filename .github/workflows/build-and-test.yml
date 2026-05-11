@@ -11,10 +11,10 @@ on:
         required: true
         type: choice
         options:
-          - raspberrypi3-mesa
-          - raspberrypi4-64-mesa
+          # - raspberrypi3-mesa
+          # - raspberrypi4-64-mesa
           - raspberrypi5
-          - wandboard-mesa
+          # - wandboard-mesa
       wpe_version:
         description: 'Select WPEWebKit version'
         required: true
@@ -46,7 +46,8 @@ jobs:
           if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.draft }}" == "true" ]; then
             echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo 'machines=["raspberrypi3-mesa", "raspberrypi5", "wandboard-mesa"]' >> $GITHUB_OUTPUT
+            # echo 'machines=["raspberrypi3-mesa", "raspberrypi5", "wandboard-mesa"]' >> $GITHUB_OUTPUT
+            echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
           elif [ -n "${{ github.event.inputs.machine }}" ]; then
             echo "machines=[\"${{ github.event.inputs.machine }}\"]" >> $GITHUB_OUTPUT
           else
