@@ -1,6 +1,26 @@
 header:
   version: 11
   includes:
-    - kas/repos/raspberrypi.yml
+    - repo: meta-moonforge
+      file: kas/include/layer/meta-moonforge-raspberrypi.yml
+    - repo: meta-moonforge
+      file: kas/include/layer/meta-moonforge-rauc-raspberrypi.yml
+
+local_conf_header:
+  30_meta-moonforge-raspberrypi: |
+    # Specifies description file for partitioning the image
+    WKS_FILE = "moonforge-image-base-raspberrypi.wks.in"
+  20_meta-moonforge-distro: |
+    # Sets up persistent data partition
+    OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p4"
+    # Sets minimum size of the data partition
+    IMAGE_DATA_MIN_SIZE = "4096M"
+
+repos:
+  # TODO:
+  meta-raspberrypi:
+    url: https://git.yoctoproject.org/meta-raspberrypi
+    commit: 8767e2ff80ec3b09cd70dd22cdb18e783ab20d7b
+    branch: scarthgap
 
 machine: raspberrypi5
