@@ -5,7 +5,6 @@ inherit image_browsers image_weston
 IMAGE_INSTALL:append = " \
     wpewebkit \
     wpe-simple-launcher \
-    sysprof \
 "
 
 IMAGE_INSTALL:append:raspberrypi4 = " rpi-eeprom"
