@@ -27,6 +27,7 @@ repos:
       meta-networking:
       meta-filesystems:
       meta-webserver:
+    branch: scarthgap
   meta-clang:
     url: https://github.com/kraj/meta-clang.git
     commit: 731488911f55ebfe746068512b426351192f82f2
