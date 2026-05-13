@@ -53,6 +53,7 @@ runs:
     - name: Build
       shell: bash
       run:  |
+        export KAS_CLONE_DEPTH="1"
         export KAS_WORK_DIR="workdir"
 
         # requires: sudo apt-get install -y git git-lfs pip
