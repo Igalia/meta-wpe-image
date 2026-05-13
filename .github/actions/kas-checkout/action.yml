@@ -49,7 +49,7 @@ runs:
         mkdir "${KAS_WORK_DIR}"
 
         attempt=0
-        until kas checkout kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml; do
+        until kas checkout kas/machines/${{ inputs.machine }}.yml:kas.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml; do
           attempt=$((attempt+1))
           if [ $attempt -ge 5 ]; then
             echo "kas checkout failed after 5 attempts. Exiting."
