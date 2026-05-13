@@ -101,4 +101,4 @@ runs:
       if: always()
       shell: bash
       run:  |
-        rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
+        # rm -rf ~/yocto-meta-wpe-image-${{ inputs.repo_release }}
