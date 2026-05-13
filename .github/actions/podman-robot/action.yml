@@ -91,10 +91,8 @@ runs:
         TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
         [ -n "${DUT_TOKEN}" ] || { echo "::error::DUT_TOKEN is not set"; exit 1; }
         dut-control-client power off "$DUT_TOKEN"
-        # s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bmap
-        # s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bz2
-        s3cmd get -F s3://${{ inputs.s3_storage }}/202604160403-wpe-nightly-raspberrypi5/core-image-weston-wpe-raspberrypi5.wic.bmap
-        s3cmd get -F s3://${{ inputs.s3_storage }}/202604160403-wpe-nightly-raspberrypi5/core-image-weston-wpe-raspberrypi5.wic.bz2
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bmap
+        s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bz2
         dut-control-client --timeout 300 flash "$DUT_TOKEN" "$(pwd)/${{ inputs.target }}-${{ inputs.machine }}.wic.bz2"
         dut-control-client power on "$DUT_TOKEN"
         MAX_RETRIES=10
