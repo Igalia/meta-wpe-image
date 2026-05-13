@@ -8,8 +8,7 @@ machine: qemux86-64
 
 distro: wpe
 
-target:
-  - core-image-weston-wpe
+target: core-image-weston-wpe
 
 local_conf_header:
   igalia-demos-settings: |
