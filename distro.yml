@@ -1,0 +1,6 @@
+header:
+  version: 11
+
+distro: wpe
+
+target: core-image-weston-wpe
