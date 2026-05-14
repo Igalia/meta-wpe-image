@@ -9,7 +9,7 @@ header:
 local_conf_header:
   30_meta-moonforge-raspberrypi: |
     # Specifies description file for partitioning the image
-    WKS_FILE = "moonforge-image-rauc-raspberrypi.wks.in"
+    WKS_FILE = "wpe-image-rauc-raspberrypi.wks.in"
   20_meta-moonforge-distro: |
     # Sets up persistent data partition
     OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p4"
