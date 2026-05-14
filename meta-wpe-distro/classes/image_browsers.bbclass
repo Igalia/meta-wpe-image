@@ -1,7 +1,7 @@
 DESCRIPTION += " for browsers"
 LICENSE = "MIT"
 
-IMAGE_FEATURES += "splash hwcodecs ssh-server-openssh"
+IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
 
 inherit moonforge-image features_check extrausers
 
