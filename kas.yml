@@ -6,10 +6,6 @@ header:
 
 machine: qemux86-64
 
-distro: wpe
-
-target: core-image-weston-wpe
-
 local_conf_header:
   igalia-demos-settings: |
     # 1GByte extra space
@@ -20,4 +16,3 @@ local_conf_header:
 
     require conf/templates/template/presets/conf.conf
     require conf/templates/template/presets/reproducible-core.conf
-
