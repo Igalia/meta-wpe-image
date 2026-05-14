@@ -11,6 +11,9 @@ PV:class-devupstream = "trunk"
 
 RCONFLICTS:${PN}:class-devupstream = ""
 
+EXTRA_OECMAKE:append:class-devupstream = " -DUSE_VULKAN=OFF"
+EXTRA_OECMAKE:append:class-devupstream = " -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON"
+
 PACKAGECONFIG:append = " wpe-platform"
 PACKAGECONFIG:remove = "speech-synthesis"
 
