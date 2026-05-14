@@ -46,7 +46,7 @@ Pi 3, 4, and 5) and includes instructions for building an SDK toolchain.
      ```sh
      export KAS_WORK_DIR="workdir/wpe-image-rpi3"
      mkdir -p ${KAS_WORK_DIR}
-     kas-container build kas.yml:kas/machines/raspberrypi3-mesa.yml:kas/presets/wpe-nightly.yml
+     kas-container build kas.yml:kas/machines/raspberrypi3-mesa.yml:distro.yml:kas/presets/wpe-nightly.yml
      ```
 
    * RPI4-64 using the propietary graphics stack (vc4graphics):
@@ -54,7 +54,7 @@ Pi 3, 4, and 5) and includes instructions for building an SDK toolchain.
      ```sh
      export KAS_WORK_DIR="workdir/wpe-image-rpi4-64"
      mkdir -p ${KAS_WORK_DIR}
-     kas-container build kas.yml:kas/machines/raspberrypi4-64-mesa.yml:kas/presets/wpe-nightly.yml
+     kas-container build kas.yml:kas/machines/raspberrypi4-64-mesa.yml:distro.yml:kas/presets/wpe-nightly.yml
      ```
 
    * RPI5:
@@ -62,7 +62,7 @@ Pi 3, 4, and 5) and includes instructions for building an SDK toolchain.
      ```sh
      export KAS_WORK_DIR="workdir/wpe-image-rpi5"
      mkdir -p ${KAS_WORK_DIR}
-     kas-container build kas.yml:kas/machines/raspberrypi5.yml:kas/presets/wpe-nightly.yml
+     kas-container build kas.yml:kas/machines/raspberrypi5.yml:distro.yml:kas/presets/wpe-nightly.yml
      ```
 
 💡 **Tip**: Check the `kas/machines/` directory for additional target configurations.
@@ -80,7 +80,7 @@ After the build completes, the generated image will be located at:
    ```sh
    export KAS_WORK_DIR="workdir/wpe-image"
    BASE_IMAGE=core-image-wpe-base
-   kas-container shell kas.yml:kas/machines/raspberrypi3-mesa.yml -c "bitbake ${BASE_IMAGE} -c populate_sdk"
+   kas-container shell kas.yml:kas/machines/raspberrypi3-mesa.yml:distro.yml -c "bitbake ${BASE_IMAGE} -c populate_sdk"
    ```
 
    Check the resulting SDK installer:
