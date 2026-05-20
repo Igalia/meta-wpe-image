@@ -53,6 +53,7 @@ runs:
     - name: Build
       shell: bash
       run:  |
+        export KAS_CLONE_DEPTH="1"
         export KAS_WORK_DIR="workdir"
 
         # requires: sudo apt-get install -y git git-lfs pip
@@ -66,7 +67,7 @@ runs:
         MAX_RETRIES=5
         for i in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $i to fetch sources for $IMAGE..."
-            if kas shell kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas/presets/buildhistory.yml:kas-local.yml -c "bitbake ${{ inputs.target }} --runall=fetch"; then
+            if kas shell kas.yml:kas/machines/${{ inputs.machine }}.yml:distro.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas/presets/buildhistory.yml:kas-local.yml -c "bitbake ${{ inputs.target }} --runall=fetch"; then
                 echo "All sources fetched successfully."
                 break
             fi
@@ -79,7 +80,7 @@ runs:
         done
 
         kas shell \
-            kas.yml:kas/machines/${{ inputs.machine }}.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas/presets/buildhistory.yml:kas-local.yml \
+            kas.yml:kas/machines/${{ inputs.machine }}.yml:distro.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas/presets/buildhistory.yml:kas-local.yml \
             -c "buildhistory-collect-srcrevs -a > ../../srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc"
         diff -u conf/include/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc || true
     - name: Upload buildhistory-collect-srcrevs.inc artifact

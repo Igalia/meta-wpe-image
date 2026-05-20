@@ -1,9 +1,9 @@
 DESCRIPTION += " for browsers"
 LICENSE = "MIT"
 
-IMAGE_FEATURES += "splash package-management hwcodecs ssh-server-openssh"
+IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
 
-inherit core-image features_check extrausers
+inherit moonforge-image features_check extrausers
 
 IMAGE_LINGUAS = "en-us es-es"
 GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
@@ -12,6 +12,10 @@ GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
 # IMAGE_ROOTFS_EXTRA_SPACE = "2097152"
 
 IMAGE_FSTYPES = "wic.bmap wic.bz2 tar.gz"
+
+CORE_IMAGE_EXTRA_INSTALL += " \
+    packagegroup-core-boot \
+"
 
 EXTRA_USERS_PARAMS += "usermod -a -G systemd-journal bot; usermod -a -G systemd-journal weston;"
 
