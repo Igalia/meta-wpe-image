@@ -21,3 +21,6 @@ TOOLCHAIN:aarch64 = "clang"
 LIBCPLUSPLUS:aarch64 = "-stdlib=libc++"
 
 FILES:${PN} += "${libdir}/mimalloc-3.2*"
+
+# Added for 2.54.x
+PACKAGECONFIG[spellcheck] = "-DENABLE_SPELLCHECK=ON,-DENABLE_SPELLCHECK=OFF,enchant2"
