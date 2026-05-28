@@ -17,8 +17,8 @@ EXTRA_OECMAKE:append:class-devupstream = " -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON
 PACKAGECONFIG:append = " wpe-platform"
 PACKAGECONFIG:remove = "speech-synthesis"
 
-TOOLCHAIN:aarch64 = "clang"
-LIBCPLUSPLUS:aarch64 = "-stdlib=libc++"
+# TOOLCHAIN:aarch64 = "clang"
+# LIBCPLUSPLUS:aarch64 = "-stdlib=libc++"
 
 FILES:${PN} += "${libdir}/mimalloc-3.2*"
 
