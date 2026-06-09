@@ -13,6 +13,7 @@ RCONFLICTS:${PN}:class-devupstream = ""
 
 EXTRA_OECMAKE:append:class-devupstream = " -DUSE_VULKAN=OFF"
 EXTRA_OECMAKE:append:class-devupstream = " -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON"
+EXTRA_OECMAKE:append:class-devupstream = " -DCMAKE_C_STANDARD=11 -DCMAKE_CXX_STANDARD=17"
 
 PACKAGECONFIG:append = " wpe-platform"
 PACKAGECONFIG:remove = "speech-synthesis"
