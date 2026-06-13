@@ -29,5 +29,5 @@ repos:
     commit: 731488911f55ebfe746068512b426351192f82f2
   meta-webkit:
     url: https://github.com/Igalia/meta-webkit.git
-    commit: 41f169ccd66f7c10bf4a544a12adffcddb7125c3
+    commit: cab2fa8a409aa669677107d59510e47bf9c2e0ed
   meta-wpe-image:
