@@ -43,11 +43,7 @@ jobs:
       - name: Define matrix values
         id: define
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.draft }}" == "true" ]; then
-            echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo 'machines=["raspberrypi5", "wandboard-mesa"]' >> $GITHUB_OUTPUT
-          elif [ -n "${{ github.event.inputs.machine }}" ]; then
+          if [ -n "${{ github.event.inputs.machine }}" ]; then
             echo "machines=[\"${{ github.event.inputs.machine }}\"]" >> $GITHUB_OUTPUT
           else
             echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
@@ -78,66 +74,6 @@ jobs:
           repo_release: ${{ matrix.yocto_rel }}
           wpe_version: ${{ matrix.wpe_version }}
 
-  buildhistory-collect-srcrevs:
-    strategy:
-      fail-fast: false
-      matrix:
-        machine: ${{ fromJSON(needs.define-matrix.outputs.machine) }}
-        wpe_version: ${{ fromJSON(needs.define-matrix.outputs.wpe_version) }}
-        yocto_rel: ['scarthgap']
-    continue-on-error: true
-    runs-on: [self-hosted, builder]
-    needs: [define-matrix, scarthgap-repo-init, timestamp]
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/s3-configure
-        env:
-          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
-          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          S3_HOST_BASE: ${{ secrets.S3_HOST_BASE }}
-        with:
-          access_key: ${S3_ACCESS_KEY}
-          secret_key: ${S3_SECRET_KEY}
-          host_base: ${S3_HOST_BASE}
-      - uses: ./.github/actions/buildhistory-collect-srcrevs
-        env:
-          S3_STORAGE: ${{ secrets.S3_STORAGE }}
-        with:
-          machine: ${{ matrix.machine }}
-          repo_release: ${{ matrix.yocto_rel }}
-          s3_storage: ${S3_STORAGE}
-          wpe_version: ${{ matrix.wpe_version }}
-
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        machine: ${{ fromJSON(needs.define-matrix.outputs.machine) }}
-        wpe_version: ${{ fromJSON(needs.define-matrix.outputs.wpe_version) }}
-        yocto_rel: ['scarthgap']
-    continue-on-error: true
-    runs-on: [self-hosted, builder]
-    needs: [define-matrix, scarthgap-repo-init]
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/s3-configure
-        env:
-          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
-          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          S3_HOST_BASE: ${{ secrets.S3_HOST_BASE }}
-        with:
-          access_key: ${S3_ACCESS_KEY}
-          secret_key: ${S3_SECRET_KEY}
-          host_base: ${S3_HOST_BASE}
-      - uses: ./.github/actions/kas-build
-        env:
-          S3_STORAGE: ${{ secrets.S3_STORAGE }}
-        with:
-          machine: ${{ matrix.machine }}
-          repo_release: ${{ matrix.yocto_rel }}
-          s3_storage: ${S3_STORAGE}
-          wpe_version: ${{ matrix.wpe_version }}
-
   test:
     strategy:
       fail-fast: false
@@ -148,7 +84,7 @@ jobs:
     runs-on: [self-hosted, dutcontrol]
     permissions:
       pull-requests: write
-    needs: [define-matrix, build]
+    needs: [define-matrix, scarthgap-repo-init]
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/s3-configure

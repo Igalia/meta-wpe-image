@@ -88,7 +88,7 @@ runs:
     - name: Flash
       shell: bash
       run:  |
-        TIMESTAMP=${{ steps.timestamp.outputs.timestamp }}
+        TIMESTAMP=202606140430
         [ -n "${DUT_TOKEN}" ] || { echo "::error::DUT_TOKEN is not set"; exit 1; }
         dut-control-client power off "$DUT_TOKEN"
         s3cmd get -F s3://${{ inputs.s3_storage }}/${TIMESTAMP}-wpe-${{ inputs.wpe_version }}-${{ inputs.machine }}/${{ inputs.target }}-${{ inputs.machine }}.wic.bmap
