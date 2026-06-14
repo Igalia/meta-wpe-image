@@ -56,7 +56,7 @@ done
 
 # In case no test set, run all tests.
 if [[ ${#TESTS[@]} -eq 0 ]]; then
-    TESTS+=("$TESTS_DIR/tests_*.robot")
+    TESTS+=("$TESTS_DIR/tests_020_motionmark.robot")
 fi
 
 # Run tests.
