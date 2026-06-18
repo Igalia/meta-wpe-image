@@ -96,6 +96,8 @@ SRCREV:pn-vulkan-headers = "217e93c664ec6704ec2d8c36fa116c1a4a1e2d40"
 SRCREV:pn-vulkan-loader = "00893b9a03e526aec2c5bf487521d16dfa435229"
 SRCREV:pn-waylandeglinfo = "b295363ab4e858fe4cfb32ee4e71a177e939b691"
 SRCREV:pn-woff2 = "1bccf208bca986e53a647dfe4811322adb06ecf8"
+SRCREV:pn-wpe-simple-launcher = "4f0e576194b5c4f632e988d31ff990bdcb5060cc"
+SRCREV:pn-wpe-testbed = "d7ac4675d0392bf843526700fdae9f0fd4c84756"
 SRCREV:pn-x264 = "baee400fa9ced6f5481a728138fed6e867b0ff7f"
 SRCREV:pn-zstd = "63779c798237346c2b245c546c40b72a5a5913fe"
 # raspberrypi5-poky-linux
