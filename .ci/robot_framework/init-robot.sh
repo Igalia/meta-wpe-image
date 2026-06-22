@@ -2,6 +2,8 @@
 
 LOCKFILE="/tmp/init-robot.lock"
 
+ROBOT_FRAMEWORK_HTML="$(dirname "$0")/html"
+
 # Create lock and ensure removal on exit
 trap 'rm -f "$LOCKFILE"' EXIT
 if [ -e "$LOCKFILE" ]; then
@@ -31,7 +33,7 @@ pip install --root-user-action ignore \
     robotframework-seleniumlibrary==6.8.0 \
     robotframework-sshlibrary==3.8.0
 
-pushd robot_framework/html/
+pushd "$ROBOT_FRAMEWORK_HTML"
 if [ ! -d "rbyers" ]; then
     git clone https://github.com/RByers/rbyers.github.io.git rbyers
 fi
