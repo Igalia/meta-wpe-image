@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=dd93f6e0496294f589c3d561f96ffee4"
 
 inherit meson pkgconfig
 
-DEPENDS = "glib-2.0-native wpewebkit"
+DEPENDS = "glib-2.0-native wpewebkit browserperfrunner"
 
 SRCREV = "4f0e576194b5c4f632e988d31ff990bdcb5060cc"
 SRC_URI = "git://git@github.com/psaavedra/wpe-simple-launcher.git;protocol=ssh;branch=main \
