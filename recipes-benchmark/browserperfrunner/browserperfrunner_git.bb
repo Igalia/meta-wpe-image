@@ -6,7 +6,9 @@ HOMEPAGE = "https://github.com/Igalia/browserperfrunner"
 LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://browserperfdash-benchmark;md5=5de144702cd7cf4dfde864c5174fb818"
 
-SRC_URI = "git://github.com/psaavedra/browserperfrunner.git;protocol=https;branch=update-20260707-1"
+# destsuffix keeps the unpack dir matching the default S (${WORKDIR|UNPACKDIR}/${BP})
+# on releases older than whinlatter, where the git fetcher unpacks to 'git' instead
+SRC_URI = "git://github.com/psaavedra/browserperfrunner.git;protocol=https;branch=update-20260707-1;destsuffix=${BP}"
 SRCREV = "d52d7916a68d1a814d18720aedb89e373309a9e1"
 
 inherit python3-dir
