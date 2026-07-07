@@ -53,5 +53,5 @@ do_install() {
     # libraries/autoinstalled as the AutoInstall download location for the
     # remaining third-party python dependencies (downloaded on first import,
     # so the target needs network access and a writable site-packages dir).
-    tar -C ${S} -cf - webkitpy libraries | tar -C ${D}${PYTHON_SITEPACKAGES_DIR} -xf -
+    tar -C ${S} -cf - webkitpy libraries | tar -C ${D}${PYTHON_SITEPACKAGES_DIR} --no-same-owner -xf -
 }
