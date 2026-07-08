@@ -59,6 +59,7 @@ IMAGE_INSTALL:append = " \
     valgrind \
     weston-xwayland \
     wpe-testbed \
+    browserperfrunner \
     "
 
 # Dependencies for graphic demos based on Vulkan
