@@ -16,7 +16,7 @@ apt-get update -y
 apt-get install -y git ssh \
     build-essential \
     imagemagick tesseract-ocr ghostscript libdmtx0b libzbar0 \
-    chromium-driver
+    chromium-driver=142.0.7444.59-1~deb13u1
 
 pip install --root-user-action ignore --upgrade pip
 
