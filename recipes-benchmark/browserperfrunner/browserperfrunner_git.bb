@@ -27,10 +27,12 @@ FILES:${PN} += "${PYTHON_SITEPACKAGES_DIR}"
 #
 # The python3-* modules below provide what webkitcorepy's AutoInstall would
 # otherwise pip-download on first import (the autoinstaller is disabled by
-# do_install, see there). python3-tomli comes from meta-python. dnslib has
-# no recipe, but it is only imported by webkitpy/layout_tests, which the
-# benchmark entry points never reach. twisted is only needed with
-# --http-server-type twisted (the default is the builtin http server).
+# do_install, see there), including the twisted stack used by the default
+# http server of the webserver benchmark runner. python3-tomli, python3-twisted,
+# python3-constantly, python3-hyperlink, python3-incremental and
+# python3-zopeinterface come from meta-python. dnslib has no recipe, but it
+# is only imported by webkitpy/layout_tests, which the benchmark entry
+# points never reach.
 RDEPENDS:${PN} = " \
     curl \
     gobject-introspection \
@@ -40,26 +42,45 @@ RDEPENDS:${PN} = " \
     perl \
     procps \
     psmisc \
+    python3-attrs \
+    python3-bcrypt \
     python3-certifi \
+    python3-cffi \
     python3-chardet \
+    python3-constantly \
     python3-core \
+    python3-cryptography \
+    python3-hyperlink \
     python3-idna \
+    python3-incremental \
     python3-modules \
     python3-packaging \
     python3-psutil \
+    python3-pycparser \
     python3-pygobject \
+    python3-pyopenssl \
     python3-pyparsing \
     python3-pysocks \
     python3-requests \
+    python3-service-identity \
     python3-setuptools \
     python3-setuptools-scm \
     python3-six \
     python3-tomli \
+    python3-twisted \
+    python3-typing-extensions \
     python3-urllib3 \
     python3-wheel \
+    python3-zopeinterface \
     ruby \
     subversion \
 "
+
+# Like upstream's webkitpy/autoinstalled/twisted.py, skip bcrypt on 32-bit
+# arm: building it needs a cargo/rust toolchain and twisted only uses it
+# for conch/ssh, which the benchmark http server never touches.
+# nooelint: oelint.vars.specific
+RDEPENDS:${PN}:remove:arm = "python3-bcrypt"
 
 do_install() {
     install -d ${D}${bindir}
