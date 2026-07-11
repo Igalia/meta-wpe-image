@@ -1,18 +1,24 @@
 header:
-  version: 14
+  version: 16
+
+  includes:
+    - repo: meta-moonforge
+      file: kas/include/layer/meta-moonforge-distro.yml
+    - repo: meta-moonforge
+      file: kas/include/layer/meta-moonforge-podman.yml
+    - repo: meta-moonforge
+      file: kas/include/layer/meta-moonforge-wpe.yml
 
 repos:
-  poky:
-    url: https://git.yoctoproject.org/git/poky
-    commit: 10fba0085de5645bb0366dd309182e0532aeea82
-    layers:
-      meta:
-      meta-poky:
+  meta-moonforge:
+    url: https://github.com/moonforgelinux/meta-moonforge.git
+    commit: 491c05f6123fc2e8224d557cf43ae08d82d154bd
+    branch: main
+  # TODO: meta-moonforge/kas/include/repo/meta-openembedded.yml
   meta-openembedded:
     url: https://git.openembedded.org/meta-openembedded
     commit: 15e18246dd0c0585cd1515a0be8ee5e2016d1329
     layers:
-      meta-oe:
       meta-oe:
       meta-gnome:
       meta-multimedia:
@@ -21,13 +27,16 @@ repos:
       meta-networking:
       meta-filesystems:
       meta-webserver:
-  meta-virtualization:
-    url: https://git.yoctoproject.org/git/meta-virtualization
-    commit: af1db2042caf8021d767dce1b26c08b59b96f3d1
+    branch: scarthgap
   meta-clang:
     url: https://github.com/kraj/meta-clang.git
     commit: 731488911f55ebfe746068512b426351192f82f2
+  # TODO: To meta-moonforge/kas/include/repo/meta-webkit.yml
   meta-webkit:
     url: https://github.com/Igalia/meta-webkit.git
     commit: cab2fa8a409aa669677107d59510e47bf9c2e0ed
+    branch: main
   meta-wpe-image:
+    layers:
+      meta-wpe-distro:
+
