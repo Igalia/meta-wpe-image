@@ -2,9 +2,10 @@ DESCRIPTION += " with Weston"
 
 IMAGE_FEATURES += "weston"
 
-REQUIRED_DISTRO_FEATURES = "opengl wayland"
+REQUIRED_DISTRO_FEATURES = "opengl polkit wayland"
 
 IMAGE_INSTALL:append = " \
+    polkit \
     waylandeglinfo \
     weston \
     weston-init \
