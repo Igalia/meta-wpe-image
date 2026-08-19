@@ -23,6 +23,8 @@ scpi() {
     scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r "$@" "root@${TEST_BOARD_IP}":
 }
 
+sshi "mount -o remount,rw / || true"
+
 pushd "${BASEPATH}"
 scpi scripts
 scpi tests-baselines
