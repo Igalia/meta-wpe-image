@@ -32,8 +32,8 @@ repos:
   # TODO: To meta-moonforge/kas/include/repo/meta-webkit.yml
   meta-webkit:
     url: https://github.com/Igalia/meta-webkit.git
-    commit: cab2fa8a409aa669677107d59510e47bf9c2e0ed
-    branch: main
+    commit: 019e1c46dbd6778635580657ea28b779d3d2f211
+    branch: scarthgap-latest
   meta-wpe-image:
     layers:
       meta-wpe-distro:
