@@ -100,7 +100,6 @@ IMAGE_INSTALL:append:aarch64 = " podman"
 # Add perf only for ARM64 bits arch
 IMAGE_INSTALL:append:aarch64 = " \
     perf \
-    perf-scripts \
 "
 
 SDK_EXTRA_TOOLS += "nativesdk-cmake nativesdk-ninja \

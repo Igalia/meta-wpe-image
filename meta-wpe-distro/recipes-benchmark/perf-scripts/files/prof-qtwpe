@@ -1,2 +1,0 @@
-#!/bin/sh
-psrecord --include-children --interval 5 --log qtwpe.log "qt-wpe-simple-browser -platform wayland-egl $*"
