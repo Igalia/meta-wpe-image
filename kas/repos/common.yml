@@ -39,4 +39,5 @@ repos:
   meta-wpe-image:
     layers:
       meta-wpe-distro:
+      meta-wpe-backport:
 
