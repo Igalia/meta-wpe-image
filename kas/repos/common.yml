@@ -10,12 +10,14 @@ header:
       file: kas/include/layer/meta-moonforge-wpe.yml
     - repo: meta-moonforge
       file: kas/include/repo/meta-openembedded.yml
+    - repo: meta-moonforge
+      file: kas/common/buildinfo.yml
 
 repos:
   meta-moonforge:
     url: https://github.com/moonforgelinux/meta-moonforge.git
-    commit: 491c05f6123fc2e8224d557cf43ae08d82d154bd
-    branch: main
+    commit: f6626368f1112afc56961a701c7528aacb0cecd0
+    branch: psaavedra/demos-main
   meta-openembedded:
     layers:
       meta-oe:

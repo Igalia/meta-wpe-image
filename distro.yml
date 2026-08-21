@@ -1,6 +1,13 @@
 header:
   version: 11
 
-distro: wpe
+distro: moonforge
 
 target: core-image-weston-wpe
+
+local_conf_header:
+  99_distro: |
+    DISTRO_FEATURES:remove = "ptest"
+    # GStreamer Video decoder v4l2h264dec (by default):
+    PACKAGECONFIG:append:pn-gstreamer1.0-plugins-bad = " v4l2codecs"
+
