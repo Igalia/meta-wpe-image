@@ -3,5 +3,5 @@ header:
 
 local_conf_header:
   release-channel: |
-    require conf/templates/template/presets/wpe-nightly.conf
+    require conf/presets/wpe-nightly.conf
 

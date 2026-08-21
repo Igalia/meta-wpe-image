@@ -1,6 +1,0 @@
-
-Available images:
-
-  * core-image-weston-wpe
-  * core-image-wpe
-  * core-image-wpe-base
