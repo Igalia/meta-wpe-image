@@ -1,4 +1,4 @@
-SUMMARY = "core-image-weston with all the dependencies required to use and install Cog/WPEWebKit"
+SUMMARY = "Weston image with WPEWebKit and Cog install dependencies"
 DESCRIPTION = "core-image-weston with all the dependencies required to use and install Cog/WPEWebKit"
 
 inherit image_demos image_weston
