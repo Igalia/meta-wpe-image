@@ -7,7 +7,3 @@ IMAGE_INSTALL:append = " \
     wpe-simple-launcher \
 "
 
-IMAGE_INSTALL:append:raspberrypi4 = " rpi-eeprom"
-IMAGE_INSTALL:append:raspberrypi4-64 = " rpi-eeprom"
-IMAGE_INSTALL:append:raspberrypi5 = " rpi-eeprom"
-
