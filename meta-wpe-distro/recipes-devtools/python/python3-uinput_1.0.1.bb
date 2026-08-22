@@ -13,7 +13,7 @@ PYPI_PACKAGE = "python-uinput"
 inherit pypi setuptools3
 
 DEPENDS += "udev"
-RDEPENDS:${PN} += " \
+RDEPENDS:${PN} += "\
     python3-ctypes \
     python3-setuptools \
 "
