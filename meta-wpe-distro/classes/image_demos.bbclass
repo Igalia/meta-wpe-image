@@ -1,6 +1,7 @@
 DESCRIPTION += "for demos"
 LICENSE = "MIT"
 
+# nooelint: oelint.vars.outofcontext
 IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
 
 inherit moonforge-image features_check extrausers
@@ -19,6 +20,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
 
 EXTRA_USERS_PARAMS += "usermod -a -G systemd-journal bot; usermod -a -G systemd-journal weston;"
 
+# nooelint: oelint.var.badimagefeature.debug-tweaks oelint.vars.outofcontext
 EXTRA_IMAGE_FEATURES .= " debug-tweaks"
 ## EXTRA_IMAGE_FEATURES .= " debug-tweaks dbg-pkgs tools-debug tools-profile"
 # By default, the Yocto build system strips symbols from the binaries it
@@ -90,8 +92,11 @@ PULSEAUDIO_INSTALL = " \
     libasound \
     sbc \
 "
+# nooelint: oelint.vars.specific
 IMAGE_INSTALL:append:raspberrypi4 = " ${PULSEAUDIO_INSTALL}"
+# nooelint: oelint.vars.specific
 IMAGE_INSTALL:append:raspberrypi4-64 = " ${PULSEAUDIO_INSTALL}"
+# nooelint: oelint.vars.specific
 IMAGE_INSTALL:append:raspberrypi5 = " ${PULSEAUDIO_INSTALL}"
 
 # Add podman only for ARM64 bits arch
@@ -114,6 +119,7 @@ TOOLCHAIN_TARGET_TASK:append = " openjpeg-staticdev"
 TOOLCHAIN_TARGET_TASK:append = " libjxl"
 TOOLCHAIN_TARGET_TASK:remove = "target-sdk-provides-dummy"
 
+# nooelint: oelint.vars.specific
 PACKAGECONFIG:append:pn-php = " apache2"
 
 # Allow dropbear/openssh to accept root logins if debug-tweaks or allow-root-login is enabled
