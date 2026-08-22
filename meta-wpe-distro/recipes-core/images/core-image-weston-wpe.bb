@@ -1,3 +1,4 @@
+SUMMARY = "core-image-weston with WPEWebKit"
 DESCRIPTION = "core-image-weston with WPEWebKit"
 
 inherit image_demos image_weston
