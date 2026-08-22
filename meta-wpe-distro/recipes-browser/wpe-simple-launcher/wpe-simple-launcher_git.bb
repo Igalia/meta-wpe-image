@@ -11,11 +11,11 @@ inherit meson pkgconfig
 
 DEPENDS = "glib-2.0-native wpewebkit"
 
-SRCREV = "4f0e576194b5c4f632e988d31ff990bdcb5060cc"
 SRC_URI = "git://git@github.com/psaavedra/wpe-simple-launcher.git;protocol=ssh;branch=main \
            file://wpe-ctl \
            file://wpe-exported-wayland \
           "
+SRCREV = "4f0e576194b5c4f632e988d31ff990bdcb5060cc"
 
 S = "${WORKDIR}/git"
 
