@@ -1,7 +1,8 @@
 SUMMARY = "Simple WPE-based web launcher"
-DESCRIPTION = "Simple WPE-based web launcher"
+DESCRIPTION = "On-device WPEWebKit launcher that opens a URL and exposes a FIFO control channel through the wpe-ctl helper."
 HOMEPAGE = "https://github.com/psaavedra/wpe-simple-launcher"
 
+# nooelint: oelint.vars.fileextrapaths oelint.vars.outofcontext
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 LICENSE = "MIT"
@@ -9,6 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=dd93f6e0496294f589c3d561f96ffee4"
 
 inherit meson pkgconfig
 
+# nooelint: oelint.vars.dependsappend
 DEPENDS = "glib-2.0-native wpewebkit"
 
 SRC_URI = "git://git@github.com/psaavedra/wpe-simple-launcher.git;protocol=ssh;branch=main \
