@@ -102,11 +102,6 @@ IMAGE_INSTALL:append:raspberrypi5 = " ${PULSEAUDIO_INSTALL}"
 # Add podman only for ARM64 bits arch
 IMAGE_INSTALL:append:aarch64 = " podman"
 
-# Add perf only for ARM64 bits arch
-IMAGE_INSTALL:append:aarch64 = " \
-    perf \
-"
-
 SDK_EXTRA_TOOLS += "nativesdk-cmake nativesdk-ninja \
     nativesdk-perl-module-findbin \
     nativesdk-perl-misc \
