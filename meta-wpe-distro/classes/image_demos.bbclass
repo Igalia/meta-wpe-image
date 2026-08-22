@@ -1,4 +1,4 @@
-DESCRIPTION += " for demos"
+DESCRIPTION += "for demos"
 LICENSE = "MIT"
 
 IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
@@ -13,7 +13,7 @@ GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
 
 IMAGE_FSTYPES = "wic.bmap wic.bz2 tar.gz"
 
-CORE_IMAGE_EXTRA_INSTALL += " \
+CORE_IMAGE_EXTRA_INSTALL += "\
     packagegroup-core-boot \
 "
 
@@ -77,7 +77,7 @@ IMAGE_INSTALL:append = " \
 # PulseAudio. Needed for RPI4 (`dtoverlay=vc4-kms-v3d`) because the ALSA
 # compatibility is disabled (`snd_bcm2835.enable_compat_alsa=0`) so the
 # sound is processed using Pulseaudio through the user D-Bus session
-PULSEAUDIO_INSTALL= " \
+PULSEAUDIO_INSTALL = " \
     libcap \
     libpulse \
     libpulsecore \
@@ -109,7 +109,7 @@ SDK_EXTRA_TOOLS += "nativesdk-cmake nativesdk-ninja \
     nativesdk-unifdef \
     "
 
-TOOLCHAIN_HOST_TASK:append = "${SDK_EXTRA_TOOLS}"
+TOOLCHAIN_HOST_TASK:append = " ${SDK_EXTRA_TOOLS}"
 TOOLCHAIN_TARGET_TASK:append = " openjpeg-staticdev"
 TOOLCHAIN_TARGET_TASK:append = " libjxl"
 TOOLCHAIN_TARGET_TASK:remove = "target-sdk-provides-dummy"
