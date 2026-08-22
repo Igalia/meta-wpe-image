@@ -3,6 +3,8 @@ From: Martin Abente Lahaye <mabente@igalia.com>
 Date: Mon, 1 Dec 2025 14:43:52 -0300
 Subject: [PATCH] rpi_arm64_defconfig: Disable CONFIG_BOOTDELAY
 
+Upstream-Status: Inappropriate [meta-wpe-image specific]
+Signed-off-by: Martin Abente Lahaye <mabente@igalia.com>
 ---
  configs/rpi_arm64_defconfig | 1 +
  1 file changed, 1 insertion(+)
