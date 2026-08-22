@@ -75,4 +75,4 @@ do_install:append () {
     install -Dm755 ${WORKDIR}/weston-terminal-configure-network ${D}/${bindir}/weston-terminal-configure-network
 }
 
-SYSTEMD_SERVICE:${PN} += " wayland-1.path"
+SYSTEMD_SERVICE:${PN} += "wayland-1.path"
