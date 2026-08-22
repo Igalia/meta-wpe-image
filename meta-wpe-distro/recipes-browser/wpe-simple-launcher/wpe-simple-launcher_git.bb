@@ -1,4 +1,6 @@
+SUMMARY = "Simple WPE-based web launcher"
 DESCRIPTION = "Simple WPE-based web launcher"
+HOMEPAGE = "https://github.com/psaavedra/wpe-simple-launcher"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
