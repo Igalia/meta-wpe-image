@@ -1,4 +1,6 @@
 SUMMARY = "configure utilities"
+DESCRIPTION = "Helper scripts to configure networking and Weston on the device."
+HOMEPAGE = "https://github.com/Igalia/meta-wpe"
 LICENSE = "LGPL-2.1+"
 LIC_FILES_CHKSUM = "file://LGPL-2.1-or-later;md5=2a4f4fd2128ea2f65047ee63fbca9f68"
 
