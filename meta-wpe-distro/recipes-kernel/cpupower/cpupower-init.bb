@@ -1,11 +1,14 @@
+# nooelint: oelint.file.underscores
 SUMMARY = "Init scripts for cpupower"
 DESCRIPTION = "systemd service and default configuration to apply cpupower \
 settings at boot."
+# nooelint: oelint.vars.homepageping
 HOMEPAGE = "https://github.com/Igalia/meta-wpe"
 
 inherit systemd
 
 LICENSE = "MIT"
+# nooelint: oelint.var.licenseremotefile
 LIC_FILES_CHKSUM ?= "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI += "file://cpupower.default \
