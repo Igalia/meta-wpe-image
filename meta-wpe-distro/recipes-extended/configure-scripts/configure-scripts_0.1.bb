@@ -21,4 +21,4 @@ do_install() {
 
 FILES:${PN} += "${bindir}/*"
 
-RDEPENDS:${PN} += " python3-core"
+RDEPENDS:${PN} += "python3-core"
