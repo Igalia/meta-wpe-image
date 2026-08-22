@@ -1,5 +1,6 @@
 DESCRIPTION += "with Weston"
 
+# nooelint: oelint.vars.outofcontext
 IMAGE_FEATURES += "weston"
 
 REQUIRED_DISTRO_FEATURES = "opengl polkit wayland"
