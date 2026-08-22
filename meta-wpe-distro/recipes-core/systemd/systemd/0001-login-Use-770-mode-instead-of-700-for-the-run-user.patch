@@ -7,6 +7,7 @@ This allows other users asigned to the user group to get access to
 the user runtime directoy.
 
 Upstream-Status: Inappropriate [upstream ticket nourl://]
+Signed-off-by: Pablo Saavedra <psaavedra@igalia.com>
 ---
  src/login/user-runtime-dir.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
