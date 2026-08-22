@@ -1,4 +1,6 @@
 SUMMARY = "Python interface to Linux uinput kernel module."
+DESCRIPTION = "Python interface to the Linux uinput kernel module, \
+allowing user-space creation of virtual input devices."
 HOMEPAGE = "https://pypi.org/project/python-uinput/"
 LICENSE = "GPL-3.0-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=f27defe1e96c2e1ecd4e0c9be8967949"
