@@ -1,4 +1,7 @@
 SUMMARY = "Init scripts for cpupower"
+DESCRIPTION = "systemd service and default configuration to apply cpupower \
+settings at boot."
+HOMEPAGE = "https://github.com/Igalia/meta-wpe"
 
 inherit systemd
 
