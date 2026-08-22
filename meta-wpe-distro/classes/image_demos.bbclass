@@ -1,4 +1,4 @@
-DESCRIPTION += " for browsers"
+DESCRIPTION += " for demos"
 LICENSE = "MIT"
 
 IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
