@@ -27,8 +27,6 @@ inherit useradd
 GROUPADD_PARAM:${PN} += "; --gid 900 --system bot;"
 USERADD_PARAM:${PN} += "; --uid 900 --system -p '' -s /bin/bash -g bot -G audio,input,video,weston -m bot;"
 
-RDEPENDS:${PN} += "bash"
-
 FILES:${PN} += "\
     ${systemd_system_unitdir}/wayland-1.path \
     ${systemd_system_unitdir}/wayland-1.service \
@@ -49,6 +47,8 @@ FILES:${PN} += "\
     ${datadir}/wpe_white.jpg \
     ${bindir}/weston-terminal-configure-network \
     "
+
+RDEPENDS:${PN} += "bash"
 
 do_install:append () {
     # Install Weston wayland-1 systemd service and path
