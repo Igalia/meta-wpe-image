@@ -1,4 +1,4 @@
-DESCRIPTION += " with Weston"
+DESCRIPTION += "with Weston"
 
 IMAGE_FEATURES += "weston"
 
