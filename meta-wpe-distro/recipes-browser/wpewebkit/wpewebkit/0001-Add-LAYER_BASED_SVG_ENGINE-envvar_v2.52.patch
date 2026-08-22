@@ -1,3 +1,12 @@
+From: Pablo Saavedra <psaavedra@igalia.com>
+Subject: [PATCH] Add LAYER_BASED_SVG_ENGINE envvar handling
+
+Local WPEWebKit customization for the 2.52 branch to update settings
+on reload and expose the layer-based SVG engine toggle.
+
+Upstream-Status: Inappropriate [meta-wpe-image specific]
+Signed-off-by: Pablo Saavedra <psaavedra@igalia.com>
+---
 diff --git a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
 index b24480e8f539..3b0c5689307c 100644
 --- a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
