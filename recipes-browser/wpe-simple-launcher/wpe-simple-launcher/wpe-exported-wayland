@@ -42,9 +42,7 @@ export "${XDG_RUNTIME_DIR?}"
 
 # Check if the script is run as root and switch to the 'weston' user if needed
 if [ "$(whoami)" = "root" ]; then
-    su weston -c "echo done > $CTL_FILE"
     su weston -c "/usr/bin/wpe-simple-launcher --ctrl $CTL_FILE $*"
 else
-    echo "done" > "$CTL_FILE"
     /usr/bin/wpe-simple-launcher --ctrl "$CTL_FILE" "$@"
 fi
