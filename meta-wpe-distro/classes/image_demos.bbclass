@@ -8,9 +8,6 @@ inherit moonforge-image features_check extrausers
 IMAGE_LINGUAS = "en-us es-es"
 GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
 
-# IMAGE_OVERHEAD_FACTOR = "1.5"
-# IMAGE_ROOTFS_EXTRA_SPACE = "2097152"
-
 IMAGE_FSTYPES = "wic.bmap wic.bz2 tar.gz"
 
 CORE_IMAGE_EXTRA_INSTALL += "\
