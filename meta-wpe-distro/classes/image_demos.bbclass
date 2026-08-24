@@ -1,5 +1,4 @@
 DESCRIPTION += "for demos"
-LICENSE = "MIT"
 
 # nooelint: oelint.vars.outofcontext
 IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
