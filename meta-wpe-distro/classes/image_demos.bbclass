@@ -10,10 +10,6 @@ GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
 
 IMAGE_FSTYPES = "wic.bmap wic.bz2 tar.gz"
 
-CORE_IMAGE_EXTRA_INSTALL += "\
-    packagegroup-core-boot \
-"
-
 IMAGE_INSTALL:append = " \
     libtasn1 git htop nano strace bridge-utils \
     ntp curl dhcpcd lzo \
