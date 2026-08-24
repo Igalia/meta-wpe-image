@@ -46,7 +46,7 @@ Pi 3, 4, and 5) and includes instructions for building an SDK toolchain.
      ```sh
      export KAS_WORK_DIR="workdir/wpe-image-rpi3"
      mkdir -p ${KAS_WORK_DIR}
-     kas-container build kas.yml:kas/machines/raspberrypi3-mesa.yml:distro.yml:kas/presets/wpe-nightly.yml
+     kas-container build kas.yml:kas/machines/raspberrypi3.yml:distro.yml:kas/presets/wpe-nightly.yml
      ```
 
    * RPI4-64 using the propietary graphics stack (vc4graphics):
@@ -54,7 +54,7 @@ Pi 3, 4, and 5) and includes instructions for building an SDK toolchain.
      ```sh
      export KAS_WORK_DIR="workdir/wpe-image-rpi4-64"
      mkdir -p ${KAS_WORK_DIR}
-     kas-container build kas.yml:kas/machines/raspberrypi4-64-mesa.yml:distro.yml:kas/presets/wpe-nightly.yml
+     kas-container build kas.yml:kas/machines/raspberrypi4-64.yml:distro.yml:kas/presets/wpe-nightly.yml
      ```
 
    * RPI5:
@@ -74,26 +74,26 @@ After the build completes, the generated image will be located at:
 
 1. Preparing the SDK Toolchain
 
-   The following example targets `raspberrypi3-mesa`, but the same steps apply
+   The following example targets `raspberrypi3`, but the same steps apply
    to other machines with minor adjustments.
 
    ```sh
    export KAS_WORK_DIR="workdir/wpe-image"
    BASE_IMAGE=core-image-wpe-base
-   kas-container shell kas.yml:kas/machines/raspberrypi3-mesa.yml:distro.yml -c "bitbake ${BASE_IMAGE} -c populate_sdk"
+   kas-container shell kas.yml:kas/machines/raspberrypi3.yml:distro.yml -c "bitbake ${BASE_IMAGE} -c populate_sdk"
    ```
 
    Check the resulting SDK installer:
 
    ```sh
-   ls ${KAS_WORK_DIR}/build/tmp/deploy/sdk/poky-wayland-*-raspberrypi3-mesa-toolchain-*.sh
+   ls ${KAS_WORK_DIR}/build/tmp/deploy/sdk/poky-wayland-*-raspberrypi3-toolchain-*.sh
    ```
 
 2. Installing the SDK Toolchain
 
    ```sh
    # execute the desired version
-   ./tmp/deploy/sdk/poky-wayland-*-raspberrypi3-mesa-toolchain-*.sh -d ~/toolchain_env -y
+   ./tmp/deploy/sdk/poky-wayland-*-raspberrypi3-toolchain-*.sh -d ~/toolchain_env -y
    ```
 
 3. Activate the SDK Toolchain

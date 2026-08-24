@@ -1,0 +1,17 @@
+header:
+  version: 11
+  includes:
+    - kas/repos/freescale.yml
+
+machine: wandboard
+
+local_conf_header:
+  99_machine: |
+    UBOOT_EXTLINUX_KERNEL_ARGS = "rootwait rw video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32"
+    # Specifies description file for partitioning the image
+    WKS_FILE = "wpe-image-wandboard.wks.in"
+    # Sets up persistent data partition
+    OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p2"
+    # Sets minimum size of the data partition
+    IMAGE_DATA_MIN_SIZE = "4096M"
+
