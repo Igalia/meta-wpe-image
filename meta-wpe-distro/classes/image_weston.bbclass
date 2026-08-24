@@ -11,6 +11,7 @@ IMAGE_INSTALL:append = " \
     weston \
     weston-init \
     weston-examples \
+    weston-xwayland \
 "
 
 SDK_EXTRA_TOOLS += "nativesdk-cmake nativesdk-ninja \

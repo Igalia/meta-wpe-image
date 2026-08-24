@@ -62,7 +62,6 @@ IMAGE_INSTALL:append = " \
     stress-ng \
     systemd-analyze \
     valgrind \
-    weston-xwayland \
     wpe-testbed \
     "
 
