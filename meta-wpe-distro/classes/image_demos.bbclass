@@ -87,9 +87,6 @@ IMAGE_INSTALL:append:raspberrypi4-64 = " ${PULSEAUDIO_INSTALL}"
 # nooelint: oelint.vars.specific
 IMAGE_INSTALL:append:raspberrypi5 = " ${PULSEAUDIO_INSTALL}"
 
-# Add podman only for ARM64 bits arch
-IMAGE_INSTALL:append:aarch64 = " podman"
-
 # Allow dropbear/openssh to accept root logins if debug-tweaks or allow-root-login is enabled
 ROOTFS_POSTPROCESS_COMMAND += "ssh_internal_sftp; "
 
