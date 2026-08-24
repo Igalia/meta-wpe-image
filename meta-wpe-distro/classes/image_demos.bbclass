@@ -114,9 +114,6 @@ TOOLCHAIN_TARGET_TASK:append = " openjpeg-staticdev"
 TOOLCHAIN_TARGET_TASK:append = " libjxl"
 TOOLCHAIN_TARGET_TASK:remove = "target-sdk-provides-dummy"
 
-# nooelint: oelint.vars.specific
-PACKAGECONFIG:append:pn-php = " apache2"
-
 # Allow dropbear/openssh to accept root logins if debug-tweaks or allow-root-login is enabled
 ROOTFS_POSTPROCESS_COMMAND += "ssh_internal_sftp; "
 
