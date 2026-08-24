@@ -18,11 +18,4 @@ local_conf_header:
     # Sets minimum size of the data partition
     IMAGE_DATA_MIN_SIZE = "4096M"
 
-repos:
-  # TODO:
-  meta-raspberrypi:
-    url: https://git.yoctoproject.org/meta-raspberrypi
-    commit: 8767e2ff80ec3b09cd70dd22cdb18e783ab20d7b
-    branch: scarthgap
-
 machine: raspberrypi5
