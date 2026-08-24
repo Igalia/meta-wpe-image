@@ -42,8 +42,6 @@ RDEPENDS:${PN} = "\
     lzo \
     nano \
     ntp \
-    openssh-sftp \
-    openssh-sftp-server \
     packagegroup-core-full-cmdline \
     parted \
     perf \

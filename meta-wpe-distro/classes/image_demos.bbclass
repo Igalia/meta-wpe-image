@@ -1,7 +1,7 @@
 DESCRIPTION += "for demos"
 
 # nooelint: oelint.vars.outofcontext
-IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
+IMAGE_FEATURES += "hwcodecs"
 
 inherit moonforge-image features_check
 
@@ -24,18 +24,4 @@ IMAGE_INSTALL:append:raspberrypi4 = " packagegroup-wpe-pulseaudio"
 IMAGE_INSTALL:append:raspberrypi4-64 = " packagegroup-wpe-pulseaudio"
 # nooelint: oelint.vars.specific
 IMAGE_INSTALL:append:raspberrypi5 = " packagegroup-wpe-pulseaudio"
-
-# Allow dropbear/openssh to accept root logins if debug-tweaks or allow-root-login is enabled
-ROOTFS_POSTPROCESS_COMMAND += "ssh_internal_sftp; "
-
-#
-# Set a valid internal-sftp
-#
-ssh_internal_sftp () {
-        for config in sshd_config sshd_config_readonly; do
-                if [ -e ${IMAGE_ROOTFS}${sysconfdir}/ssh/$config ]; then
-                        sed -i 's/^[#[:space:]]*Subsystem sftp.*/Subsystem sftp internal-sftp/' ${IMAGE_ROOTFS}${sysconfdir}/ssh/$config
-                fi
-        done
-}
 
