@@ -5,8 +5,6 @@ header:
     - repo: meta-moonforge
       file: kas/include/layer/meta-moonforge-distro.yml
     - repo: meta-moonforge
-      file: kas/include/layer/meta-moonforge-podman.yml
-    - repo: meta-moonforge
       file: kas/include/layer/meta-moonforge-wpe.yml
     - repo: meta-moonforge
       file: kas/include/repo/meta-openembedded.yml
