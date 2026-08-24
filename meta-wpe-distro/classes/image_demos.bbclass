@@ -3,7 +3,7 @@ DESCRIPTION += "for demos"
 # nooelint: oelint.vars.outofcontext
 IMAGE_FEATURES += "hwcodecs ssh-server-openssh"
 
-inherit moonforge-image features_check extrausers
+inherit moonforge-image features_check
 
 IMAGE_LINGUAS = "en-us es-es"
 GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
@@ -13,8 +13,6 @@ IMAGE_FSTYPES = "wic.bmap wic.bz2 tar.gz"
 CORE_IMAGE_EXTRA_INSTALL += "\
     packagegroup-core-boot \
 "
-
-EXTRA_USERS_PARAMS += "usermod -a -G systemd-journal bot; usermod -a -G systemd-journal weston;"
 
 IMAGE_INSTALL:append = " \
     libtasn1 git htop nano strace bridge-utils \
