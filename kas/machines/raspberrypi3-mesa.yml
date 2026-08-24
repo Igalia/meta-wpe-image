@@ -1,9 +1,0 @@
-header:
-  version: 11
-  includes:
-    - repo: meta-moonforge
-      file: kas/include/layer/meta-moonforge-raspberrypi.yml
-    - repo: meta-moonforge
-      file: kas/include/layer/meta-moonforge-rauc-raspberrypi.yml
-
-machine: raspberrypi3-mesa
