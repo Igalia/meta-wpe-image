@@ -12,6 +12,8 @@ header:
       file: kas/include/repo/meta-openembedded.yml
     - repo: meta-moonforge
       file: kas/common/buildinfo.yml
+    - repo: meta-moonforge
+      file: kas/common/debug.yml
 
 repos:
   meta-moonforge:
