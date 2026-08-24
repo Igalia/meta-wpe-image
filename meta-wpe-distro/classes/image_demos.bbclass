@@ -11,72 +11,19 @@ GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
 IMAGE_FSTYPES = "wic.bmap wic.bz2 tar.gz"
 
 IMAGE_INSTALL:append = " \
-    libtasn1 git htop nano strace bridge-utils \
-    ntp curl dhcpcd lzo \
-    alsa-tools \
-    alsa-utils-alsamixer \
-    alsa-utils-alsatplg \
-    alsa-utils-midi \
-    alsa-utils-aplay \
-    alsa-utils-amixer \
-    alsa-utils-aconnect \
-    alsa-utils-speakertest \
-    alsa-utils-alsactl \
-    alsa-utils-alsaloop \
-    apache2 apache2-scripts \
-    configure-scripts \
-    cpupower cpupower-init \
-    dbus \
-    e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks e2fsprogs-resize2fs \
-    gdb \
-    gdbserver \
-    glmark2 \
-    gstreamer1.0-libav \
-    mesa-demos \
-    packagegroup-core-full-cmdline \
-    parted pv \
-    perf \
-    python3-uinput \
-    openssh-sftp \
-    openssh-sftp-server \
-    smem \
-    stress-ng \
-    systemd-analyze \
-    valgrind \
-    wpe-testbed \
+    packagegroup-wpe-demos-tools \
+    packagegroup-wpe-vulkan-demos \
     "
 
-# Dependencies for graphic demos based on Vulkan
-IMAGE_INSTALL:append = " \
-    assimp \
-    glfw \
-    glm \
-    vulkan-headers \
-    libsdl2-image \
-    "
-
-# PulseAudio. Needed for RPI4 (`dtoverlay=vc4-kms-v3d`) because the ALSA
-# compatibility is disabled (`snd_bcm2835.enable_compat_alsa=0`) so the
-# sound is processed using Pulseaudio through the user D-Bus session
-PULSEAUDIO_INSTALL = " \
-    libcap \
-    libpulse \
-    libpulsecore \
-    libsndfile1 \
-    pulseaudio-server \
-    pulseaudio-module-loopback \
-    pulseaudio-misc \
-    pulseaudio-module-cli \
-    pulseaudio-module-dbus-protocol \
-    libasound \
-    sbc \
-"
+# PulseAudio only on RPi4/5: with dtoverlay=vc4-kms-v3d the ALSA compat is
+# disabled (snd_bcm2835.enable_compat_alsa=0), so audio is processed through
+# PulseAudio on the user D-Bus session.
 # nooelint: oelint.vars.specific
-IMAGE_INSTALL:append:raspberrypi4 = " ${PULSEAUDIO_INSTALL}"
+IMAGE_INSTALL:append:raspberrypi4 = " packagegroup-wpe-pulseaudio"
 # nooelint: oelint.vars.specific
-IMAGE_INSTALL:append:raspberrypi4-64 = " ${PULSEAUDIO_INSTALL}"
+IMAGE_INSTALL:append:raspberrypi4-64 = " packagegroup-wpe-pulseaudio"
 # nooelint: oelint.vars.specific
-IMAGE_INSTALL:append:raspberrypi5 = " ${PULSEAUDIO_INSTALL}"
+IMAGE_INSTALL:append:raspberrypi5 = " packagegroup-wpe-pulseaudio"
 
 # Allow dropbear/openssh to accept root logins if debug-tweaks or allow-root-login is enabled
 ROOTFS_POSTPROCESS_COMMAND += "ssh_internal_sftp; "
