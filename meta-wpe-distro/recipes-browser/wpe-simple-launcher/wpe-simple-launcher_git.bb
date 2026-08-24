@@ -13,7 +13,7 @@ inherit meson pkgconfig
 # nooelint: oelint.vars.dependsappend
 DEPENDS = "glib-2.0-native wpewebkit"
 
-SRC_URI = "git://git@github.com/psaavedra/wpe-simple-launcher.git;protocol=ssh;branch=main \
+SRC_URI = "git://git@github.com/psaavedra/wpe-simple-launcher.git;protocol=ssh;branch=psaavedra/fifo-ctrl \
            file://wpe-ctl \
            file://wpe-exported-wayland \
           "
