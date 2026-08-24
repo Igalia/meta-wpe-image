@@ -19,16 +19,6 @@ CORE_IMAGE_EXTRA_INSTALL += "\
 
 EXTRA_USERS_PARAMS += "usermod -a -G systemd-journal bot; usermod -a -G systemd-journal weston;"
 
-# nooelint: oelint.var.badimagefeature.debug-tweaks oelint.vars.outofcontext
-EXTRA_IMAGE_FEATURES .= " debug-tweaks"
-## EXTRA_IMAGE_FEATURES .= " debug-tweaks dbg-pkgs tools-debug tools-profile"
-# By default, the Yocto build system strips symbols from the binaries it
-# packages, which makes it difficult to use some of the tools.
-#
-# You can prevent that by setting the INHIBIT_PACKAGE_STRIP variable to "1" in
-# your local.conf when you build the image:
-# INHIBIT_PACKAGE_STRIP = "1"
-
 IMAGE_INSTALL:append = " \
     libtasn1 git htop nano strace bridge-utils \
     ntp curl dhcpcd lzo \
