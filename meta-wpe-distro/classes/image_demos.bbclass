@@ -101,18 +101,6 @@ IMAGE_INSTALL:append:raspberrypi5 = " ${PULSEAUDIO_INSTALL}"
 # Add podman only for ARM64 bits arch
 IMAGE_INSTALL:append:aarch64 = " podman"
 
-SDK_EXTRA_TOOLS += "nativesdk-cmake nativesdk-ninja \
-    nativesdk-perl-module-findbin \
-    nativesdk-perl-misc \
-    nativesdk-gperf \
-    nativesdk-unifdef \
-    "
-
-TOOLCHAIN_HOST_TASK:append = " ${SDK_EXTRA_TOOLS}"
-TOOLCHAIN_TARGET_TASK:append = " openjpeg-staticdev"
-TOOLCHAIN_TARGET_TASK:append = " libjxl"
-TOOLCHAIN_TARGET_TASK:remove = "target-sdk-provides-dummy"
-
 # Allow dropbear/openssh to accept root logins if debug-tweaks or allow-root-login is enabled
 ROOTFS_POSTPROCESS_COMMAND += "ssh_internal_sftp; "
 

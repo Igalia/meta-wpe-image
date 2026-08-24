@@ -6,6 +6,18 @@ distro: moonforge
 target: core-image-weston-wpe
 
 local_conf_header:
+  90_sdk-toolchain: |
+    # SDK / toolchain extras (centralized here from image_demos.bbclass)
+    SDK_EXTRA_TOOLS += "nativesdk-cmake nativesdk-ninja \
+        nativesdk-perl-module-findbin \
+        nativesdk-perl-misc \
+        nativesdk-gperf \
+        nativesdk-unifdef \
+        "
+    TOOLCHAIN_HOST_TASK:append = " ${SDK_EXTRA_TOOLS}"
+    TOOLCHAIN_TARGET_TASK:append = " openjpeg-staticdev"
+    TOOLCHAIN_TARGET_TASK:append = " libjxl"
+    TOOLCHAIN_TARGET_TASK:remove = "target-sdk-provides-dummy"
   99_distro: |
     DISTRO_FEATURES:remove = "ptest"
     # GStreamer Video decoder v4l2h264dec (by default):
