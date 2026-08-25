@@ -14,13 +14,22 @@ export GST_PLUGIN_FEATURE_RANK="avdec_av1:0"
 # FIFO path used for the wpe-simple-launcher --ctrl channel (see wpe-ctl)
 CTL_FILE="/tmp/wpe-exported-wayland"
 
+# Detect the board from the device-tree model rather than the hostname,
+# which can be overridden per device. The model is a NUL-terminated string such as
+# "Raspberry Pi 5 Model B Rev 1.0".
+IS_RPI5=0
+if [ -r /proc/device-tree/model ] && \
+    tr -d '\0' < /proc/device-tree/model | grep -q "Raspberry Pi 5"; then
+    IS_RPI5=1
+fi
+
 # Enable DMA-BUF video sink in WebKit for efficient rendering.
 # WebKitDMABufVideoSink sink that is able to accept decode
 # dmabuf or raw data in a range of RGB-like or YUV formats.
 # Bug: https://bugs.webkit.org/show_bug.cgi?id=279819
 #
 # Apply workaround only if running on raspberrypi5
-if [ "$(hostname)" = "raspberrypi5" ]; then
+if [ "$IS_RPI5" -eq 1 ]; then
     export WEBKIT_GST_DMABUF_SINK_ENABLED=1
 fi
 
@@ -30,7 +39,7 @@ fi
 # XXX Reported in : https://bugs.webkit.org/show_bug.cgi?id=288464
 #
 # Apply regression workaround only if running on raspberrypi5
-if [ "$(hostname)" = "raspberrypi5" ]; then
+if [ "$IS_RPI5" -eq 1 ]; then
     export WEBKIT_GST_DISABLE_GL_SINK=1
 fi
 
