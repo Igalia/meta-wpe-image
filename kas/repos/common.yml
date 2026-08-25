@@ -3,8 +3,6 @@ header:
 
   includes:
     - repo: meta-moonforge
-      file: kas/include/layer/meta-moonforge-distro.yml
-    - repo: meta-moonforge
       file: kas/include/layer/meta-moonforge-wpe.yml
     - repo: meta-moonforge
       file: kas/include/repo/meta-openembedded.yml
@@ -28,9 +26,6 @@ repos:
       meta-networking:
       meta-filesystems:
       meta-webserver:
-  meta-clang:
-    url: https://github.com/kraj/meta-clang.git
-    commit: 731488911f55ebfe746068512b426351192f82f2
   meta-wpe-image:
     layers:
       meta-wpe-distro:
