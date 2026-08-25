@@ -82,7 +82,7 @@ runs:
         kas shell \
             kas.yml:kas/machines/${{ inputs.machine }}.yml:distro.yml:kas/presets/wpe-${{ inputs.wpe_version }}.yml:kas/presets/buildhistory.yml:kas-local.yml \
             -c "buildhistory-collect-srcrevs -a > ../../srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc"
-        diff -u conf/include/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc || true
+        diff -u meta-wpe-distro/conf/include/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc || true
     - name: Upload buildhistory-collect-srcrevs.inc artifact
       uses: actions/upload-artifact@v6
       with:
