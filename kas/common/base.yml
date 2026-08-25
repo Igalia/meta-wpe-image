@@ -1,0 +1,34 @@
+header:
+  version: 11
+  includes:
+    - kas/repos/common.yml
+    - kas/common/debug.yml
+    - kas/common/clang.yml
+
+distro: demos
+target: core-image-weston-wpe
+
+local_conf_header:
+  11_igalia-demos-settings: |
+    PACKAGE_CLASSES ?= "package_rpm"
+
+    CONF_VERSION = "2"
+
+    ACCEPT_FSL_EULA = "1"
+
+    LICENSE_FLAGS_ACCEPTED += "commercial"
+
+    # 1GByte extra space
+    IMAGE_ROOTFS_EXTRA_SPACE = "1048576"
+
+    # Temporary remove the psplash splash feature
+    FEATURE_INSTALL:remove = "psplash"
+
+    PREFERRED_VERSION_linux-raspberrypi:raspberrypi5 = "6.12.%"
+
+    # eeprom for Raspberrypi boards
+    IMAGE_INSTALL:append:raspberrypi4 = " rpi-eeprom"
+    IMAGE_INSTALL:append:raspberrypi4-64 = " rpi-eeprom"
+    IMAGE_INSTALL:append:raspberrypi5 = " rpi-eeprom"
+
+    require conf/presets/reproducible-core.conf
