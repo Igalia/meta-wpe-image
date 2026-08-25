@@ -16,7 +16,7 @@ header:
 repos:
   meta-moonforge:
     url: https://github.com/moonforgelinux/meta-moonforge.git
-    commit: f6626368f1112afc56961a701c7528aacb0cecd0
+    commit: 5b7291fb45d766ecb4769713a95eaebdb50ecae5
     branch: psaavedra/demos-main
   meta-openembedded:
     layers:
@@ -31,11 +31,6 @@ repos:
   meta-clang:
     url: https://github.com/kraj/meta-clang.git
     commit: 731488911f55ebfe746068512b426351192f82f2
-  # TODO: To meta-moonforge/kas/include/repo/meta-webkit.yml
-  meta-webkit:
-    url: https://github.com/Igalia/meta-webkit.git
-    commit: 019e1c46dbd6778635580657ea28b779d3d2f211
-    branch: scarthgap-latest
   meta-wpe-image:
     layers:
       meta-wpe-distro:
