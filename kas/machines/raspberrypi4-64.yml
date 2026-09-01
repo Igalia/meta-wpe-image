@@ -2,18 +2,26 @@ header:
   version: 11
   includes:
     - repo: meta-moonforge
-      file: kas/include/layer/meta-moonforge-podman.yml
-    - repo: meta-moonforge
       file: kas/include/layer/meta-moonforge-raspberrypi.yml
 
+machine: raspberrypi4-64
+
 local_conf_header:
-  30_meta-moonforge-raspberrypi: |
+  99_machine: |
+    MACHINE_FEATURES += "vc4graphics"
+    GPU_MEM_256 = "128"
+    GPU_MEM_512 = "196"
+    GPU_MEM_1024 = "256"
+    DISABLE_OVERSCAN = "1"
+    RPI_EXTRA_CONFIG = ' \n \
+            hdmi_group=0 \n \
+            hdmi_mode=0 \n \
+            dtparam=audio=on \n \
+            '
     # Specifies description file for partitioning the image
     WKS_FILE = "moonforge-image-base-raspberrypi.wks.in"
-  20_meta-moonforge-distro: |
     # Sets up persistent data partition
     OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p3"
     # Sets minimum size of the data partition
     IMAGE_DATA_MIN_SIZE = "4096M"
 
-machine: raspberrypi5

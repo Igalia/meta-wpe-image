@@ -1,4 +1,0 @@
-#!/bin/bash
-CTL_FILE=/tmp/wpe-exported-wayland
-
-echo "$@" > ${CTL_FILE}

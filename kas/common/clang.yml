@@ -1,0 +1,28 @@
+header:
+  version: 11
+  includes:
+    - kas/repos/clang.yml
+
+local_conf_header:
+  90_clang: |
+    # Clang based cross compiler is not included into the generated SDK using bitbake
+    # meta-toolchain or bitbake -cpopulate_sdk <image> if clang is expected to be
+    # part of SDK, add CLANGSDK = "1" in local.conf
+    #
+    # Ref: https://github.com/kraj/meta-clang#adding-clang-in-generated-sdk-toolchain
+    CLANGSDK = "1"
+
+    # Make clang the single provider of llvm across all variants. With CLANGSDK=1,
+    # nativesdk-clang is pulled into the SDK; oe-core's llvm recipe (same version)
+    # is also built and both package "liblto<ver>", colliding in shared pkgdata
+    # (do_packagedata: "trying to install files ... when those files already exist").
+    # Routing llvm to clang eliminates the duplicate recipe (and saves build time).
+    # clang does not PROVIDE llvm by default, so declare it here too.
+    # Ref: https://github.com/kraj/meta-clang#providing-llvm
+    PREFERRED_PROVIDER_llvm = "clang"
+    PREFERRED_PROVIDER_llvm-native = "clang-native"
+    PREFERRED_PROVIDER_nativesdk-llvm = "nativesdk-clang"
+    PROVIDES:pn-clang = "llvm"
+    PROVIDES:pn-clang-native = "llvm-native"
+    PROVIDES:pn-nativesdk-clang = "nativesdk-llvm"
+
