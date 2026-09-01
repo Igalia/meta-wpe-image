@@ -18,4 +18,6 @@ RDEPENDS:${PN} = "\
     libsdl2-image \
     mesa-demos \
     vulkan-headers \
+    vulkan-loader \
+    vulkan-tools \
 "
