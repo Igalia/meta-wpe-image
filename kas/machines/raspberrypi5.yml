@@ -5,16 +5,14 @@ header:
       file: kas/include/layer/meta-moonforge-podman.yml
     - repo: meta-moonforge
       file: kas/include/layer/meta-moonforge-raspberrypi.yml
-    - repo: meta-moonforge
-      file: kas/include/layer/meta-moonforge-rauc-raspberrypi.yml
 
 local_conf_header:
   30_meta-moonforge-raspberrypi: |
     # Specifies description file for partitioning the image
-    WKS_FILE = "wpe-image-rauc-raspberrypi.wks.in"
+    WKS_FILE = "moonforge-image-base-raspberrypi.wks.in"
   20_meta-moonforge-distro: |
     # Sets up persistent data partition
-    OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p4"
+    OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p3"
     # Sets minimum size of the data partition
     IMAGE_DATA_MIN_SIZE = "4096M"
 
