@@ -2,4 +2,4 @@ header:
   version: 11
   includes:
     - kas/machines/raspberrypi3.yml
-    - kas/common/base.yml
+    - kas/include/common/base.yml
