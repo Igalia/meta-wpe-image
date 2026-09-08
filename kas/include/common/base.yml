@@ -21,9 +21,6 @@ local_conf_header:
     # 1GByte extra space
     IMAGE_ROOTFS_EXTRA_SPACE = "1048576"
 
-    # Temporary remove the psplash splash feature
-    FEATURE_INSTALL:remove = "psplash"
-
     PREFERRED_VERSION_linux-raspberrypi:raspberrypi5 = "6.12.%"
 
     # eeprom for Raspberrypi boards
