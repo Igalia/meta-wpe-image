@@ -8,10 +8,18 @@ machine: wandboard
 local_conf_header:
   99_machine: |
     UBOOT_EXTLINUX_KERNEL_ARGS = "rootwait rw video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32"
-    # Specifies description file for partitioning the image
-    WKS_FILE = "wpe-image-wandboard.wks.in"
-    # Sets up persistent data partition
-    OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p2"
+    # Specifies description file for partitioning the image.
+    # meta-freescale-3rdparty's wandboard.conf hard-sets WKS_FILES (plural) to
+    # the stock imx-uboot-spl layout, which has no persistent /data partition.
+    # That machine-conf assignment is parsed after local.conf and shadows a
+    # plain WKS_FILE override (wic resolves WKS_FULL_PATH from WKS_FILES), so
+    # force our WKS via WKS_FILES to get the /data partition overlayfs-etc needs.
+    WKS_FILES:forcevariable = "wpe-image-wandboard.wks.in"
+    # Sets up persistent data partition. Reference it by filesystem label
+    # (set via the WKS "data" partition) instead of a fixed device node: the
+    # Wandboard enumerates the boot SD as mmcblk2, not mmcblk0, so a hardcoded
+    # /dev/mmcblkNpN does not match and the /etc overlay fails to mount.
+    OVERLAYFS_ETC_DEVICE = "LABEL=data"
     # Sets minimum size of the data partition
     IMAGE_DATA_MIN_SIZE = "4096M"
 
