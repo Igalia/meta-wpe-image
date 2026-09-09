@@ -1,0 +1,80 @@
+From 5cc2229bd3ff5257047eaa03b5b523513b27c7fa Mon Sep 17 00:00:00 2001
+From: Pablo Saavedra <psaavedra@igalia.com>
+Date: Wed, 9 Sep 2026 11:27:27 +0200
+Subject: [PATCH] Work around Clang 18 crash when mapping SVG stroke dash
+ arrays
+
+Reviewed by NOBODY (OOPS!).
+
+Clang 18 segfaults in Sema::tryCaptureVariable() while compiling the rendering
+unified sources with -std=c++23:
+
+    3  clang::Sema::tryCaptureVariable(...)
+    4  clang::Sema::BuildDeclRefExpr(...)
+    12 clang::Sema::SubstConstraintExpr(...)
+    16 clang::Sema::CheckInstantiatedFunctionTemplateConstraints(...)
+    21 clang::Sema::AddTemplateOverloadCandidate(...)
+    27 clang::Sema::AddMethodCandidate(...)
+    28 clang::Sema::BuildCallToMemberFunction(...)
+
+Resolving lengthContext.valueForLength(dash, zoom) inside the DashArray::map()
+lambdas makes the compiler check whether the argument converts to each of the
+eight SVGLengthContext::valueForLength() parameter types. The Style wrappers
+among them inherit PrimitiveNumericWrapperBase's variadic constructor, whose
+requires-clause mentions its own function parameters:
+
+    template<typename... Args>
+    ALWAYS_INLINE PrimitiveNumericWrapperBase(Args&&... args)
+       requires (requires { { LengthPercentage<R, V>(args...) }; })
+
+Both call sites took the dash element as auto&, so that constraint is
+substituted while the generic lambda body is being instantiated. Clang 18 then
+tries to capture the constructor's parameters and dereferences null.
+
+Upstream fixed this in llvm/llvm-project#93206, "[clang] Fix crash in
+tryCaptureVariable for unevaluated lambdas" (commit 3d361b2, merged into main
+on 2024-06-04) but this was never backported to Clang 18.x release and still
+crashes.
+
+Spelling the lambda parameter type out keeps the body non-dependent, so the
+constraint is checked in an ordinary function context instead and the crash
+goes away.
+
+* Source/WebCore/rendering/svg/SVGRenderSupport.cpp:
+(WebCore::SVGRenderSupport::applyStrokeStyleToContext):
+* Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp:
+(WebCore::writeSVGStrokePaintingResource):
+---
+ Source/WebCore/rendering/svg/SVGRenderSupport.cpp    | 2 +-
+ Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/rendering/svg/SVGRenderSupport.cpp b/Source/WebCore/rendering/svg/SVGRenderSupport.cpp
+index f2ff262edf19..2518f155ff8e 100644
+--- a/Source/WebCore/rendering/svg/SVGRenderSupport.cpp
++++ b/Source/WebCore/rendering/svg/SVGRenderSupport.cpp
+@@ -564,7 +564,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
+         }
+         
+         bool canSetLineDash = false;
+-        auto dashArray = DashArray::map(dashes, [&lengthContext, usedZoom, scaleFactor, &canSetLineDash](auto& dash) -> DashArrayElement {
++        auto dashArray = DashArray::map(dashes, [&lengthContext, usedZoom, scaleFactor, &canSetLineDash](const Style::SVGStrokeDasharrayValue& dash) -> DashArrayElement {
+             auto value = lengthContext.valueForLength(dash, usedZoom) * scaleFactor;
+             if (value > 0)
+                 canSetLineDash = true;
+diff --git a/Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp b/Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp
+index 0c3d4965c9b8..75d03ca36a48 100644
+--- a/Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp
++++ b/Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp
+@@ -209,7 +209,7 @@ static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement&
+     auto zoom = style.usedZoomForLength();
+     double dashOffset = lengthContext.valueForLength(style.strokeDashOffset(), zoom);
+     double strokeWidth = lengthContext.valueForLength(style.strokeWidth(), zoom);
+-    auto dashArray = DashArray::map(style.strokeDashArray(), [&](auto& length) -> DashArrayElement {
++    auto dashArray = DashArray::map(style.strokeDashArray(), [&](const Style::SVGStrokeDasharrayValue& length) -> DashArrayElement {
+         return lengthContext.valueForLength(length, zoom);
+     });
+ 
+-- 
+2.43.0
+

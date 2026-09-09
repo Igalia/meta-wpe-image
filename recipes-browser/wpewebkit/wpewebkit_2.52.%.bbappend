@@ -2,7 +2,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.52.patch "
 SRCBRANCH:class-devupstream = "main"
-SRC_URI:class-devupstream = "git://github.com/WebKit/WebKit.git;protocol=https;branch=${SRCBRANCH}"
+SRC_URI:class-devupstream = "git://github.com/WebKit/WebKit.git;protocol=https;branch=${SRCBRANCH} \
+                             file://0001-Work-around-Clang-18-crash-when-mapping-SVG-stroke-d.patch"
 # Temporarily disabled because this patch is not updated:
 # file://0001-Add-LAYER_BASED_SVG_ENGINE-envvar_v2.52.patch
 SRCREV:class-devupstream = "${AUTOREV}"
