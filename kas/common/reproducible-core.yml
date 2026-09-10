@@ -1,0 +1,27 @@
+header:
+  version: 11
+
+local_conf_header:
+  enable-reproducible: |
+    # Opt in to the per-machine SRCREV locks that conf/distro/demos.conf gates on
+    # this feature. It has to be set here and not in the distro conf itself:
+    # bitbake.conf parses conf/local.conf before conf/distro/${DISTRO}.conf, which
+    # is where DISTRO_FEATURES is read to decide whether to load the locks.
+    DISTRO_FEATURES:append = " reproducible-core"
+
+    # Use a fixed timestamp for a release build. bitbake.conf sets SOURCE_DATE_EPOCH
+    # with ?= before it includes local.conf, so this hard assignment wins.
+    # 1720000000 is 2024-07-03 09:46:40 UTC.
+    SOURCE_DATE_EPOCH = "1720000000"
+
+    # Make the root filesystem timestamps deterministic too, via
+    # rootfs-postcommands.bbclass.
+    REPRODUCIBLE_TIMESTAMP_ROOTFS = "${SOURCE_DATE_EPOCH}"
+
+    # bitbake.conf ships SOURCE_DATE_EPOCH in BB_BASEHASH_IGNORE_VARS, so the
+    # assignment above changes no taskhash: on a builder with warm sstate every
+    # cached task restores with the per-recipe epoch it was built with, leaving an
+    # image whose timestamps are whatever the cache held. Drop the exclusion so the
+    # fixed epoch reaches the hashes. This gives pinned builds their own sstate
+    # signature, which is the point - they must not reuse unpinned artefacts.
+    BB_BASEHASH_IGNORE_VARS:remove = "SOURCE_DATE_EPOCH"

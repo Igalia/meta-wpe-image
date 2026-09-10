@@ -9,6 +9,8 @@ inputs:
     default: 'scarthgap'
   wpe_version:
     default: 'nightly'
+  reproducible:
+    default: 'no'
 
 runs:
   using: 'composite'
@@ -23,6 +25,7 @@ runs:
         echo "MACHINE=${{ inputs.machine }}"
         echo "RELEASE=${{ inputs.repo_release }}"
         echo "WPE_VERSION=${{ inputs.wpe_version }}"
+        echo "REPRODUCIBLE=${{ inputs.reproducible }}"
         echo "======================================================================"
     - name: Set bitbake environment
       shell: bash
@@ -48,8 +51,22 @@ runs:
         export KAS_WORK_DIR="workdir"
         mkdir "${KAS_WORK_DIR}"
 
+        # Map the "reproducible" input onto a kas fragment. The choice values are the
+        # fragment basenames, and "no" adds nothing. Unknown values fail loudly rather
+        # than silently building unpinned.
+        REPRODUCIBLE="${{ inputs.reproducible }}"
+        case "${REPRODUCIBLE}" in
+            no|false|'')
+                REPRODUCIBLE_FRAGMENT="" ;;
+            reproducible-core|reproducible-all)
+                REPRODUCIBLE_FRAGMENT=":kas/common/${REPRODUCIBLE}.yml" ;;
+            *)
+                echo "Unknown reproducible input: '${REPRODUCIBLE}'" >&2
+                exit 1 ;;
+        esac
+
         attempt=0
-        until kas checkout kas/demos-image-${{ inputs.machine }}.yml:kas/common/wpe-${{ inputs.wpe_version }}.yml; do
+        until kas checkout kas/demos-image-${{ inputs.machine }}.yml:kas/common/wpe-${{ inputs.wpe_version }}.yml${REPRODUCIBLE_FRAGMENT}; do
           attempt=$((attempt+1))
           if [ $attempt -ge 5 ]; then
             echo "kas checkout failed after 5 attempts. Exiting."
