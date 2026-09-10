@@ -9,6 +9,8 @@ inputs:
     default: 'core-image-weston-wpe'
   wpe_version:
     default: 'nightly'
+  reproducible:
+    default: 'no'
 
 runs:
   using: 'composite'
@@ -22,6 +24,7 @@ runs:
         echo "RELEASE=${{ inputs.repo_release }}"
         echo "TARGET=${{ inputs.target }}"
         echo "WPE_VERSION=${{ inputs.wpe_version }}"
+        echo "REPRODUCIBLE=${{ inputs.reproducible }}"
         echo "======================================================================"
     - name: Download timestamp artifact
       uses: actions/download-artifact@v7
@@ -64,10 +67,24 @@ runs:
         cp /kas-local.yml ~/yocto-meta-wpe-image-${{ inputs.repo_release }}/
 
         ulimit -n 4096
+        # Map the "reproducible" input onto a kas fragment. The choice values are the
+        # fragment basenames, and "no" adds nothing. Unknown values fail loudly rather
+        # than silently building unpinned.
+        REPRODUCIBLE="${{ inputs.reproducible }}"
+        case "${REPRODUCIBLE}" in
+            no|false|'')
+                REPRODUCIBLE_FRAGMENT="" ;;
+            reproducible-core|reproducible-all)
+                REPRODUCIBLE_FRAGMENT=":kas/common/${REPRODUCIBLE}.yml" ;;
+            *)
+                echo "Unknown reproducible input: '${REPRODUCIBLE}'" >&2
+                exit 1 ;;
+        esac
+
         MAX_RETRIES=5
         for i in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $i to fetch sources for $IMAGE..."
-            if kas shell kas/demos-image-${{ inputs.machine }}.yml:kas/common/wpe-${{ inputs.wpe_version }}.yml:kas/common/buildhistory.yml:kas-local.yml -c "bitbake ${{ inputs.target }} --runall=fetch"; then
+            if kas shell kas/demos-image-${{ inputs.machine }}.yml:kas/common/wpe-${{ inputs.wpe_version }}.yml${REPRODUCIBLE_FRAGMENT}:kas/common/buildhistory.yml:kas-local.yml -c "bitbake ${{ inputs.target }} --runall=fetch"; then
                 echo "All sources fetched successfully."
                 break
             fi
@@ -80,7 +97,7 @@ runs:
         done
 
         kas shell \
-            kas/demos-image-${{ inputs.machine }}.yml:kas/common/wpe-${{ inputs.wpe_version }}.yml:kas/common/buildhistory.yml:kas-local.yml \
+            kas/demos-image-${{ inputs.machine }}.yml:kas/common/wpe-${{ inputs.wpe_version }}.yml${REPRODUCIBLE_FRAGMENT}:kas/common/buildhistory.yml:kas-local.yml \
             -c "buildhistory-collect-srcrevs -a > ../../srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc"
         diff -u meta-wpe-distro/conf/include/srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc srcrev_${{ inputs.target }}_${{ inputs.machine }}.inc || true
     - name: Upload buildhistory-collect-srcrevs.inc artifact

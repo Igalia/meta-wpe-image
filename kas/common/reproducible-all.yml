@@ -1,0 +1,11 @@
+header:
+  version: 11
+  includes:
+    - kas/common/reproducible-core.yml
+
+local_conf_header:
+  enable-reproducible-webkit: |
+    # Also pin the WPE stack - wpewebkit, wpe-simple-launcher and wpe-testbed -
+    # from conf/include/srcrev_webkit.inc. This freezes wpewebkit, so composing
+    # this with kas/common/wpe-nightly.yml yields a "nightly" that never moves.
+    DISTRO_FEATURES:append = " reproducible-webkit"

@@ -22,6 +22,17 @@ on:
         options:
           - '2_52'
           - nightly
+      reproducible:
+        description: 'Pin SRCREVs from conf/include (no = build against upstream tips)'
+        required: true
+        default: 'reproducible-core'
+        type: choice
+        options:
+          # Quoted: bare `no` is a YAML 1.1 boolean and would reach the actions as
+          # the string "false" rather than "no".
+          - 'no'
+          - reproducible-core
+          - reproducible-all
 
 # Opt into Node.js 24 for actions (avoids deprecation warning)
 env:
@@ -39,6 +50,7 @@ jobs:
     outputs:
       machine: ${{ steps.define.outputs.machines }}
       wpe_version: ${{ steps.define.outputs.wpe_version }}
+      reproducible: ${{ steps.define.outputs.reproducible }}
     steps:
       - name: Define matrix values
         id: define
@@ -59,6 +71,15 @@ jobs:
           else
             echo 'wpe_version=["nightly"]' >> $GITHUB_OUTPUT
           fi
+          # Scalar, not a matrix dimension: pinning is a property of the run, and
+          # making it a matrix axis would double every build.
+          if [ -n "${{ github.event.inputs.reproducible }}" ]; then
+            echo "reproducible=${{ github.event.inputs.reproducible }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "reproducible=reproducible-core" >> $GITHUB_OUTPUT
+          else
+            echo "reproducible=no" >> $GITHUB_OUTPUT
+          fi
 
   scarthgap-repo-init:
     strategy:
@@ -77,6 +98,7 @@ jobs:
           machine: ${{ matrix.machine }}
           repo_release: ${{ matrix.yocto_rel }}
           wpe_version: ${{ matrix.wpe_version }}
+          reproducible: ${{ needs.define-matrix.outputs.reproducible }}
 
   buildhistory-collect-srcrevs:
     strategy:
@@ -107,6 +129,10 @@ jobs:
           repo_release: ${{ matrix.yocto_rel }}
           s3_storage: ${S3_STORAGE}
           wpe_version: ${{ matrix.wpe_version }}
+          # Deliberately unpinned: buildhistory-collect-srcrevs reports the SRCREV
+          # each recipe actually used, so running this job with the locks applied
+          # would regenerate the pins it was given and never track upstream.
+          reproducible: 'no'
 
   build:
     strategy:
@@ -137,6 +163,7 @@ jobs:
           repo_release: ${{ matrix.yocto_rel }}
           s3_storage: ${S3_STORAGE}
           wpe_version: ${{ matrix.wpe_version }}
+          reproducible: ${{ needs.define-matrix.outputs.reproducible }}
 
   test:
     strategy:
