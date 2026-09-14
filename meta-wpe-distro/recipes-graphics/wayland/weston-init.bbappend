@@ -10,7 +10,7 @@ SRC_URI += "file://weston.env \
             file://demo-wpe-website \
             file://demo-wpe-duckduckgo\
             file://24x24-blank.png \
-            file://wpe_white.jpg \
+            file://wpe-moonforge-background.png \
             file://application-exit-symbolic.symbolic.png \
             file://find-location-symbolic.symbolic.png \
             file://go-next-symbolic-rtl.symbolic.png \
@@ -44,7 +44,7 @@ FILES:${PN} += "\
     ${datadir}/utilities-terminal-symbolic.symbolic.png \
     ${datadir}/view-refresh-symbolic.symbolic.png \
     ${datadir}/web-browser-symbolic.symbolic.png \
-    ${datadir}/wpe_white.jpg \
+    ${datadir}/wpe-moonforge-background.png \
     ${bindir}/weston-terminal-configure-network \
     "
 
@@ -66,7 +66,7 @@ do_install:append () {
     install -D -p -m0644 ${WORKDIR}/utilities-terminal-symbolic.symbolic.png         ${D}${datadir}/
     install -D -p -m0644 ${WORKDIR}/view-refresh-symbolic.symbolic.png               ${D}${datadir}/
     install -D -p -m0644 ${WORKDIR}/web-browser-symbolic.symbolic.png                ${D}${datadir}/
-    install -D -p -m0644 ${WORKDIR}/wpe_white.jpg                                    ${D}${datadir}/
+    install -D -p -m0644 ${WORKDIR}/wpe-moonforge-background.png                     ${D}${datadir}/
 
     install -Dm755 ${WORKDIR}/kill-demo ${D}/${bindir}/kill-demo
     install -Dm755 ${WORKDIR}/toggle-gallium-hud ${D}/${bindir}/toggle-gallium-hud
