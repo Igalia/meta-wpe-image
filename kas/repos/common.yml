@@ -14,8 +14,8 @@ header:
 repos:
   meta-moonforge:
     url: https://github.com/moonforgelinux/meta-moonforge.git
-    commit: 7c2fe20810b8878a2d466bacb6de799149f968f4
-    branch: main
+    commit: 85fcc639a9bae75dcbbc713379274f9723ea5f0f
+    branch: psaavedra/demos-main
   meta-openembedded:
     layers:
       meta-oe:
