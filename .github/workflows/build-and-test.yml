@@ -20,7 +20,7 @@ on:
         required: true
         type: choice
         options:
-          - '2_52'
+          - '2_54'
           - nightly
       reproducible:
         description: 'Pin SRCREVs from conf/include (no = build against upstream tips)'
@@ -65,7 +65,7 @@ jobs:
             echo 'machines=["raspberrypi5"]' >> $GITHUB_OUTPUT
           fi
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo 'wpe_version=["2_52"]' >> $GITHUB_OUTPUT
+            echo 'wpe_version=["2_54"]' >> $GITHUB_OUTPUT
           elif [ -n "${{ github.event.inputs.wpe_version }}" ]; then
             echo "wpe_version=[\"${{ github.event.inputs.wpe_version }}\"]" >> $GITHUB_OUTPUT
           else
