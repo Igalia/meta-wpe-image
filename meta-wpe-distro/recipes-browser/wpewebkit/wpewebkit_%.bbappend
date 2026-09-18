@@ -1,6 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-PACKAGECONFIG:append = " experimental-features minibrowser"
+PACKAGECONFIG:append = " experimental-features"
+PACKAGECONFIG:remove = "wpe-legacy-api"
 
 # These warnings only exist in clang; guard them with the clang toolchain so
 # GCC builds (e.g. the arm/imx machines) do not choke on unknown -W options.
