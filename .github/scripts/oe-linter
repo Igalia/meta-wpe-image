@@ -1,0 +1,99 @@
+#!/bin/sh
+set -e
+
+# Run from the repository root, so that the file list below does not depend on
+# the directory the script was invoked from.
+cd "$(dirname "$0")/../.."
+
+# Version of oelint-adv the layers are linted against. Pinned so that CI and
+# local runs agree: a different version changes which rules fire.
+OELINT_ADV_VERSION="9.6.1"
+
+# Layers excluded from linting. meta-wpe-backport carries recipes backported
+# verbatim from upstream OE-core/meta-openembedded; keeping their diff against
+# upstream minimal matters more than oelint compliance. Set to "" to lint
+# everything.
+OELINT_EXCLUDE_DIRS="${OELINT_EXCLUDE_DIRS-meta-wpe-backport}"
+
+# Locate the oelint-adv binary: PATH first (the normal case), then the usual
+# pipx locations, for the case where pipx's bin dir is not on PATH. Deliberately
+# not parsing `pipx list` output, whose format varies between pipx versions.
+resolve_oelint_adv() {
+    for candidate in \
+        "$(command -v oelint-adv || true)" \
+        "${PIPX_BIN_DIR:-$HOME/.local/bin}/oelint-adv" \
+        "${PIPX_HOME:-$HOME/.local/pipx}/venvs/oelint-adv/bin/oelint-adv"
+    do
+        if [ -n "$candidate" ] && [ -x "$candidate" ]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Install oelint-adv, unless the pinned version is already there. pipx reports
+# success without doing anything when some other version is installed, so the
+# version has to be checked here for the pin to take effect.
+OELINT_ADV_BIN=$(resolve_oelint_adv || true)
+OELINT_ADV_INSTALLED=""
+if [ -n "$OELINT_ADV_BIN" ]; then
+    OELINT_ADV_INSTALLED=$("$OELINT_ADV_BIN" --version 2>/dev/null | awk '{print $NF}' || true)
+fi
+
+if [ "$OELINT_ADV_INSTALLED" != "$OELINT_ADV_VERSION" ]; then
+    pipx install --force "oelint-adv==$OELINT_ADV_VERSION" \
+        || { echo "pipx failed, trying pip..." >&2; pip install --user --no-cache-dir "oelint-adv==$OELINT_ADV_VERSION" || exit 1; }
+    OELINT_ADV_BIN=$(resolve_oelint_adv || true)
+fi
+
+if [ -z "$OELINT_ADV_BIN" ]; then
+    echo "oelint-adv command not found." >&2
+    exit 1
+fi
+
+# Find all relevant files, unless the caller pinned the list, e.g.
+#   OELINT_FILES="$(git diff --name-only --diff-filter=d HEAD |
+#                   grep -E '\.(bb|bbappend|bbclass)$')"
+if [ -z "$OELINT_FILES" ]; then
+    # Only files tracked by this repository: the working tree usually also holds
+    # kas checkouts (meta-moonforge, poky, ...) and build output, none of which
+    # are ours to lint.
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        OELINT_FILES=$(git ls-files -- "*.bb" "*.bbappend" "*.bbclass")
+    else
+        OELINT_FILES=$(find . -type f \( \
+          -name "*.bb" -o \
+          -name "*.bbappend" -o \
+          -name "*.bbclass" \
+        \))
+    fi
+fi
+
+# Applied to a caller-supplied list too: the excluded layers are excluded no
+# matter how the file list was arrived at.
+for dir in $OELINT_EXCLUDE_DIRS; do
+    OELINT_FILES=$(printf '%s\n' "$OELINT_FILES" | grep -Ev "^(\./)?$dir/" || true)
+done
+OELINT_FILES=$(printf '%s\n' "$OELINT_FILES" | sed '/^$/d' | sort -u)
+
+# If no files are found, exit early
+if [ -z "$OELINT_FILES" ]; then
+  echo "No matching files found."
+  exit 0
+fi
+
+# Decide on color argument for terminal usage
+ARG_COLOR=""
+if [ -t 1 ]; then
+    ARG_COLOR="--color"
+fi
+
+# oelint.vars.noncoreoverride is suppressed on purpose: this is a distro layer,
+# and its .bbappends are meant to apply to every machine, not to a MACHINE- or
+# DISTRO-specific override.
+# shellcheck disable=SC2086
+"$OELINT_ADV_BIN" $ARG_COLOR --hide info \
+    --suppress "oelint.task.heredocs oelint.vars.mispell oelint.vars.noncoreoverride" \
+    --release scarthgap \
+    $OELINT_FILES
