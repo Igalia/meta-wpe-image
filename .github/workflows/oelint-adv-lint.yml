@@ -1,0 +1,21 @@
+name: oelint-adv-lint
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+  schedule:
+    - cron: '0 0 * * 0'  # Runs every Sunday at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Install requirements
+      run: sudo apt-get update && sudo apt-get install -y pipx
+
+    - name: Run oelint-adv
+      run: ./.github/scripts/oe-linter
