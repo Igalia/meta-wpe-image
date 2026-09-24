@@ -94,6 +94,7 @@ fi
 # DISTRO-specific override.
 # shellcheck disable=SC2086
 "$OELINT_ADV_BIN" $ARG_COLOR --hide info \
-    --suppress "oelint.task.heredocs oelint.vars.mispell oelint.vars.noncoreoverride" \
+    --constantmods "+.github/oelint-constants.json" \
+    --suppress "oelint.vars.noncoreoverride" \
     --release scarthgap \
     $OELINT_FILES

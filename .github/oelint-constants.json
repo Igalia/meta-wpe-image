@@ -1,0 +1,10 @@
+{
+  "variables": {
+    "known": [
+      "CMDLINE_CMA",
+      "GLIBC_GENERATE_LOCALES",
+      "LIBCPLUSPLUS",
+      "SDK_EXTRA_TOOLS"
+    ]
+  }
+}
