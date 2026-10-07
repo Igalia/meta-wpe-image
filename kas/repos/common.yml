@@ -14,7 +14,7 @@ header:
 repos:
   meta-moonforge:
     url: https://github.com/pgorszkowski-igalia/meta-moonforge.git
-    commit: 2fce917ea93445ba7ee36884eb289c11acb75f2f
+    commit: d69fa816c125e9d762adf1e3dc660ed818d4f9b8
     branch: testing_patch-1
   meta-openembedded:
     layers:
