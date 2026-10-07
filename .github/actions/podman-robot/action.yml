@@ -49,7 +49,7 @@ runs:
         rm -rf dut-control
         git clone https://github.com/psaavedra/dut-control.git
         pushd dut-control || exit
-        git checkout add-reserve-retries
+        git checkout 5fa85a8479ec8467ae50b4824be265064e28f7fa
         pip install --upgrade pip && pip install .
         popd || exit
         echo "${GITHUB_WORKSPACE}/venv/bin" >> $GITHUB_PATH
