@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRCBRANCH:class-devupstream = "main"
-SRC_URI:class-devupstream = "git://github.com/WebKit/WebKit.git;protocol=https;branch=${SRCBRANCH}"
+SRCBRANCH:class-devupstream = "fix-seconds-suppress-clang18"
+SRC_URI:class-devupstream = "git://github.com/psaavedra/WebKit.git;protocol=https;branch=${SRCBRANCH}"
 # nooelint: oelint.vars.autorev oelint.append.protvars.SRCREV
 SRCREV:class-devupstream = "${AUTOREV}"
 
