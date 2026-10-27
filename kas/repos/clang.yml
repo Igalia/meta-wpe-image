@@ -4,5 +4,5 @@ header:
 repos:
   meta-clang:
     url: https://github.com/kraj/meta-clang.git
-    commit: 731488911f55ebfe746068512b426351192f82f2
+    commit: 407541071937acb1f7135a6c890ba4e56554d839
 
