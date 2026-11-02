@@ -15,7 +15,7 @@ List buildinfo
 
 List installed packages
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP
-    ${stdout}=    SSH Command    ${TEST_BOARD_IP}    rpm -qa
+    ${stdout}=    SSH Command    ${TEST_BOARD_IP}    cat /etc/installed-packages
     ${formatted}=    Evaluate    """${stdout}[0]"""
     Log    ${formatted}
     Should Contain    ${stdout}[0]    wpewebkit

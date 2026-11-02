@@ -5,6 +5,20 @@ IMAGE_FEATURES += "hwcodecs package-management"
 
 inherit moonforge-image features_check
 
+# Ship the list of installed packages in the image. The overlayfs-etc feature
+# set by moonforge-image conflicts with package-management, so the target has
+# neither rpm nor its database. This runs before the database is removed.
+ROOTFS_POSTUNINSTALL_COMMAND += "write_target_image_manifest"
+
+python write_target_image_manifest () {
+    from oe.rootfs import image_list_installed_packages
+    from oe.utils import format_pkg_list
+
+    manifest = d.expand("${IMAGE_ROOTFS}${sysconfdir}/installed-packages")
+    with open(manifest, "w") as f:
+        f.write(format_pkg_list(image_list_installed_packages(d), "ver"))
+}
+
 IMAGE_LINGUAS = "en-us es-es"
 GLIBC_GENERATE_LOCALES = "en_US.UTF-8 es_ES.UTF-8"
 
