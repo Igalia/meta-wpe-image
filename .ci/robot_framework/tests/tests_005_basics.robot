@@ -18,6 +18,7 @@ List installed packages
     ${stdout}=    SSH Command    ${TEST_BOARD_IP}    rpm -qa
     ${formatted}=    Evaluate    """${stdout}[0]"""
     Log    ${formatted}
+    Should Contain    ${stdout}[0]    wpewebkit
 
 Check Kernel Configuration available in /proc/config.gz
     ${TEST_BOARD_IP}    Get Environment Variable    TEST_BOARD_IP

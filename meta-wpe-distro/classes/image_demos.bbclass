@@ -1,7 +1,7 @@
 DESCRIPTION += "for demos"
 
 # nooelint: oelint.vars.outofcontext
-IMAGE_FEATURES += "hwcodecs"
+IMAGE_FEATURES += "hwcodecs package-management"
 
 inherit moonforge-image features_check
 
